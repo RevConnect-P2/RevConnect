@@ -98,5 +98,83 @@ public class PostServiceImpl implements PostService {
         return postMapper.toPostResponse(savedPost, hashtags);
     }
 
+    @Override
+    public PostResponse updatePost(Long postId, Long userId, PostCreateRequest request) {
+
+        // 1️⃣ Validate content
+        if (request.getContent() == null || request.getContent().trim().isEmpty()) {
+            throw new BadRequestException("Post content cannot be empty");
+        }
+
+        // 2️⃣ Fetch post
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
+
+        // 3️⃣ Ownership check
+        if (!post.getUser().getUserId().equals(userId)) {
+            throw new UnauthorizedException("You are not allowed to update this post");
+        }
+
+        // 4️⃣ Validate post type
+        String postType = request.getPostType();
+        if (postType == null ||
+                (!postType.equalsIgnoreCase("NORMAL") &&
+                        !postType.equalsIgnoreCase("PROMOTIONAL"))) {
+            throw new BadRequestException("Invalid post type");
+        }
+
+        // 5️⃣ Validate CTA for promotional posts
+        if (postType.equalsIgnoreCase("PROMOTIONAL")) {
+            if (request.getCtaText() == null || request.getCtaLink() == null) {
+                throw new BadRequestException("CTA text and link are required for promotional posts");
+            }
+        }
+
+        // 6️⃣ Update post fields
+        post.setContent(request.getContent());
+        post.setPostType(postType.toUpperCase());
+        post.setPinned(request.getPinned() != null ? request.getPinned() : false);
+        post.setCtaText(request.getCtaText());
+        post.setCtaLink(request.getCtaLink());
+        post.setScheduledAt(request.getScheduledAt());
+
+        Post updatedPost = postRepository.save(post);
+
+        // 7️⃣ Remove old hashtag mappings
+        postHashtagRepository.deleteByPost(updatedPost);
+
+        // 8️⃣ Add new hashtags
+        List<String> hashtagNames = request.getHashtags();
+        List<Hashtag> hashtags = new ArrayList<>();
+
+        if (hashtagNames != null && !hashtagNames.isEmpty()) {
+
+            for (String tag : hashtagNames) {
+                if (tag == null || tag.trim().isEmpty()) continue;
+
+                String normalizedTag = tag.trim().toLowerCase();
+
+                Hashtag hashtag = hashtagRepository
+                        .findByTagName(normalizedTag)
+                        .orElseGet(() -> hashtagRepository.save(
+                                Hashtag.builder()
+                                        .tagName(normalizedTag)
+                                        .build()
+                        ));
+
+                PostHashtag postHashtag = PostHashtag.builder()
+                        .post(updatedPost)
+                        .hashtag(hashtag)
+                        .build();
+
+                postHashtagRepository.save(postHashtag);
+                hashtags.add(hashtag);
+            }
+        }
+
+        // 9️⃣ Return response
+        return postMapper.toPostResponse(updatedPost, hashtags);
+    }
+
     // Other methods will be implemented next
 }
