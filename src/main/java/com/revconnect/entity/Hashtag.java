@@ -6,7 +6,12 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "HASHTAGS")
+@Table(
+        name = "HASHTAGS",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = "TAG_NAME")
+        }
+)
 
 @Getter
 @Setter
@@ -21,10 +26,23 @@ public class Hashtag {
     @Column(name = "HASHTAG_ID")
     private Long hashtagId;
 
-    @Column(name = "TAG_NAME")
+
+    // prevent duplicate hashtags like #java twice
+    @Column(name = "TAG_NAME", nullable = false, unique = true, length = 100)
     private String tagName;
 
-    @Column(name = "CREATED_AT")
+
+    @Column(name = "CREATED_AT", updatable = false)
     private LocalDateTime createdAt;
+
+
+
+    // Oracle timestamp auto insert
+    @PrePersist
+    protected void onCreate() {
+
+        createdAt = LocalDateTime.now();
+
+    }
 
 }

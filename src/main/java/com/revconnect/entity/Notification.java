@@ -22,32 +22,59 @@ public class Notification {
     private Long notificationId;
 
 
-    @ManyToOne
-    @JoinColumn(name = "USER_ID")
+    // User receiving notification
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "USER_ID", nullable = false)
     private User user;
 
 
-    @Column(name = "TYPE")
+    // LIKE, COMMENT, FOLLOW, CONNECTION, SHARE
+    @Column(name = "TYPE", nullable = false, length = 50)
     private String type;
 
 
+    // ID of related entity (POST_ID, COMMENT_ID etc)
     @Column(name = "REFERENCE_ID")
     private Long referenceId;
 
 
-    @Column(name = "MESSAGE")
+    @Column(name = "MESSAGE", length = 500)
     private String message;
 
 
+    // Oracle stores Boolean as NUMBER(1)
     @Column(name = "IS_READ")
-    private Boolean isRead;
+    private Boolean isRead = false;
 
 
-    @Column(name = "CREATED_AT")
+    @Column(name = "CREATED_AT", updatable = false)
     private LocalDateTime createdAt;
 
 
     @Column(name = "UPDATED_AT")
     private LocalDateTime updatedAt;
+
+
+
+    // Auto set created timestamp
+    @PrePersist
+    protected void onCreate() {
+
+        createdAt = LocalDateTime.now();
+
+        if (isRead == null) {
+            isRead = false;
+        }
+
+    }
+
+
+    // Auto set updated timestamp
+    @PreUpdate
+    protected void onUpdate() {
+
+        updatedAt = LocalDateTime.now();
+
+    }
 
 }

@@ -1,24 +1,17 @@
 package com.revconnect.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "POST_HASHTAGS")
+@Table(
+        name = "POST_HASHTAGS",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"POST_ID", "HASHTAG_ID"})
+        }
+)
 
 @Getter
 @Setter
@@ -34,17 +27,29 @@ public class PostHashtag {
     private Long id;
 
 
-    @ManyToOne
-    @JoinColumn(name = "POST_ID", referencedColumnName = "POST_ID")
+    // Many mappings belong to one post
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "POST_ID", nullable = false)
     private Post post;
 
 
-    @ManyToOne
-    @JoinColumn(name = "HASHTAG_ID", referencedColumnName = "HASHTAG_ID")
+    // Many mappings belong to one hashtag
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "HASHTAG_ID", nullable = false)
     private Hashtag hashtag;
 
 
-    @Column(name = "TAGGED_AT")
+    @Column(name = "TAGGED_AT", updatable = false)
     private LocalDateTime taggedAt;
+
+
+
+    // Auto timestamp when inserted
+    @PrePersist
+    protected void onCreate() {
+
+        taggedAt = LocalDateTime.now();
+
+    }
 
 }
