@@ -176,5 +176,24 @@ public class PostServiceImpl implements PostService {
         return postMapper.toPostResponse(updatedPost, hashtags);
     }
 
+    @Override
+    public void deletePost(Long postId, Long userId) {
+
+        // 1️⃣ Fetch post
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
+
+        // 2️⃣ Ownership check
+        if (!post.getUser().getUserId().equals(userId)) {
+            throw new UnauthorizedException("You are not allowed to delete this post");
+        }
+
+        // 3️⃣ Remove hashtag mappings
+        postHashtagRepository.deleteByPost(post);
+
+        // 4️⃣ Delete post
+        postRepository.delete(post);
+    }
+
     // Other methods will be implemented next
 }
