@@ -195,5 +195,52 @@ public class PostServiceImpl implements PostService {
         postRepository.delete(post);
     }
 
+    @Override
+    public List<PostResponse> getPostsByUser(Long userId) {
+
+        // 1️⃣ Validate user
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        // 2️⃣ Fetch posts by user
+        List<Post> posts = postRepository.findAll()
+                .stream()
+                .filter(post -> post.getUser().getUserId().equals(user.getUserId()))
+                .sorted((p1, p2) -> p2.getCreatedAt().compareTo(p1.getCreatedAt()))
+                .toList();
+
+        // 3️⃣ Map posts to response
+        List<PostResponse> responses = new ArrayList<>();
+
+        for (Post post : posts) {
+            List<Hashtag> hashtags = postHashtagRepository.findAll()
+                    .stream()
+                    .filter(ph -> ph.getPost().getPostId().equals(post.getPostId()))
+                    .map(PostHashtag::getHashtag)
+                    .toList();
+
+            responses.add(postMapper.toPostResponse(post, hashtags));
+        }
+
+        return responses;
+    }
+
+    @Override
+    public PostResponse getPostById(Long postId) {
+
+        // 1️⃣ Fetch post
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
+
+        // 2️⃣ Fetch hashtags
+        List<Hashtag> hashtags = postHashtagRepository.findAll()
+                .stream()
+                .filter(ph -> ph.getPost().getPostId().equals(post.getPostId()))
+                .map(PostHashtag::getHashtag)
+                .toList();
+
+        // 3️⃣ Map to response
+        return postMapper.toPostResponse(post, hashtags);
+    }
     // Other methods will be implemented next
 }
