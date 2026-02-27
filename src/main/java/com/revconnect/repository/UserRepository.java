@@ -1,7 +1,25 @@
 package com.revconnect.repository;
 
 import com.revconnect.entity.User;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserRepository extends JpaRepository<User, Long> {
+import java.util.Optional;
+
+public interface UserRepository
+        extends JpaRepository<User, Long>
+{
+
+
+    // check email exists
+    Optional<User> findByEmail(String email);
+
+
+
+    // ✅ ADD THIS (IMPORTANT)
+    // check username exists
+    Optional<User> findByUsername(String username);
+
+
+
 }
