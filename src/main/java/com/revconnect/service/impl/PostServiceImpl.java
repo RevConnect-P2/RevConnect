@@ -5,9 +5,11 @@ import com.revconnect.dto.response.PostResponse;
 import com.revconnect.entity.*;
 import com.revconnect.exception.BadRequestException;
 import com.revconnect.exception.ResourceNotFoundException;
+import com.revconnect.exception.UnauthorizedException;
 import com.revconnect.mapper.PostMapper;
 import com.revconnect.repository.*;
 import com.revconnect.service.PostService;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -98,6 +100,7 @@ public class PostServiceImpl implements PostService {
         return postMapper.toPostResponse(savedPost, hashtags);
     }
 
+    @Transactional
     @Override
     public PostResponse updatePost(Long postId, Long userId, PostCreateRequest request) {
 
@@ -176,6 +179,7 @@ public class PostServiceImpl implements PostService {
         return postMapper.toPostResponse(updatedPost, hashtags);
     }
 
+    @Transactional
     @Override
     public void deletePost(Long postId, Long userId) {
 
