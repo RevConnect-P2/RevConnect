@@ -17,7 +17,12 @@ import java.time.LocalDateTime;
 public class Comment {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "comment_seq")
+    @SequenceGenerator(
+            name = "comment_seq",
+            sequenceName = "comment_seq",
+            allocationSize = 1
+    )
     @Column(name = "COMMENT_ID")
     private Long commentId;
 
@@ -34,9 +39,10 @@ public class Comment {
     private User user;
 
 
-    // Oracle supports large text using CLOB
+    // FIX FOR ORACLE CLOB
     @Lob
-    @Column(name = "COMMENT_TEXT", nullable = false)
+    @Basic(fetch = FetchType.LAZY)
+    @Column(name = "COMMENT_TEXT", nullable = false, columnDefinition = "CLOB")
     private String commentText;
 
 
@@ -49,27 +55,28 @@ public class Comment {
 
 
 
-    // Auto set created timestamp
     @PrePersist
     protected void onCreate() {
 
         createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
 
         validateComment();
+
     }
 
 
-    // Auto set updated timestamp
     @PreUpdate
     protected void onUpdate() {
 
         updatedAt = LocalDateTime.now();
 
         validateComment();
+
     }
 
 
-    // Prevent empty comment
+
     private void validateComment() {
 
         if (commentText == null || commentText.trim().isEmpty()) {
