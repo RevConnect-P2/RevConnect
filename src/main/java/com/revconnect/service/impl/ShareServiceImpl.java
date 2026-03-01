@@ -44,6 +44,16 @@ public class ShareServiceImpl implements ShareService {
     }
 
     @Override
+    public void unsharePost(Long postId, String email) {
+
+        Share share = shareRepository
+                .findByOriginalPost_PostIdAndSharedBy_Email(postId, email)
+                .orElseThrow(() -> new RuntimeException("Share not found"));
+
+        shareRepository.delete(share);
+    }
+
+    @Override
     public Long getShareCount(Long postId) {
 
         return shareRepository.countByOriginalPost_PostId(postId);

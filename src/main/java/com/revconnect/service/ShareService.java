@@ -4,5 +4,7 @@ public interface ShareService {
 
     void sharePost(Long postId, String email);
 
-    Long getShareCount(Long postId);
+    void unsharePost(Long postId, String email);   // ADD THIS
+
+    Long getShareCount(Long postId);               // keep as it is
 }
