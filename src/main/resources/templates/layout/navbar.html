@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!-- PROFESSIONAL NAVBAR FRAGMENT -->
+
+<nav th:fragment="navbar(user)"
+     class="navbar navbar-expand-lg bg-white shadow-sm sticky-top">
+
+    <div class="container">
+
+        <!-- LOGO -->
+        <a href="/dashboard"
+           class="navbar-brand fw-bold text-primary"
+           style="font-size:22px;">
+            RevConnect
+        </a>
+
+
+        <!-- SEARCH -->
+        <form class="d-flex w-50">
+            <input class="form-control rounded-pill"
+                   type="search"
+                   placeholder="Search RevConnect">
+        </form>
+
+
+
+        <!-- RIGHT MENU -->
+        <ul class="navbar-nav ms-auto align-items-center">
+
+
+            <!-- HOME -->
+            <li class="nav-item text-center mx-3">
+
+                <a href="/dashboard"
+                   class="nav-link text-dark">
+
+                    <i class="bi bi-house fs-5"></i>
+
+                    <div style="font-size:12px;">
+                        Home
+                    </div>
+
+                </a>
+
+            </li>
+
+
+
+            <!-- NETWORK -->
+            <li class="nav-item text-center mx-3">
+
+                <a href="/network"
+                   class="nav-link text-dark">
+
+                    <i class="bi bi-people fs-5"></i>
+
+                    <div style="font-size:12px;">
+                        Network
+                    </div>
+
+                </a>
+
+            </li>
+
+
+
+            <!-- NOTIFICATIONS -->
+            <li class="nav-item text-center mx-3 position-relative">
+
+                <a href="/notifications"
+                   class="nav-link text-dark">
+
+                    <i class="bi bi-bell fs-5"></i>
+
+                    <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">
+                        3
+                    </span>
+
+                    <div style="font-size:12px;">
+                        Notifications
+                    </div>
+
+                </a>
+
+            </li>
+
+
+
+            <!-- PROFILE -->
+            <li class="nav-item text-center mx-3">
+
+                <a href="/profile"
+                   class="nav-link text-dark">
+
+                    <i class="bi bi-person-circle fs-5"></i>
+
+                    <div style="font-size:12px;"
+                         th:text="${user.username}">
+                        Username
+                    </div>
+
+                </a>
+
+            </li>
+
+
+
+            <!-- LOGOUT -->
+            <li class="nav-item mx-3">
+
+                <a href="/logout"
+                   class="btn btn-danger btn-sm rounded-pill">
+
+                    Logout
+
+                </a>
+
+            </li>
+
+
+        </ul>
+
+
+    </div>
+
+</nav>
+
+</body>
+</html>
