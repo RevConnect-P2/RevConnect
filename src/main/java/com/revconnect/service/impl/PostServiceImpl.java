@@ -202,29 +202,31 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<PostResponse> getPostsByUser(Long userId) {
 
-        // 1️⃣ Validate user
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        // 2️⃣ Fetch posts by user
-        List<Post> posts = postRepository.findAll()
-                .stream()
-                .filter(post -> post.getUser().getUserId().equals(user.getUserId()))
-                .sorted((p1, p2) -> p2.getCreatedAt().compareTo(p1.getCreatedAt()))
-                .toList();
+        List<Post> visiblePosts =
+                postRepository.findByUserAndScheduledAtIsNullOrScheduledAtLessThanEqual(
+                        user,
+                        LocalDateTime.now()
+                );
 
-        // 3️⃣ Map posts to response
         List<PostResponse> responses = new ArrayList<>();
 
-        for (Post post : posts) {
-            List<Hashtag> hashtags = postHashtagRepository.findAll()
-                    .stream()
-                    .filter(ph -> ph.getPost().getPostId().equals(post.getPostId()))
-                    .map(PostHashtag::getHashtag)
-                    .toList();
+        // 1️⃣ Add pinned post first
+        visiblePosts.stream()
+                .filter(Post::getPinned)
+                .forEach(post -> responses.add(
+                        postMapper.toPostResponse(post, List.of())
+                ));
 
-            responses.add(postMapper.toPostResponse(post, hashtags));
-        }
+        // 2️⃣ Add remaining posts
+        visiblePosts.stream()
+                .filter(post -> !post.getPinned())
+                .sorted((p1, p2) -> p2.getCreatedAt().compareTo(p1.getCreatedAt()))
+                .forEach(post -> responses.add(
+                        postMapper.toPostResponse(post, List.of())
+                ));
 
         return responses;
     }
@@ -245,6 +247,55 @@ public class PostServiceImpl implements PostService {
 
         // 3️⃣ Map to response
         return postMapper.toPostResponse(post, hashtags);
+    }
+
+    @Override
+    @Transactional
+    public PostResponse pinPost(Long postId, Long userId) {
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
+
+        if (!post.getUser().getUserId().equals(userId)) {
+            throw new UnauthorizedException("You cannot pin this post");
+        }
+
+        // ❌ Cannot pin future scheduled post
+        if (post.getScheduledAt() != null &&
+                post.getScheduledAt().isAfter(LocalDateTime.now())) {
+            throw new BadRequestException("Cannot pin a scheduled post");
+        }
+
+        User user = post.getUser();
+
+        // Unpin existing pinned post
+        postRepository.findByUserAndPinnedTrue(user)
+                .ifPresent(existing -> {
+                    existing.setPinned(false);
+                    postRepository.save(existing);
+                });
+
+        post.setPinned(true);
+        Post saved = postRepository.save(post);
+
+        return postMapper.toPostResponse(saved, List.of());
+    }
+
+    @Override
+    @Transactional
+    public PostResponse unpinPost(Long postId, Long userId) {
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
+
+        if (!post.getUser().getUserId().equals(userId)) {
+            throw new UnauthorizedException("You cannot unpin this post");
+        }
+
+        post.setPinned(false);
+        Post saved = postRepository.save(post);
+
+        return postMapper.toPostResponse(saved, List.of());
     }
     // Other methods will be implemented next
 }
