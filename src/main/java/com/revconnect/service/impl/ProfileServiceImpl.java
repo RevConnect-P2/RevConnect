@@ -39,9 +39,8 @@ public class ProfileServiceImpl implements ProfileService {
             throw new IllegalStateException("Profile already exists");
         }
 
-        if (request.getProfileType() == null) {
-            throw new IllegalArgumentException("Profile type is required");
-        }
+        // ✅ Profile type ALWAYS comes from USER
+        ProfileType profileType = ProfileType.valueOf(user.getUserType());
 
         UserProfile profile = UserProfile.builder()
                 .user(user)
@@ -50,8 +49,12 @@ public class ProfileServiceImpl implements ProfileService {
                 .profilePic(request.getProfilePic())
                 .location(request.getLocation())
                 .website(request.getWebsite())
-                .profileVisibility(request.getProfileVisibility())
-                .profileType(request.getProfileType())
+                .profileVisibility(
+                        request.getProfileVisibility() != null
+                                ? request.getProfileVisibility()
+                                : "PUBLIC"
+                )
+                .profileType(profileType)
                 .build();
 
         applyProfileTypeRules(profile, request);
@@ -67,9 +70,8 @@ public class ProfileServiceImpl implements ProfileService {
         UserProfile profile = userProfileRepository.findByUser_UserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Profile not found"));
 
-        if (request.getProfileType() == null) {
-            throw new IllegalArgumentException("Profile type is required");
-        }
+        // ❌ DO NOT validate profileType
+        // ❌ DO NOT change profileType
 
         profile.setFullName(request.getFullName());
         profile.setBio(request.getBio());
@@ -77,7 +79,6 @@ public class ProfileServiceImpl implements ProfileService {
         profile.setLocation(request.getLocation());
         profile.setWebsite(request.getWebsite());
         profile.setProfileVisibility(request.getProfileVisibility());
-        profile.setProfileType(request.getProfileType());
 
         applyProfileTypeRules(profile, request);
 
@@ -89,10 +90,30 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public ProfileResponse getProfile(Long userId) {
 
-        UserProfile profile = userProfileRepository.findByUser_UserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Profile not found"));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        return mapToResponse(profile.getUser(), profile);
+        UserProfile profile = userProfileRepository.findByUser_UserId(userId)
+                .orElseGet(() -> {
+
+                    ProfileType profileType =
+                            ProfileType.valueOf(user.getUserType());
+
+                    UserProfile newProfile = UserProfile.builder()
+                            .user(user)
+                            .fullName(user.getUsername())
+                            .bio("")
+                            .profilePic(null)
+                            .location(null)
+                            .website(null)
+                            .profileVisibility("PUBLIC")
+                            .profileType(profileType)   // ✅ FIXED
+                            .build();
+
+                    return userProfileRepository.save(newProfile);
+                });
+
+        return mapToResponse(user, profile);
     }
 
     // ================= SEARCH =================
