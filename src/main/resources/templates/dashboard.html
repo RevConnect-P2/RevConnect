@@ -1,74 +1,48 @@
 <!DOCTYPE html>
-
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-
     <title>Dashboard</title>
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
 </head>
-
 
 <body>
 
-
 <nav class="navbar navbar-dark bg-dark">
-
     <div class="container-fluid">
 
-<span class="navbar-brand">
+        <span class="navbar-brand">
+            RevConnect Dashboard
+        </span>
 
-RevConnect Dashboard
+        <div>
+            <!-- ✅ NEW: My Profile button -->
+            <a href="/profile" class="btn btn-outline-light me-2">
+                My Profile
+            </a>
 
-</span>
-
-        <a href="/login"
-           class="btn btn-danger">
-
-            Logout
-
-        </a>
-
-    </div>
-
-</nav>
-
-
-
-<div class="container mt-5">
-
-
-    <div class="card shadow">
-
-
-        <div class="card-body text-center">
-
-
-            <h2 class="text-success">
-
-                Login Successful 🎉
-
-            </h2>
-
-
-            <p>
-
-                Welcome to RevConnect
-
-            </p>
-
-
+            <!-- Existing Logout button -->
+            <a href="/login" class="btn btn-danger">
+                Logout
+            </a>
         </div>
 
-
     </div>
+</nav>
 
+<div class="container mt-5">
+    <div class="card shadow">
+        <div class="card-body text-center">
+            <h2 class="text-success">
+                Login Successful 🎉
+            </h2>
 
+            <p>
+                Welcome to RevConnect
+            </p>
+        </div>
+    </div>
 </div>
 
-
 </body>
-
 </html>
