@@ -25,7 +25,13 @@ public class AuthController {
     @GetMapping("/register")
     public String registerPage(Model model) {
         model.addAttribute("registerRequest", new RegisterRequest());
+<<<<<<< HEAD
         return "auth/register";
+=======
+
+        return "auth/register";
+
+>>>>>>> origin/develop
     }
 
     // ========================
@@ -35,12 +41,33 @@ public class AuthController {
     public String register(@ModelAttribute RegisterRequest request, Model model) {
         try {
             authService.register(request);
+<<<<<<< HEAD
             model.addAttribute("success", "Registration successful. Please login.");
             return "auth/login";
         } catch (RuntimeException e) {
             model.addAttribute("error", e.getMessage());
             return "auth/register";
         }
+=======
+
+            model.addAttribute("success",
+                    "Registration successful. Please login.");
+
+            return "auth/login";
+
+        }
+
+        catch (RuntimeException e)
+        {
+
+            model.addAttribute("error",
+                    e.getMessage());
+
+            return "auth/register";
+
+        }
+
+>>>>>>> origin/develop
     }
 
     // ========================
@@ -49,7 +76,13 @@ public class AuthController {
     @GetMapping("/login")
     public String loginPage(Model model) {
         model.addAttribute("loginRequest", new LoginRequest());
+<<<<<<< HEAD
         return "auth/login";
+=======
+
+        return "auth/login";
+
+>>>>>>> origin/develop
     }
 
     // ========================
@@ -64,9 +97,32 @@ public class AuthController {
         try {
             User user = authService.login(request);
 
+<<<<<<< HEAD
             // Store user info in session
             session.setAttribute("USER_ID", user.getUserId());
             session.setAttribute("USERNAME", user.getUsername());
+=======
+
+            UsernamePasswordAuthenticationToken authToken =
+                    new UsernamePasswordAuthenticationToken(
+                            user.getEmail(),
+                            null,
+                            null
+                    );
+
+            SecurityContextHolder.getContext()
+                    .setAuthentication(authToken);
+
+            session.setAttribute(
+                    "SPRING_SECURITY_CONTEXT",
+                    SecurityContextHolder.getContext()
+            );
+
+>>>>>>> origin/develop
+
+            // ✅ ADD THIS LINE
+            session.setAttribute("loggedUser", user);
+
 
             return "redirect:/dashboard";
 
@@ -74,22 +130,64 @@ public class AuthController {
             model.addAttribute("error", e.getMessage());
             return "auth/login";
         }
+<<<<<<< HEAD
+=======
+
+        catch (RuntimeException e)
+        {
+
+            model.addAttribute("error", e.getMessage());
+
+            return "auth/login";
+
+        }
+
+>>>>>>> origin/develop
     }
 
     // ========================
     // LOGOUT
     // ========================
+<<<<<<< HEAD
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();
         return "redirect:/login";
+=======
+
+    // ========================
+// LOGOUT
+// ========================
+
+    @GetMapping("/logout")
+    public String logout(HttpSession session, Model model)
+    {
+
+        // Clear Spring Security context
+        SecurityContextHolder.clearContext();
+
+        // Invalidate session
+        session.invalidate();
+
+        // Send success message to login page
+        model.addAttribute("success", "Logout Successful");
+
+        // Return login page directly (NOT redirect)
+        return "auth/login";
+
+>>>>>>> origin/develop
     }
 
     // ========================
     // FORGOT PASSWORD
     // ========================
     @GetMapping("/forgot-password")
+<<<<<<< HEAD
     public String forgotPasswordPage() {
+=======
+    public String forgotPasswordPage()
+    {
+>>>>>>> origin/develop
         return "auth/forgot-password";
     }
 
@@ -98,12 +196,33 @@ public class AuthController {
         try {
             User user = authService.findByEmail(email);
             model.addAttribute("email", email);
+<<<<<<< HEAD
             model.addAttribute("question", user.getSecurityQuestion());
             return "auth/reset-password";
         } catch (RuntimeException e) {
             model.addAttribute("error", e.getMessage());
             return "auth/forgot-password";
         }
+=======
+
+            model.addAttribute("question",
+                    user.getSecurityQuestion());
+
+            return "auth/reset-password";
+
+        }
+
+        catch (RuntimeException e)
+        {
+
+            model.addAttribute("error",
+                    e.getMessage());
+
+            return "auth/forgot-password";
+
+        }
+
+>>>>>>> origin/develop
     }
 
     @PostMapping("/reset-password")
@@ -115,10 +234,27 @@ public class AuthController {
     ) {
         try {
             authService.resetPassword(email, answer, newPassword);
+<<<<<<< HEAD
             model.addAttribute("success", "Password reset successful. Please login.");
             return "auth/login";
         } catch (RuntimeException e) {
             model.addAttribute("error", e.getMessage());
+=======
+
+            model.addAttribute("success",
+                    "Password reset successful. Please login.");
+
+            return "auth/login";
+
+        }
+
+        catch (RuntimeException e)
+        {
+
+            model.addAttribute("error",
+                    e.getMessage());
+
+>>>>>>> origin/develop
             model.addAttribute("email", email);
             model.addAttribute(
                     "question",
@@ -135,7 +271,11 @@ public class AuthController {
     @ResponseBody
     public Map<String, Object> getLoggedInUser(HttpSession session) {
 
+<<<<<<< HEAD
         Map<String, Object> response = new HashMap<>();
+=======
+            return "auth/reset-password";
+>>>>>>> origin/develop
 
         Object userId = session.getAttribute("USER_ID");
         Object username = session.getAttribute("USERNAME");

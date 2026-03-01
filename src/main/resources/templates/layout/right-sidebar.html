@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+<body>
+
+<div th:fragment="rightSidebar">
+
+
+    <!-- TRENDING NEWS ONLY -->
+
+    <div class="card sidebar-card mb-3">
+
+        <div class="card-body">
+
+            <h6 class="sidebar-title">
+                <i class="bi bi-newspaper me-2"></i>
+                Trending News
+            </h6>
+
+
+            <div class="news-item">
+
+                <div class="news-text">
+                    Java Developer Jobs ↑
+                </div>
+
+                <div class="news-count">
+                    12,245 readers
+                </div>
+
+            </div>
+
+
+            <div class="news-item">
+
+                <div class="news-text">
+                    Spring Boot Trending 🔥
+                </div>
+
+                <div class="news-count">
+                    8,122 readers
+                </div>
+
+            </div>
+
+
+            <div class="news-item">
+
+                <div class="news-text">
+                    Full Stack Developers in Demand
+                </div>
+
+                <div class="news-count">
+                    6,455 readers
+                </div>
+
+            </div>
+
+
+            <div class="news-item">
+
+                <div class="news-text">
+                    Oracle Jobs Available
+                </div>
+
+                <div class="news-count">
+                    4,321 readers
+                </div>
+
+            </div>
+
+
+            <div class="news-item">
+
+                <div class="news-text">
+                    AI Engineers Needed 🚀
+                </div>
+
+                <div class="news-count">
+                    15,999 readers
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+
+</div>
+
+
+
+<style>
+
+
+    .sidebar-card{
+
+    border:none;
+
+    border-radius:12px;
+
+    box-shadow:0 2px 8px rgba(0,0,0,0.08);
+
+    }
+
+
+
+    .sidebar-title{
+
+    font-weight:600;
+
+    margin-bottom:15px;
+
+    }
+
+
+
+    .news-item{
+
+    padding:8px;
+
+    cursor:pointer;
+
+    border-radius:8px;
+
+    transition:0.2s;
+
+    }
+
+
+
+    .news-item:hover{
+
+    background:#eef3f8;
+
+    }
+
+
+
+    .news-text{
+
+    font-size:14px;
+
+    font-weight:600;
+
+    }
+
+
+
+    .news-count{
+
+    font-size:12px;
+
+    color:gray;
+
+    }
+
+
+</style>
+
+
+</body>
+</html>

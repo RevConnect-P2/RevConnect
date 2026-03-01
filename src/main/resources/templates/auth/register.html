@@ -1,230 +1,291 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
 
-    <title>Register</title>
+    <title>Create Account | RevConnect</title>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+
+    <style>
+
+        body{
+        height:100vh;
+        background: linear-gradient(135deg,#0a66c2,#00a0dc);
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        font-family: 'Segoe UI', sans-serif;
+        }
+
+
+        .register-card{
+
+        width:450px;
+        padding:30px;
+        border-radius:20px;
+        background: rgba(255,255,255,0.95);
+        box-shadow:0 10px 35px rgba(0,0,0,0.25);
+
+        }
+
+
+        .logo{
+
+        font-size:30px;
+        font-weight:bold;
+        color:#0a66c2;
+        text-align:center;
+
+        }
+
+
+        .subtitle{
+
+        text-align:center;
+        color:gray;
+        margin-bottom:20px;
+
+        }
+
+
+        .form-control{
+
+        border-radius:10px;
+        padding:10px;
+
+        }
+
+
+        .btn-primary{
+
+        border-radius:10px;
+        padding:10px;
+        font-weight:bold;
+
+        }
+
+
+        .eye{
+
+        cursor:pointer;
+
+        }
+
+    </style>
+
 </head>
 
-<body class="bg-light">
 
+<body>
 
-<div class="container">
 
-    <div class="row justify-content-center mt-5">
 
-        <div class="col-md-5">
+<div class="register-card">
 
-            <div class="card shadow">
 
-                <div class="card-header text-center">
+    <div class="logo">
 
-                    <h3>Register</h3>
+        RevConnect
 
-                </div>
+    </div>
 
-                <div class="card-body">
 
+    <div class="subtitle">
 
-                    <!-- ERROR MESSAGE -->
-                    <div th:if="${error}" class="alert alert-danger">
+        Create your professional account
 
-                        <span th:text="${error}"></span>
+    </div>
 
-                    </div>
 
 
+    <!-- ERROR MESSAGE -->
 
-                    <!-- REGISTER FORM -->
-                    <form th:action="@{/register}" method="post">
+    <div th:if="${error}" class="alert alert-danger text-center">
 
+        <span th:text="${error}"></span>
 
-                        <!-- EMAIL -->
-                        <div class="mb-3">
+    </div>
 
-                            <label>Email</label>
 
-                            <input type="email"
-                                   class="form-control"
-                                   name="email"
-                                   required>
 
-                        </div>
+    <form th:action="@{/register}" method="post">
 
 
+        <!-- EMAIL -->
 
-                        <!-- USERNAME -->
-                        <div class="mb-3">
+        <div class="mb-3">
 
-                            <label>Username</label>
+            <label>Email</label>
 
-                            <input type="text"
-                                   class="form-control"
-                                   name="username"
-                                   required>
+            <input type="email"
+                   class="form-control"
+                   name="email"
+                   placeholder="Enter email"
+                   required>
 
-                        </div>
+        </div>
 
 
 
-                        <!-- PASSWORD WITH EYE ICON -->
-                        <div class="mb-3">
+        <!-- USERNAME -->
 
-                            <label>Password</label>
+        <div class="mb-3">
 
-                            <div class="input-group">
+            <label>Username</label>
 
-                                <input type="password"
-                                       class="form-control"
-                                       name="password"
-                                       id="password"
-                                       required>
+            <input type="text"
+                   class="form-control"
+                   name="username"
+                   placeholder="Enter username"
+                   required>
 
+        </div>
 
-                                <span class="input-group-text"
-                                      onclick="togglePassword()"
-                                      style="cursor:pointer;">
 
-            👁
 
-        </span>
+        <!-- PASSWORD -->
 
-                            </div>
+        <div class="mb-3">
 
-                        </div>
+            <label>Password</label>
 
+            <div class="input-group">
 
+                <input type="password"
+                       class="form-control"
+                       name="password"
+                       id="password"
+                       placeholder="Enter password"
+                       required>
 
-                        <!-- USER TYPE -->
-                        <div class="mb-3">
 
-                            <label>User Type</label>
+                <span class="input-group-text eye"
+                      onclick="togglePassword()">
 
-                            <select class="form-control"
-                                    name="userType"
-                                    required>
+<i class="fa fa-eye"></i>
 
-                                <option value="">Select User Type</option>
+</span>
 
-                                <option value="PERSONAL">
-                                    Personal User
-                                </option>
-
-                                <option value="CREATOR">
-                                    Creator
-                                </option>
-
-                                <option value="BUSINESS">
-                                    Business
-                                </option>
-
-                            </select>
-
-                        </div>
-
-
-
-                        <!-- SECURITY QUESTION -->
-                        <div class="mb-3">
-
-                            <label>Security Question</label>
-
-                            <select class="form-control"
-                                    name="securityQuestion"
-                                    required>
-
-                                <option value="">Select Question</option>
-
-                                <option value="What is your pet name?">
-                                    What is your pet name?
-                                </option>
-
-                                <option value="What is your school name?">
-                                    What is your school name?
-                                </option>
-
-                                <option value="What is your favorite color?">
-                                    What is your favorite color?
-                                </option>
-
-                                <option value="What is your best friend name?">
-                                    What is your best friend name?
-                                </option>
-
-                            </select>
-
-                        </div>
-
-
-
-                        <!-- SECURITY ANSWER -->
-                        <div class="mb-3">
-
-                            <label>Security Answer</label>
-
-                            <input type="text"
-                                   class="form-control"
-                                   name="securityAnswer"
-                                   required>
-
-                        </div>
-
-
-
-                        <!-- REGISTER BUTTON -->
-                        <button class="btn btn-primary w-100">
-
-                            Register
-
-                        </button>
-
-
-                    </form>
-
-
-                    <hr>
-
-
-                    <a th:href="@{/login}"
-                       class="btn btn-link w-100">
-
-                        Already have account? Login
-
-                    </a>
-
-
-                </div>
 
             </div>
 
         </div>
 
+
+
+        <!-- USER TYPE -->
+
+        <div class="mb-3">
+
+            <label>User Type</label>
+
+            <select class="form-control" name="userType" required>
+
+                <option value="">Select User Type</option>
+
+                <option value="PERSONAL">Personal User</option>
+
+                <option value="CREATOR">Creator</option>
+
+                <option value="BUSINESS">Business</option>
+
+            </select>
+
+        </div>
+
+
+
+        <!-- SECURITY QUESTION -->
+
+        <div class="mb-3">
+
+            <label>Security Question</label>
+
+            <select class="form-control" name="securityQuestion" required>
+
+                <option value="">Select Question</option>
+
+                <option>What is your pet name?</option>
+
+                <option>What is your school name?</option>
+
+                <option>What is your favorite color?</option>
+
+                <option>What is your best friend name?</option>
+
+            </select>
+
+        </div>
+
+
+
+        <!-- SECURITY ANSWER -->
+
+        <div class="mb-3">
+
+            <label>Security Answer</label>
+
+            <input type="text"
+                   class="form-control"
+                   name="securityAnswer"
+                   placeholder="Enter answer"
+                   required>
+
+        </div>
+
+
+
+        <button class="btn btn-primary w-100">
+
+            Create Account
+
+        </button>
+
+
+    </form>
+
+
+    <hr>
+
+
+    <div class="text-center">
+
+        Already have account?
+
+        <a th:href="@{/login}">
+
+            Login
+
+        </a>
+
     </div>
 
+
 </div>
+
+
+
 <script>
 
-    function togglePassword()
-    {
+    function togglePassword(){
 
-        var passwordField =
-            document.getElementById("password");
+    var x=document.getElementById("password");
 
-
-        if(passwordField.type === "password")
-        {
-            passwordField.type = "text";
-        }
-        else
-        {
-            passwordField.type = "password";
-        }
+    x.type=x.type==="password"?"text":"password";
 
     }
 
 </script>
+
+
 
 </body>
 
