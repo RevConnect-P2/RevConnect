@@ -28,11 +28,9 @@
         <div class="col-md-9">
 
             <!-- Username -->
-            <h3 class="mb-2" th:text="${profile.username}">
-                username
-            </h3>
+            <h3 class="mb-2" th:text="${profile.username}">username</h3>
 
-            <!-- Stats (later via dashboard aggregation) -->
+            <!-- Stats -->
             <div class="d-flex gap-4 mb-3">
                 <span><strong>0</strong> posts</span>
                 <span><strong>0</strong> followers</span>
@@ -41,15 +39,11 @@
 
             <!-- Full Name -->
             <p class="mb-1">
-                <strong th:text="${profile.fullName}">
-                    Full Name
-                </strong>
+                <strong th:text="${profile.fullName}">Full Name</strong>
             </p>
 
             <!-- Bio -->
-            <p class="mb-1" th:text="${profile.bio}">
-                Bio
-            </p>
+            <p class="mb-1" th:text="${profile.bio}">Bio</p>
 
             <!-- Profile Type -->
             <p class="text-muted">
@@ -57,14 +51,66 @@
                 <span th:text="${profile.profileType}"></span>
             </p>
 
-            <!-- Optional fields (safe even if null) -->
-            <p th:if="${profile.location != null}">
+            <!-- Location -->
+            <p th:if="${profile.location}">
                 📍 <span th:text="${profile.location}"></span>
             </p>
 
-            <p th:if="${profile.website != null}">
+            <!-- Website -->
+            <p th:if="${profile.website}">
                 🔗 <a th:href="${profile.website}" th:text="${profile.website}"></a>
             </p>
+
+            <!-- ================= CREATOR INFO ================= -->
+            <div th:if="${profile.profileType.name() == 'CREATOR'}">
+
+                <p th:if="${profile.category}">
+                    🎨 <strong>Category:</strong>
+                    <span th:text="${profile.category}"></span>
+                </p>
+
+                <p th:if="${profile.externalLinks}">
+                    🔗 <strong>Links:</strong>
+                    <span th:text="${profile.externalLinks}"></span>
+                </p>
+
+            </div>
+
+            <!-- ================= BUSINESS INFO ================= -->
+            <div th:if="${profile.profileType.name() == 'BUSINESS'}">
+
+                <p th:if="${profile.businessAddress}">
+                    🏢 <strong>Business Address:</strong>
+                    <span th:text="${profile.businessAddress}"></span>
+                </p>
+
+                <p th:if="${profile.contactInfo}">
+                    📞 <strong>Contact Info:</strong>
+                    <span th:text="${profile.contactInfo}"></span>
+                </p>
+
+                <div th:if="${businessHours != null and !businessHours.isEmpty()}">
+
+                    <h5 class="mt-4">🕒 Business Hours</h5>
+                    <hr>
+
+                    <div th:each="hour : ${businessHours}" class="d-flex justify-content-between mb-1">
+                        <span th:text="${hour.dayOfWeek}"></span>
+
+                        <span th:if="${hour.isClosed}">
+            Closed
+        </span>
+
+                        <span th:if="${!hour.isClosed}">
+            <span th:text="${#temporals.format(hour.openTime, 'hh:mm a')}"></span>
+            -
+            <span th:text="${#temporals.format(hour.closeTime, 'hh:mm a')}"></span>
+        </span>
+                    </div>
+
+                </div>
+
+            </div>
 
         </div>
     </div>
@@ -72,17 +118,20 @@
     <hr class="my-4"/>
 
     <!-- Posts Section -->
-    <h5 class="mb-3 text-center">
-        My Posts
-    </h5>
+    <h5 class="mb-3 text-center">My Posts</h5>
 
-    <!-- Posts Placeholder -->
     <div class="row text-center text-muted">
         <p>Posts will appear here later.</p>
     </div>
 
     <a href="/profile/edit" class="btn btn-outline-primary btn-sm">
         Edit Profile
+    </a>
+
+    <a th:if="${profile.profileType.name() == 'BUSINESS'}"
+       href="/profile/business-hours"
+       class="btn btn-outline-success btn-sm ms-2">
+        Business Hours
     </a>
 
 </div>

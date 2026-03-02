@@ -62,6 +62,53 @@
                            th:value="${profile.website}">
                 </div>
 
+                <!-- CREATOR FIELDS -->
+                <div th:if="${profile.profileType.name() == 'CREATOR'}">
+
+                    <!-- Category -->
+                    <div class="mb-3">
+                        <label class="form-label">Creator Category</label>
+                        <input type="text"
+                               name="category"
+                               class="form-control"
+                               placeholder="e.g. Photographer, Blogger, Developer"
+                               th:value="${profile.category}">
+                    </div>
+
+                    <!-- External Links -->
+                    <div class="mb-3">
+                        <label class="form-label">External Links</label>
+                        <textarea name="externalLinks"
+                                  class="form-control"
+                                  rows="2"
+                                  placeholder="Instagram / YouTube / Portfolio links"
+                                  th:text="${profile.externalLinks}"></textarea>
+                    </div>
+
+                </div>
+
+                <!-- BUSINESS FIELDS -->
+                <div th:if="${profile.profileType.name() == 'BUSINESS'}">
+
+                    <div class="mb-3">
+                        <label class="form-label">Business Address</label>
+                        <textarea name="businessAddress"
+                                  class="form-control"
+                                  rows="2"
+                                  th:text="${profile.businessAddress}">
+        </textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Contact Info</label>
+                        <input type="text"
+                               name="contactInfo"
+                               class="form-control"
+                               th:value="${profile.contactInfo}">
+                    </div>
+
+                </div>
+
                 <!-- Profile Visibility -->
                 <div class="mb-4">
                     <label class="form-label">Profile Visibility</label>

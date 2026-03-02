@@ -3,14 +3,14 @@ package com.revconnect.dto.request;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Getter
 @Setter
 public class BusinessHoursRequest {
 
     private String dayOfWeek;
-    private LocalDateTime openTime;
-    private LocalDateTime closeTime;
+    private LocalTime openTime;
+    private LocalTime closeTime;
     private Boolean isClosed;
 }

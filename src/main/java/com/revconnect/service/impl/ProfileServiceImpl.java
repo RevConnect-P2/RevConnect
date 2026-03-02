@@ -18,7 +18,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +30,7 @@ public class ProfileServiceImpl implements ProfileService {
     private final UserProfileRepository userProfileRepository;
     private final BusinessHoursRepository businessHoursRepository;
 
+    // ================= CREATE PROFILE =================
     // ================= CREATE PROFILE =================
     @Override
     public ProfileResponse createProfile(Long userId, ProfileCreateRequest request) {
@@ -39,8 +42,8 @@ public class ProfileServiceImpl implements ProfileService {
             throw new IllegalStateException("Profile already exists");
         }
 
-        // ✅ Profile type ALWAYS comes from USER
-        ProfileType profileType = ProfileType.valueOf(user.getUserType());
+        // ✅ SAFE profile type resolution
+        ProfileType profileType = resolveProfileType(user.getUserType());
 
         UserProfile profile = UserProfile.builder()
                 .user(user)
@@ -97,7 +100,7 @@ public class ProfileServiceImpl implements ProfileService {
                 .orElseGet(() -> {
 
                     ProfileType profileType =
-                            ProfileType.valueOf(user.getUserType());
+                            resolveProfileType(user.getUserType());
 
                     UserProfile newProfile = UserProfile.builder()
                             .user(user)
@@ -107,7 +110,7 @@ public class ProfileServiceImpl implements ProfileService {
                             .location(null)
                             .website(null)
                             .profileVisibility("PUBLIC")
-                            .profileType(profileType)   // ✅ FIXED
+                            .profileType(profileType)
                             .build();
 
                     return userProfileRepository.save(newProfile);
@@ -129,6 +132,7 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
+    @Transactional
     public void addBusinessHours(
             Long userId,
             List<BusinessHoursRequest> requestList
@@ -138,19 +142,34 @@ public class ProfileServiceImpl implements ProfileService {
                 .findByUser_UserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Profile not found"));
 
-        // ❌ Only BUSINESS profiles allowed
         if (profile.getProfileType() != ProfileType.BUSINESS) {
             throw new IllegalStateException(
                     "Business hours allowed only for BUSINESS profiles"
             );
         }
 
-        // Remove existing hours (safe replace)
+        // 1️⃣ delete old rows
         businessHoursRepository.deleteByProfile_ProfileId(
                 profile.getProfileId()
         );
+        businessHoursRepository.flush(); // 🔥 ORACLE FIX
+
+        // 2️⃣ prevent duplicate days
+        Set<String> seenDays = new HashSet<>();
 
         for (BusinessHoursRequest req : requestList) {
+
+            // 🚫 skip duplicate day
+            if (!seenDays.add(req.getDayOfWeek())) {
+                continue;
+            }
+
+            // 🚫 skip empty rows
+            if (!Boolean.TRUE.equals(req.getIsClosed())
+                    && req.getOpenTime() == null
+                    && req.getCloseTime() == null) {
+                continue;
+            }
 
             BusinessHours hours = BusinessHours.builder()
                     .profile(profile)
@@ -312,5 +331,16 @@ public class ProfileServiceImpl implements ProfileService {
         response.setContactInfo(profile.getContactInfo());
 
         return response;
+    }
+
+    // ================= SAFE PROFILE TYPE RESOLVER =================
+    private ProfileType resolveProfileType(String userType) {
+        try {
+            return ProfileType.valueOf(userType);
+        } catch (Exception e) {
+            throw new IllegalStateException(
+                    "Invalid user type value: " + userType
+            );
+        }
     }
 }
