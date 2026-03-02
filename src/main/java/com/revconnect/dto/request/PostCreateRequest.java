@@ -15,7 +15,7 @@ public class PostCreateRequest {
     // Post text content
     private String content;
 
-    // NORMAL / PROMOTIONAL (string for now)
+    // NORMAL / PROMOTIONAL
     private String postType;
 
     // Pin post on profile
@@ -28,7 +28,10 @@ public class PostCreateRequest {
     // For scheduled posts
     private LocalDateTime scheduledAt;
 
-    // List of hashtags without #
-    // Example: ["java", "springboot"]
+    // Hashtags (NOT YOUR MODULE – untouched)
     private List<String> hashtags;
+
+    // 🆕 Product / Service Tags
+    private List<TagRequest> tags;
+
 }

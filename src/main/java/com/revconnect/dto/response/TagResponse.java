@@ -1,5 +1,6 @@
 package com.revconnect.dto.response;
 
+import com.revconnect.enums.TagType;
 import lombok.*;
 
 @Getter
@@ -7,8 +8,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AuthResponse {
+public class TagResponse {
 
-    private String token;
-
+    private String tagName;
+    private TagType tagType;
 }

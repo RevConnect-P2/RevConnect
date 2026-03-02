@@ -2,56 +2,49 @@ package com.revconnect.security.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class SecurityConfig {
 
-
     @Bean
-    public PasswordEncoder passwordEncoder()
-    {
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-
-
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http)
-            throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-
-                // disable csrf
+                // Disable CSRF for now (okay for session-based UI)
                 .csrf(csrf -> csrf.disable())
 
-
-                // ✅ allow everything
+                // Authorization rules
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                "/login",
+                                "/register",
+                                "/forgot-password",
+                                "/reset-password",
+                                "/auth/me",
+                                "/css/**",
+                                "/js/**",
+                                "/images/**"
+                        ).permitAll()
 
+                        // Everything else allowed (manual session check)
                         .anyRequest().permitAll()
-
                 )
 
-
-                // disable default login
+                // ❌ VERY IMPORTANT: disable Spring Security login
                 .formLogin(form -> form.disable())
 
-
-                // disable logout
+                // ❌ disable Spring Security logout (you handle it)
                 .logout(logout -> logout.disable());
 
-
-
         return http.build();
-
     }
-
-
 }
