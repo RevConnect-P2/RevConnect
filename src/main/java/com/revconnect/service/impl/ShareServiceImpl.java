@@ -27,12 +27,11 @@ public class ShareServiceImpl implements ShareService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
-        // Check duplicate share
+        // If already shared → just return silently
         if (shareRepository
                 .findByOriginalPost_PostIdAndSharedBy_Email(postId, email)
                 .isPresent()) {
-
-            throw new RuntimeException("You have already shared this post");
+            return;   // ✅ DO NOTHING (no error)
         }
 
         Share share = Share.builder()

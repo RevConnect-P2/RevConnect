@@ -11,6 +11,7 @@ public class CommentResponse {
 
     private Long commentId;
     private String commentText;
-    private String userEmail;
+//    private String userEmail;
     private LocalDateTime createdAt;
+    private String username;
 }

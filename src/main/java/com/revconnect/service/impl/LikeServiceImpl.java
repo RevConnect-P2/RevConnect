@@ -63,4 +63,32 @@ public class LikeServiceImpl implements LikeService {
         // 3️⃣ Delete like
         postLikeRepository.delete(like);
     }
+
+    @Override
+    public boolean toggleLike(Long postId, String principalValue) {
+
+        User user = userRepository.findByEmail(principalValue)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        Optional<PostLike> existingLike =
+                postLikeRepository.findByUserAndPost(user, post);
+
+        if (existingLike.isPresent()) {
+
+            postLikeRepository.delete(existingLike.get());
+            return false; // unliked
+
+        } else {
+
+            PostLike like = new PostLike();
+            like.setUser(user);
+            like.setPost(post);
+
+            postLikeRepository.save(like);
+            return true; // liked
+        }
+    }
 }

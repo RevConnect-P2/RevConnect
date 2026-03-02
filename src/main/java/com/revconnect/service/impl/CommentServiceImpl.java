@@ -40,14 +40,14 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<CommentResponse> getCommentsByPost(Long postId) {
+    public List<CommentResponse> getCommentsByPostId(Long postId) {
 
         return commentRepository.findByPost_PostId(postId)
                 .stream()
                 .map(comment -> CommentResponse.builder()
                         .commentId(comment.getCommentId())
                         .commentText(comment.getCommentText())
-                        .userEmail(comment.getUser().getEmail())
+                        .username(comment.getUser().getUsername()) // ✅ FIX
                         .createdAt(comment.getCreatedAt())
                         .build())
                 .toList();

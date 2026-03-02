@@ -1,6 +1,8 @@
 package com.revconnect.repository;
 
+import com.revconnect.entity.Post;
 import com.revconnect.entity.PostLike;
+import com.revconnect.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
@@ -14,5 +16,7 @@ public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
     Optional<PostLike> findByPost_PostIdAndUser_Email(Long postId, String email);
 
     Optional<PostLike> findByPost_PostIdAndUser_UserId(Long postId, Long userId);
+
+    Optional<PostLike> findByUserAndPost(User user, Post post);
 
 }
