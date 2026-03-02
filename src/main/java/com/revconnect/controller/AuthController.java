@@ -1,3 +1,4 @@
+
 package com.revconnect.controller;
 
 import com.revconnect.dto.request.LoginRequest;
@@ -35,7 +36,7 @@ public class AuthController {
 
         model.addAttribute("registerRequest", new RegisterRequest());
 
-        return "register";
+        return "auth/register";
 
     }
 
@@ -58,7 +59,7 @@ public class AuthController {
             model.addAttribute("success",
                     "Registration successful. Please login.");
 
-            return "login";
+            return "auth/login";
 
         }
 
@@ -68,7 +69,7 @@ public class AuthController {
             model.addAttribute("error",
                     e.getMessage());
 
-            return "register";
+            return "auth/register";
 
         }
 
@@ -86,7 +87,7 @@ public class AuthController {
 
         model.addAttribute("loginRequest", new LoginRequest());
 
-        return "login";
+        return "auth/login";
 
     }
 
@@ -95,7 +96,6 @@ public class AuthController {
     // ========================
     // LOGIN USER
     // ========================
-
     @PostMapping("/login")
     public String login(
             @ModelAttribute LoginRequest request,
@@ -115,15 +115,17 @@ public class AuthController {
                             null
                     );
 
-
             SecurityContextHolder.getContext()
                     .setAuthentication(authToken);
-
 
             session.setAttribute(
                     "SPRING_SECURITY_CONTEXT",
                     SecurityContextHolder.getContext()
             );
+
+
+            // ✅ ADD THIS LINE
+            session.setAttribute("loggedUser", user);
 
 
             return "redirect:/dashboard";
@@ -133,42 +135,37 @@ public class AuthController {
         catch (RuntimeException e)
         {
 
-            model.addAttribute("error",
-                    e.getMessage());
+            model.addAttribute("error", e.getMessage());
 
-            return "login";
+            return "auth/login";
 
         }
 
     }
 
-
-
-    // ========================
-    // DASHBOARD PAGE
-    // ========================
-
-    @GetMapping("/dashboard")
-    public String dashboard()
-    {
-
-        return "dashboard";
-
-    }
-
-
-
     // ========================
     // LOGOUT
     // ========================
 
+    // ========================
+// LOGOUT
+// ========================
+
     @GetMapping("/logout")
-    public String logout(HttpSession session)
+    public String logout(HttpSession session, Model model)
     {
 
+        // Clear Spring Security context
+        SecurityContextHolder.clearContext();
+
+        // Invalidate session
         session.invalidate();
 
-        return "redirect:/api/login";
+        // Send success message to login page
+        model.addAttribute("success", "Logout Successful");
+
+        // Return login page directly (NOT redirect)
+        return "auth/login";
 
     }
 
@@ -176,7 +173,7 @@ public class AuthController {
     @GetMapping("/forgot-password")
     public String forgotPasswordPage()
     {
-        return "forgot-password";
+        return "auth/forgot-password";
     }
 
 
@@ -196,7 +193,7 @@ public class AuthController {
             model.addAttribute("question",
                     user.getSecurityQuestion());
 
-            return "reset-password";
+            return "auth/reset-password";
 
         }
 
@@ -206,7 +203,7 @@ public class AuthController {
             model.addAttribute("error",
                     e.getMessage());
 
-            return "forgot-password";
+            return "auth/forgot-password";
 
         }
 
@@ -229,7 +226,7 @@ public class AuthController {
             model.addAttribute("success",
                     "Password reset successful. Please login.");
 
-            return "login";
+            return "auth/login";
 
         }
 
@@ -245,7 +242,7 @@ public class AuthController {
                     authService.findByEmail(email)
                             .getSecurityQuestion());
 
-            return "reset-password";
+            return "auth/reset-password";
 
         }
 

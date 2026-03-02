@@ -27,10 +27,11 @@ public class PostResponse {
 
     private LocalDateTime createdAt;
 
-    // Minimal user info (NO password, NO entity)
     private Long userId;
     private String username;
 
-    // Hashtags as plain strings
     private List<String> hashtags;
+
+    // 🆕 Tagged Products / Services
+    private List<TagResponse> tags;
 }
