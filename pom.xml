@@ -113,8 +113,6 @@ https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 
 
-
-
 		<!-- JWT API -->
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
@@ -168,20 +166,9 @@ https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 		</dependency>
 
-        <!-- Swagger    -->
-        <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>2.5.0</version>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
 
 
-    </dependencies>
+	</dependencies>
 	<repositories>
 		<repository>
 			<id>central</id>
