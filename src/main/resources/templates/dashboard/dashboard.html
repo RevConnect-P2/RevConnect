@@ -198,90 +198,40 @@
 
 
 
+            <!-- ========================= -->
+            <!-- FEED FILTER BAR -->
+            <!-- ========================= -->
+            <div class="card feed-card mb-3">
+                <div class="card-body d-flex gap-2">
 
-            <!-- NO POSTS MESSAGE -->
+                    <button
+                            class="btn btn-sm btn-primary feed-filter-btn"
+                            data-filter="ALL"
+                            onclick="setFeedFilter('ALL')">
+                        All
+                    </button>
 
-<!--            <div th:if="${posts == null}"-->
+                    <button
+                            class="btn btn-sm btn-outline-primary feed-filter-btn"
+                            data-filter="NORMAL"
+                            onclick="setFeedFilter('NORMAL')">
+                        Normal
+                    </button>
 
-<!--                 class="card feed-card text-center p-4">-->
+                    <button
+                            class="btn btn-sm btn-outline-primary feed-filter-btn"
+                            data-filter="PROMOTIONAL"
+                            onclick="setFeedFilter('PROMOTIONAL')">
+                        Promotional
+                    </button>
 
-
-<!--                No posts available-->
-
-
-<!--            </div>-->
+                </div>
+            </div>
 
 
             <!-- FEED POSTS (Rendered by JS) -->
             <div id="feedContainer"></div>
 
-            <!-- POSTS LIST -->
-
-<!--            <div th:each="post : ${posts}"-->
-
-<!--                 class="card feed-card mb-3">-->
-
-
-<!--                <div class="card-body">-->
-
-
-<!--                    <div class="post-user"-->
-
-<!--                         th:text="${post.username}">-->
-
-<!--                        Username-->
-
-<!--                    </div>-->
-
-
-<!--                    <div class="post-text mt-2"-->
-
-<!--                         th:text="${post.content}">-->
-
-<!--                        Post content-->
-
-<!--                    </div>-->
-
-
-<!--                    <hr>-->
-
-
-<!--                    <div class="row text-center">-->
-
-
-<!--                        <div class="col post-action">-->
-
-<!--                            <i class="bi bi-hand-thumbs-up"></i>-->
-
-<!--                            Like-->
-
-<!--                        </div>-->
-
-
-<!--                        <div class="col post-action">-->
-
-<!--                            <i class="bi bi-chat"></i>-->
-
-<!--                            Comment-->
-
-<!--                        </div>-->
-
-
-<!--                        <div class="col post-action">-->
-
-<!--                            <i class="bi bi-share"></i>-->
-
-<!--                            Share-->
-
-<!--                        </div>-->
-
-
-<!--                    </div>-->
-
-
-<!--                </div>-->
-
-<!--            </div>-->
 
 
 

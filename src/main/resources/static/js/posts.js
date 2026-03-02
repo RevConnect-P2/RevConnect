@@ -8,30 +8,11 @@ let productServiceTags = [];
 let savedPostIds = new Set();
 
 // ===============================
-// ON PAGE LOAD
+// FEED FILTER STATE
 // ===============================
-//document.addEventListener("DOMContentLoaded", () => {
-//    fetchLoggedInUser();
-//});
+let allFeedPosts = [];
+let currentFeedFilter = "ALL"; // ALL | NORMAL | PROMOTIONAL
 
-// ===============================
-// FETCH LOGGED-IN USER
-// ===============================
-//function fetchLoggedInUser() {
-//    fetch("/auth/me")
-//        .then(response => response.json())
-//        .then(data => {
-//            if (!data || !data.userId) {
-//                console.error("User not authenticated");
-//                return;
-//            }
-//
-//            currentUser = data;
-//        })
-//        .catch(error => {
-//            console.error("Error fetching user info:", error);
-//        });
-//}
 
 // ===============================
 // ADD PRODUCT / SERVICE TAG
@@ -174,6 +155,18 @@ function createFeedPostCard(post, options = {}) {
         .map(tag => `<span class="text-primary me-2">#${tag}</span>`)
         .join("");
 
+    const tagsHtml = (post.tags || [])
+        .map(tag => `
+            <span class="badge me-2
+             ${
+                tag.tagType === 'PRODUCT'
+                    ? 'bg-info'
+                    : 'bg-success'}">
+                ${tag.tagType}: ${tag.tagName}
+            </span>
+        `)
+        .join("");
+
     card.innerHTML = `
         <div class="card-body">
 
@@ -188,6 +181,7 @@ function createFeedPostCard(post, options = {}) {
 
             ${hashtags ? `<div class="mb-2">${hashtags}</div>` : ""}
 
+            ${tagsHtml ? `<div class="mt-2">${tagsHtml}</div>` : ""}
             ${
                 post.postType === "PROMOTIONAL" &&
                 post.ctaText &&
@@ -220,7 +214,8 @@ function createFeedPostCard(post, options = {}) {
                 <div class="col post-action text-end">
                     <i class="bi ${options.isSaved ? 'bi-bookmark-fill' : 'bi-bookmark'}"
                        style="cursor:pointer;font-size:18px"
-                       onclick="${options.isSaved
+                       onclick="
+                       ${options.isSaved
                             ? `unsavePost(${post.postId}, this)`
                             : `savePost(${post.postId}, this)`}"
                        title="Save post"></i>
@@ -325,23 +320,27 @@ function fetchFeedPosts() {
             if (!res.ok) throw new Error("Failed to load feed");
             return res.json();
         })
-        .then(posts => {
-            feedContainer.innerHTML = "";
-
-            if (!posts.length) {
-                feedContainer.innerHTML =
-                    "<div class='card feed-card text-center p-4'>No posts available</div>";
-                return;
-            }
-
-            posts.forEach(post => {
-                const card = createFeedPostCard(post, {
-                    showPinned: false,
-                    isSaved: savedPostIds.has(post.postId)
-                });
-                feedContainer.appendChild(card);
-            });
-        })
+//        .then(posts => {
+//            feedContainer.innerHTML = "";
+//
+//            if (!posts.length) {
+//                feedContainer.innerHTML =
+//                    "<div class='card feed-card text-center p-4'>No posts available</div>";
+//                return;
+//            }
+//
+//            posts.forEach(post => {
+//                const card = createFeedPostCard(post, {
+//                    showPinned: false,
+//                    isSaved: savedPostIds.has(post.postId)
+//                });
+//                feedContainer.appendChild(card);
+//            });
+//        })
+         .then(posts => {
+                    allFeedPosts = posts;
+                    renderFeedPosts();
+                })
         .catch(err => {
             console.error(err);
             feedContainer.innerHTML =
@@ -349,6 +348,54 @@ function fetchFeedPosts() {
         });
 }
 
+function renderFeedPosts() {
+
+    const feedContainer = document.getElementById("feedContainer");
+    if (!feedContainer) return;
+
+    feedContainer.innerHTML = "";
+
+    const filteredPosts = allFeedPosts.filter(post => {
+        if (currentFeedFilter === "ALL") return true;
+        return post.postType === currentFeedFilter;
+    });
+
+    if (!filteredPosts.length) {
+        feedContainer.innerHTML =
+            "<div class='card feed-card text-center p-4'>No posts found</div>";
+        return;
+    }
+
+    filteredPosts.forEach(post => {
+        const card = createFeedPostCard(post, {
+            showPinned: false,
+            isSaved: savedPostIds.has(post.postId)
+        });
+        feedContainer.appendChild(card);
+    });
+}
+
+function setFeedFilter(filterType) {
+    currentFeedFilter = filterType;
+    updateFeedFilterUI();
+    renderFeedPosts();
+}
+
+function updateFeedFilterUI() {
+    document.querySelectorAll(".feed-filter-btn").forEach(btn => {
+        btn.classList.remove("btn-primary");
+        btn.classList.add("btn-outline-primary");
+    });
+
+    const activeBtn = document.querySelector(
+        `.feed-filter-btn[data-filter="${currentFeedFilter}"]`
+    );
+
+    if (activeBtn) {
+        activeBtn.classList.remove("btn-outline-primary");
+        activeBtn.classList.add("btn-primary");
+    }
+}
 // ===============================
 // SAVE / UNSAVE POST
 // ===============================

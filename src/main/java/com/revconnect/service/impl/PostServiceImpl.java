@@ -273,7 +273,11 @@ public class PostServiceImpl implements PostService {
         visiblePosts.stream()
                 .filter(Post::getPinned)
                 .forEach(post -> responses.add(
-                        postMapper.toPostResponse(post, List.of(), List.of())
+                        postMapper.toPostResponse(
+                                post,
+                                getHashtagsForPost(post),
+                                getTagsForPost(post)
+                        )
                 ));
 
         // remaining posts
@@ -373,13 +377,34 @@ public class PostServiceImpl implements PostService {
 
         visiblePosts.stream()
                 .sorted((p1, p2) -> p2.getCreatedAt().compareTo(p1.getCreatedAt()))
-                .forEach(post ->
-                        responses.add(
-                                postMapper.toPostResponse(post, List.of(), List.of())
-                        )
-                );
+                .forEach(post -> {
+                    List<Hashtag> hashtags = getHashtagsForPost(post);
+                    List<TagResponse> tags = getTagsForPost(post);
+
+                    responses.add(
+                            postMapper.toPostResponse(post, hashtags, tags)
+                    );
+                });
 
         return responses;
+    }
+
+    private List<Hashtag> getHashtagsForPost(Post post) {
+        return postHashtagRepository.findAll()
+                .stream()
+                .filter(ph -> ph.getPost().getPostId().equals(post.getPostId()))
+                .map(PostHashtag::getHashtag)
+                .toList();
+    }
+
+    private List<TagResponse> getTagsForPost(Post post) {
+        return postTagRepository.findByPost(post)
+                .stream()
+                .map(t -> TagResponse.builder()
+                        .tagName(t.getTagName())
+                        .tagType(t.getTagType())
+                        .build())
+                .toList();
     }
 
 }
