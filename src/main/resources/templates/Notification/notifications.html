@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Notifications</title>
+</head>
+
+<div style="margin-bottom:15px;">
+    <a th:href="@{/dashboard}"
+       style="text-decoration:none;
+              padding:6px 12px;
+              background:#eee;
+              border-radius:5px;">
+        ← Back to Dashboard
+    </a>
+</div>
+<h2>Notifications</h2>
+
+<p>Unread Count:
+    <span th:text="${unreadCount}"></span>
+</p>
+
+<form method="get" th:action="@{/notifications}">
+
+    <select name="type">
+
+        <!-- ALL -->
+        <option value=""
+                th:selected="${selectedType == null}">
+            All
+        </option>
+
+        <!-- LIKE -->
+        <option value="LIKE"
+                th:selected="${selectedType == T(com.revconnect.enums.NotificationType).LIKE}">
+            Likes
+        </option>
+
+        <!-- COMMENT -->
+        <option value="COMMENT"
+                th:selected="${selectedType == T(com.revconnect.enums.NotificationType).COMMENT}">
+            Comments
+        </option>
+
+        <!-- FOLLOW -->
+        <option value="FOLLOW"
+                th:selected="${selectedType == T(com.revconnect.enums.NotificationType).FOLLOW}">
+            Follows
+        </option>
+
+        <!-- CONNECTION -->
+        <option value="CONNECTION"
+                th:selected="${selectedType == T(com.revconnect.enums.NotificationType).CONNECTION}">
+            Connections
+        </option>
+
+        <!-- SHARE -->
+        <option value="SHARE"
+                th:selected="${selectedType == T(com.revconnect.enums.NotificationType).SHARE}">
+            Shares
+        </option>
+
+        <!-- NEW POST -->
+        <option value="NEW_POST"
+                th:selected="${selectedType == T(com.revconnect.enums.NotificationType).NEW_POST}">
+            New Posts
+        </option>
+
+    </select>
+
+    <button type="submit">Filter</button>
+</form>
+
+<form th:action="@{/notifications/read-all}"
+      method="post">
+    <button type="submit">Mark All Read</button>
+</form>
+
+<hr/>
+
+<div th:each="n : ${notifications}"
+     th:style="${!n.isRead} ? 'background-color:#eef;'">
+
+    <p>
+        <b th:text="${n.sender.username}"></b>
+        <span th:text="${n.message}"></span>
+    </p>
+
+    <small th:text="${n.createdAt}"></small>
+
+    <form th:if="${!n.isRead}"
+          th:action="@{/notifications/{id}/read(id=${n.notificationId})}"
+          method="post">
+        <button type="submit">Mark Read</button>
+    </form>
+
+    <form th:if="${n.isRead}"
+          th:action="@{/notifications/{id}/unread(id=${n.notificationId})}"
+          method="post">
+        <button type="submit">Mark Unread</button>
+    </form>
+
+    <form th:action="@{/notifications/{id}/delete(id=${n.notificationId})}"
+          method="post">
+        <button type="submit">Delete</button>
+    </form>
+
+    <hr/>
+</div>
+
+</body>
+</html>

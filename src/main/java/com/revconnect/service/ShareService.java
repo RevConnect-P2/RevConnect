@@ -3,6 +3,7 @@ package com.revconnect.service;
 import com.revconnect.entity.Post;
 import com.revconnect.entity.User;
 
-public interface CommentService {
-    public void addComment(Post post, User currentUser);
-}
+public interface ShareService {
+    public void sharePost(Post post, User currentUser) ;
+
+    }

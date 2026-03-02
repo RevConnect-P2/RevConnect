@@ -1,6 +1,7 @@
 package com.revconnect.controller;
 
 import com.revconnect.entity.User;
+import com.revconnect.service.NotificationService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -8,18 +9,24 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import java.util.ArrayList; // ✅ IMPORTANT
+import java.util.ArrayList;
 
 @Controller
 public class DashboardController {
+
+    private final NotificationService notificationService;
+
+    // ✅ Constructor Injection
+    public DashboardController(NotificationService notificationService) {
+        this.notificationService = notificationService;
+    }
 
     @GetMapping("/dashboard")
     public String dashboard(HttpSession session, Model model)
     {
 
-        // ✅ Get logged-in user
+        // ✅ Get logged-in user from session
         User user = (User) session.getAttribute("loggedUser");
-
 
         // ✅ Security check
         if (user == null)
@@ -27,30 +34,26 @@ public class DashboardController {
             return "redirect:/login";
         }
 
-
-        // ✅ Send user to dashboard
+        // ✅ Add user to model
         model.addAttribute("user", user);
 
+        // ✅ Add unread notification count
+        long unreadCount =
+                notificationService.getUnreadCount(user.getUserId());
 
-        // ✅ Temporary empty post list (prevents error)
+        model.addAttribute("unreadCount", unreadCount);
+
+        // ✅ Temporary empty post list
         model.addAttribute("posts", new ArrayList<>());
 
-
-        // ✅ Temporary stats (team members will implement later)
+        // ✅ Temporary stats
         model.addAttribute("connectionsCount", 0);
-
         model.addAttribute("followersCount", 0);
-
         model.addAttribute("followingCount", 0);
 
+        model.addAttribute("message",
+                "Welcome to RevConnect Dashboard");
 
-        // ✅ Optional welcome message
-        model.addAttribute("message", "Welcome to RevConnect Dashboard");
-
-
-        // ✅ Load dashboard page
         return "dashboard/dashboard";
-
     }
-
 }
