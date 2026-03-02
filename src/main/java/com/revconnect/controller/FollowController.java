@@ -1,39 +1,37 @@
 package com.revconnect.controller;
 
-import com.revconnect.entity.Follow;
+import com.revconnect.entity.User;
 import com.revconnect.service.FollowService;
+import com.revconnect.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.security.Principal;
 
-@RestController
-@RequestMapping("/follow")
+@Controller
+@RequestMapping("/network/follow")
 @RequiredArgsConstructor
 public class FollowController {
 
     private final FollowService followService;
+    private final UserService userService;
 
-    // Use IDs instead of full User objects
-    @PostMapping("/add")
-    public Follow follow(@RequestParam Long followerId,
-                         @RequestParam Long followingId) {
-        return followService.followUser(followerId, followingId);
+    // FOLLOW USER
+    @PostMapping("/follow/{userId}")
+    public String follow(@PathVariable Long userId, Principal principal) {
+        User follower = userService.getUserByEmailOrThrow(principal.getName()); // use only one method
+        User following = userService.getUserByIdOrThrow(userId);
+        followService.follow(follower, following);
+        return "redirect:/network"; // redirect to main network page
     }
 
-    @DeleteMapping("/unfollow")
-    public void unfollow(@RequestParam Long followerId,
-                         @RequestParam Long followingId) {
-        followService.unfollowUser(followerId, followingId);
-    }
-
-    @GetMapping("/followers/{userId}")
-    public List<Follow> getFollowers(@PathVariable Long userId) {
-        return followService.getFollowers(userId);
-    }
-
-    @GetMapping("/following/{userId}")
-    public List<Follow> getFollowing(@PathVariable Long userId) {
-        return followService.getFollowing(userId);
+    // UNFOLLOW USER
+    @PostMapping("/unfollow/{userId}")
+    public String unfollow(@PathVariable Long userId, Principal principal) {
+        User follower = userService.getUserByEmailOrThrow(principal.getName()); // consistent
+        User following = userService.getUserByIdOrThrow(userId);
+        followService.unfollow(follower, following);
+        return "redirect:/network"; // redirect to main network page
     }
 }

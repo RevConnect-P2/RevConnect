@@ -124,6 +124,11 @@
             color: #fff;
         }
 
+        .btn-primary {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+
         hr {
             border-top: 1px solid #ddd;
             margin: 20px 0;
@@ -135,6 +140,7 @@
                 width: 100% !important;
                 margin-bottom: 10px;
             }
+
             .navbar-nav {
                 flex-direction: row !important;
             }
@@ -175,15 +181,6 @@
                 </a>
             </li>
 
-            <!-- NOTIFICATIONS -->
-            <li class="nav-item text-center mx-2 position-relative">
-                <a href="/notifications" class="nav-link text-dark">
-                    <i class="bi bi-bell fs-5"></i>
-                    <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">3</span>
-                    <div style="font-size:12px;">Notifications</div>
-                </a>
-            </li>
-
             <!-- PROFILE -->
             <li class="nav-item text-center mx-2">
                 <a href="/profile" class="nav-link text-dark" th:text="${user.username}">Username
@@ -206,7 +203,10 @@
 
         <!-- LEFT SIDEBAR -->
         <div class="col-md-3">
-            <div class="sidebar-card" th:replace="layout/left-sidebar :: leftSidebar(${user}, ${connectionsCount}, ${followersCount}, ${followingCount})"></div>
+            <div class="sidebar-card">
+                <!-- You can include left sidebar if needed -->
+                <p><strong>Welcome,</strong> <span th:text="${user.username}"></span></p>
+            </div>
         </div>
 
         <!-- MAIN NETWORK SECTION -->
@@ -217,34 +217,68 @@
                 <!-- PENDING REQUESTS -->
                 <h6>Pending Requests</h6>
                 <div th:each="req : ${pendingRequests}" class="network-item">
-                    <span th:text="${req.sender != null ? req.sender.username : 'Unknown'}">SenderName</span>
-                    <div>
+                    <span th:text="${req.sender.username}">SenderName</span>
+                    <form th:action="@{/network/accept/{id}(id=${req.connectionId})}" method="post" style="display:inline;">
                         <button class="btn btn-success btn-sm ms-2">Accept</button>
+                    </form>
+                    <form th:action="@{/network/reject/{id}(id=${req.connectionId})}" method="post" style="display:inline;">
                         <button class="btn btn-danger btn-sm ms-1">Reject</button>
-                    </div>
+                    </form>
                 </div>
                 <hr>
 
                 <!-- CONNECTIONS -->
                 <h6>Your Connections</h6>
                 <div th:each="c : ${connections}" class="network-item">
-                    <span th:text="${c.receiver != null ? c.receiver.username : 'Unknown'}">ReceiverName</span>
-                    <button class="btn btn-outline-danger btn-sm ms-2">Remove</button>
+                    <span th:text="${c.sender.userId == user.userId ? c.receiver.username : c.sender.username}">ConnectionName</span>
+                    <form th:action="@{/network/remove/{id}(id=${c.connectionId})}" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-outline-danger btn-sm ms-2">Remove</button>
+                    </form>
                 </div>
                 <hr>
 
                 <!-- FOLLOWERS -->
                 <h6>Followers</h6>
                 <div th:each="f : ${followers}" class="network-item">
-                    <span th:text="${f.follower != null ? f.follower.username : 'Unknown'}">FollowerName</span>
+                    <span th:text="${f.username}">FollowerName</span>
                 </div>
                 <hr>
 
                 <!-- FOLLOWING -->
                 <h6>Following</h6>
                 <div th:each="f : ${following}" class="network-item">
-                    <span th:text="${f.following != null ? f.following.username : 'Unknown'}">FollowingName</span>
-                    <button class="btn btn-outline-secondary btn-sm ms-2">Unfollow</button>
+                    <span th:text="${f.username}">FollowingName</span>
+                    <form th:action="@{/network/follow/unfollow/{id}(id=${f.userId})}" method="post" style="display:inline;">
+                        <button class="btn btn-outline-secondary btn-sm ms-2">Unfollow</button>
+                    </form>
+                </div>
+                <hr>
+
+                <!-- AVAILABLE USERS TO CONNECT -->
+                <h6>People You May Know</h6>
+                <div th:each="u : ${availableUsers}" class="network-item">
+                    <span th:text="${u.username}">Username</span>
+
+                    <!-- Connection button -->
+                    <!-- Connection button -->
+                    <div th:switch="${userStatusMap[u.userId] ?: 'Connect/Follow'}">
+                        <!-- Default: Can Connect or Follow -->
+                        <form th:case="'Connect/Follow'" th:action="@{/network/request/{id}(id=${u.userId})}" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-primary btn-sm ms-2">Connect</button>
+                        </form>
+                        <button th:case="'Requested'" type="button" class="btn btn-secondary btn-sm ms-2" disabled>Requested</button>
+                        <button th:case="'Connected'" type="button" class="btn btn-success btn-sm ms-2" disabled>Connected</button>
+                    </div>
+
+                    <!-- Follow button -->
+                    <div th:switch="${userStatusMap[u.userId]}">
+                        <form th:case="'Connect/Follow'" th:action="@{/network/follow/follow/{id}(id=${u.userId})}" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-success btn-sm ms-2">Follow</button>
+                        </form>
+                        <form th:case="'Following'" th:action="@{/network/follow/unfollow/{id}(id=${u.userId})}" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-outline-secondary btn-sm ms-2">Following</button>
+                        </form>
+                    </div>
                 </div>
 
             </div>

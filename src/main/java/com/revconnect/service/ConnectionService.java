@@ -1,20 +1,23 @@
 package com.revconnect.service;
 
 import com.revconnect.entity.Connection;
+import com.revconnect.entity.User;
 
 import java.util.List;
 
 public interface ConnectionService {
 
-    Connection sendConnectionRequest(Long senderId, Long receiverId);
+    Connection sendRequest(User sender, User receiver);
 
-    Connection acceptRequest(Long connectionId);
+    Connection acceptRequest(Long connectionId, User currentUser);
 
-    Connection rejectRequest(Long connectionId);
+    Connection rejectRequest(Long connectionId, User currentUser);
 
-    void removeConnection(Long connectionId);
+    List<Connection> getPendingRequests(User currentUser);
 
-    List<Connection> getPendingRequests(Long userId);
+    List<Connection> getConnections(User currentUser);
 
-    List<Connection> getUserConnections(Long userId);
+    void removeConnection(Long connectionId, User currentUser);
+    List<Connection> getPendingSentRequests(User user);
+
 }
