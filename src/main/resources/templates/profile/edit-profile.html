@@ -123,21 +123,34 @@
                         </option>
                     </select>
                 </div>
-
                 <!-- Profile Type (READ-ONLY) -->
                 <div class="mb-3">
                     <label class="form-label">Profile Type</label>
 
                     <select class="form-select" disabled>
-                        <option th:selected="${profile.profileType == 'USER'}">USER</option>
-                        <option th:selected="${profile.profileType == 'CREATOR'}">CREATOR</option>
-                        <option th:selected="${profile.profileType == 'BUSINESS'}">BUSINESS</option>
+
+                        <option value="PERSONAL"
+                                th:selected="${profile.profileType.name() == 'PERSONAL'}">
+                            PERSONAL
+                        </option>
+
+                        <option value="CREATOR"
+                                th:selected="${profile.profileType.name() == 'CREATOR'}">
+                            CREATOR
+                        </option>
+
+                        <option value="BUSINESS"
+                                th:selected="${profile.profileType.name() == 'BUSINESS'}">
+                            BUSINESS
+                        </option>
+
                     </select>
 
                     <!-- Hidden input so backend still receives value -->
                     <input type="hidden"
                            name="profileType"
-                           th:value="${profile.profileType}" />
+                           th:value="${profile.profileType.name()}" />
+
                 </div>
 
                 <div class="d-flex justify-content-between">

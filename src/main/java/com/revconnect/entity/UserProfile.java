@@ -20,67 +20,110 @@ public class UserProfile {
     @Column(name = "PROFILE_ID")
     private Long profileId;
 
+
     // Each user has only one profile
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "USER_ID", nullable = false, unique = true)
     private User user;
 
+
     @Column(name = "FULL_NAME")
     private String fullName;
 
-    @Column(name = "BIO")
+
+    @Column(name = "BIO", columnDefinition = "CLOB")
     private String bio;
+
 
     @Column(name = "PROFILE_PIC")
     private String profilePic;
 
+
     @Column(name = "LOCATION")
     private String location;
+
 
     @Column(name = "WEBSITE")
     private String website;
 
-    // 🔹 ENHANCED PROFILE TYPE (USER / CREATOR / BUSINESS)
+
+
+    /**
+     * PERSONAL / CREATOR / BUSINESS
+     * Default = PERSONAL
+     */
     @Enumerated(EnumType.STRING)
-    @Column(name = "PROFILE_TYPE")
+    @Column(name = "PROFILE_TYPE", nullable = false)
     private ProfileType profileType;
 
-    // 🔹 CREATOR
+
+
+    // CREATOR fields
+
     @Column(name = "CATEGORY")
     private String category;
+
 
     @Column(name = "EXTERNAL_LINKS")
     private String externalLinks;
 
-    // 🔹 BUSINESS
+
+
+    // BUSINESS fields
+
     @Column(name = "BUSINESS_ADDRESS")
     private String businessAddress;
+
 
     @Column(name = "CONTACT_INFO")
     private String contactInfo;
 
+
+
+    // PROFILE SETTINGS
+
     @Column(name = "PROFILE_VISIBILITY")
     private String profileVisibility;
+
+
+
+    // TIMESTAMP
 
     @Column(name = "CREATED_AT", updatable = false)
     private LocalDateTime createdAt;
 
+
     @Column(name = "UPDATED_AT")
     private LocalDateTime updatedAt;
 
-    // Oracle timestamp auto insert
+
+
+    /**
+     * AUTO CREATE TIMESTAMP + DEFAULT PROFILE TYPE
+     */
     @PrePersist
     protected void onCreate() {
+
         createdAt = LocalDateTime.now();
 
         if (profileType == null) {
-            profileType = ProfileType.USER;
+
+            profileType = ProfileType.PERSONAL;
+
         }
+
     }
 
-    // Oracle timestamp auto update
+
+
+    /**
+     * AUTO UPDATE TIMESTAMP
+     */
     @PreUpdate
     protected void onUpdate() {
+
         updatedAt = LocalDateTime.now();
+
     }
+
 }

@@ -6,7 +6,7 @@ import com.revconnect.dto.request.ProfileUpdateRequest;
 import com.revconnect.dto.response.BusinessHoursResponse;
 import com.revconnect.dto.response.ProfileResponse;
 import com.revconnect.entity.BusinessHours;
-import com.revconnect.entity.User;
+import com.revconnect.entity.User; // ✅ FIXED IMPORT
 import com.revconnect.entity.UserProfile;
 import com.revconnect.enums.ProfileType;
 import com.revconnect.exception.ResourceNotFoundException;
@@ -30,8 +30,9 @@ public class ProfileServiceImpl implements ProfileService {
     private final UserProfileRepository userProfileRepository;
     private final BusinessHoursRepository businessHoursRepository;
 
+
     // ================= CREATE PROFILE =================
-    // ================= CREATE PROFILE =================
+
     @Override
     public ProfileResponse createProfile(Long userId, ProfileCreateRequest request) {
 
@@ -42,7 +43,6 @@ public class ProfileServiceImpl implements ProfileService {
             throw new IllegalStateException("Profile already exists");
         }
 
-        // ✅ SAFE profile type resolution
         ProfileType profileType = resolveProfileType(user.getUserType());
 
         UserProfile profile = UserProfile.builder()
@@ -58,38 +58,49 @@ public class ProfileServiceImpl implements ProfileService {
                                 : "PUBLIC"
                 )
                 .profileType(profileType)
+                .category("GENERAL") // ✅ FIX
                 .build();
 
         applyProfileTypeRules(profile, request);
 
         UserProfile savedProfile = userProfileRepository.save(profile);
+
         return mapToResponse(user, savedProfile);
     }
 
+
     // ================= UPDATE PROFILE =================
+
     @Override
     public ProfileResponse updateProfile(Long userId, ProfileUpdateRequest request) {
 
         UserProfile profile = userProfileRepository.findByUser_UserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Profile not found"));
 
-        // ❌ DO NOT validate profileType
-        // ❌ DO NOT change profileType
-
+        // Basic fields
         profile.setFullName(request.getFullName());
         profile.setBio(request.getBio());
         profile.setProfilePic(request.getProfilePic());
         profile.setLocation(request.getLocation());
         profile.setWebsite(request.getWebsite());
-        profile.setProfileVisibility(request.getProfileVisibility());
 
+        profile.setProfileVisibility(
+                request.getProfileVisibility() != null
+                        ? request.getProfileVisibility()
+                        : "PUBLIC"
+        );
+
+        // Apply BUSINESS / CREATOR rules
         applyProfileTypeRules(profile, request);
 
+        // Save
         UserProfile updatedProfile = userProfileRepository.save(profile);
+
         return mapToResponse(profile.getUser(), updatedProfile);
     }
 
     // ================= GET PROFILE =================
+
     @Override
     public ProfileResponse getProfile(Long userId) {
 
@@ -106,11 +117,9 @@ public class ProfileServiceImpl implements ProfileService {
                             .user(user)
                             .fullName(user.getUsername())
                             .bio("")
-                            .profilePic(null)
-                            .location(null)
-                            .website(null)
                             .profileVisibility("PUBLIC")
                             .profileType(profileType)
+                            .category("GENERAL") // ✅ FIX
                             .build();
 
                     return userProfileRepository.save(newProfile);
@@ -119,7 +128,9 @@ public class ProfileServiceImpl implements ProfileService {
         return mapToResponse(user, profile);
     }
 
+
     // ================= SEARCH =================
+
     @Override
     public List<ProfileResponse> searchProfiles(String query) {
 
@@ -131,45 +142,29 @@ public class ProfileServiceImpl implements ProfileService {
                 .toList();
     }
 
+
+    // ================= ADD BUSINESS HOURS =================
+
     @Override
     @Transactional
-    public void addBusinessHours(
-            Long userId,
-            List<BusinessHoursRequest> requestList
-    ) {
+    public void addBusinessHours(Long userId, List<BusinessHoursRequest> requestList) {
 
         UserProfile profile = userProfileRepository
                 .findByUser_UserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Profile not found"));
 
         if (profile.getProfileType() != ProfileType.BUSINESS) {
-            throw new IllegalStateException(
-                    "Business hours allowed only for BUSINESS profiles"
-            );
+            throw new IllegalStateException("Only BUSINESS profile allowed");
         }
 
-        // 1️⃣ delete old rows
-        businessHoursRepository.deleteByProfile_ProfileId(
-                profile.getProfileId()
-        );
-        businessHoursRepository.flush(); // 🔥 ORACLE FIX
+        businessHoursRepository.deleteByProfile_ProfileId(profile.getProfileId());
+        businessHoursRepository.flush();
 
-        // 2️⃣ prevent duplicate days
         Set<String> seenDays = new HashSet<>();
 
         for (BusinessHoursRequest req : requestList) {
 
-            // 🚫 skip duplicate day
-            if (!seenDays.add(req.getDayOfWeek())) {
-                continue;
-            }
-
-            // 🚫 skip empty rows
-            if (!Boolean.TRUE.equals(req.getIsClosed())
-                    && req.getOpenTime() == null
-                    && req.getCloseTime() == null) {
-                continue;
-            }
+            if (!seenDays.add(req.getDayOfWeek())) continue;
 
             BusinessHours hours = BusinessHours.builder()
                     .profile(profile)
@@ -182,42 +177,20 @@ public class ProfileServiceImpl implements ProfileService {
             businessHoursRepository.save(hours);
         }
     }
-    @Override
-    public List<BusinessHoursResponse> getBusinessHours(Long userId) {
 
-        UserProfile profile = userProfileRepository
-                .findByUser_UserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Profile not found"));
 
-        return businessHoursRepository
-                .findByProfile_ProfileId(profile.getProfileId())
-                .stream()
-                .map(h -> {
-                    BusinessHoursResponse res = new BusinessHoursResponse();
-                    res.setDayOfWeek(h.getDayOfWeek());
-                    res.setOpenTime(h.getOpenTime());
-                    res.setCloseTime(h.getCloseTime());
-                    res.setIsClosed(h.getIsClosed());
-                    return res;
-                })
-                .toList();
-    }
+    // ================= UPDATE BUSINESS HOURS (✅ FIXED) =================
 
     @Override
-    public void updateBusinessHours(
-            Long userId,
-            String dayOfWeek,
-            BusinessHoursRequest request
-    ) {
+    @Transactional
+    public void updateBusinessHours(Long userId, String dayOfWeek, BusinessHoursRequest request) {
 
         UserProfile profile = userProfileRepository
                 .findByUser_UserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Profile not found"));
 
         if (profile.getProfileType() != ProfileType.BUSINESS) {
-            throw new IllegalStateException(
-                    "Business hours allowed only for BUSINESS profiles"
-            );
+            throw new IllegalStateException("Only BUSINESS profile allowed");
         }
 
         BusinessHours hours = businessHoursRepository
@@ -225,9 +198,7 @@ public class ProfileServiceImpl implements ProfileService {
                 .stream()
                 .filter(h -> h.getDayOfWeek().equalsIgnoreCase(dayOfWeek))
                 .findFirst()
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Business hours not found for " + dayOfWeek)
-                );
+                .orElseThrow(() -> new ResourceNotFoundException("Business hours not found"));
 
         hours.setOpenTime(request.getOpenTime());
         hours.setCloseTime(request.getCloseTime());
@@ -236,85 +207,131 @@ public class ProfileServiceImpl implements ProfileService {
         businessHoursRepository.save(hours);
     }
 
+
+    // ================= GET BUSINESS HOURS =================
     @Override
-    public void deleteBusinessHours(Long userId, String dayOfWeek) {
+    public List<BusinessHoursResponse> getBusinessHours(Long userId) {
 
         UserProfile profile = userProfileRepository
                 .findByUser_UserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Profile not found"));
 
-        if (profile.getProfileType() != ProfileType.BUSINESS) {
-            throw new IllegalStateException(
-                    "Business hours allowed only for BUSINESS profiles"
-            );
-        }
-
-        BusinessHours hours = businessHoursRepository
+        List<BusinessHoursResponse> hours = businessHoursRepository
                 .findByProfile_ProfileId(profile.getProfileId())
                 .stream()
-                .filter(h -> h.getDayOfWeek().equalsIgnoreCase(dayOfWeek))
-                .findFirst()
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Business hours not found for " + dayOfWeek)
-                );
+                .map(h -> {
 
-        businessHoursRepository.delete(hours);
+                    BusinessHoursResponse res = new BusinessHoursResponse();
+
+                    res.setDayOfWeek(h.getDayOfWeek());
+                    res.setOpenTime(h.getOpenTime());
+                    res.setCloseTime(h.getCloseTime());
+                    res.setIsClosed(h.getIsClosed());
+
+                    return res;
+                })
+                // ✅ FIX HERE
+                .collect(java.util.stream.Collectors.toList());
+
+
+
+        // ✅ SORT NOW WORKS
+        hours.sort(java.util.Comparator.comparing(
+                h -> java.time.DayOfWeek.valueOf(h.getDayOfWeek().toUpperCase())
+        ));
+
+        return hours;
     }
 
-    @Override
-    @Transactional
-    public void deleteAllBusinessHours(Long userId) {
+// ================= RULE ENGINE =================
 
-        UserProfile profile = userProfileRepository
-                .findByUser_UserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Profile not found"));
-
-        if (profile.getProfileType() != ProfileType.BUSINESS) {
-            throw new IllegalStateException(
-                    "Business hours allowed only for BUSINESS profiles"
-            );
-        }
-
-        businessHoursRepository.deleteByProfile_ProfileId(
-                profile.getProfileId()
-        );
-    }
-
-    // ================= PROFILE TYPE RULE ENGINE =================
     private void applyProfileTypeRules(UserProfile profile, Object request) {
-
-        profile.setCategory(null);
-        profile.setExternalLinks(null);
-        profile.setBusinessAddress(null);
-        profile.setContactInfo(null);
 
         ProfileType type = profile.getProfileType();
 
+
+        // ================= CREATOR =================
+
         if (type == ProfileType.CREATOR) {
+
             if (request instanceof ProfileCreateRequest r) {
-                profile.setCategory(r.getCategory());
+
+                profile.setCategory(
+                        r.getCategory() != null ? r.getCategory() : "GENERAL"
+                );
+
                 profile.setExternalLinks(r.getExternalLinks());
-            } else if (request instanceof ProfileUpdateRequest r) {
-                profile.setCategory(r.getCategory());
-                profile.setExternalLinks(r.getExternalLinks());
+
             }
+
+
+            if (request instanceof ProfileUpdateRequest r) {
+
+                profile.setCategory(
+                        r.getCategory() != null ? r.getCategory() : "GENERAL"
+                );
+
+                profile.setExternalLinks(r.getExternalLinks());
+
+            }
+
         }
 
-        if (type == ProfileType.BUSINESS) {
+
+        // ================= BUSINESS =================
+
+        else if (type == ProfileType.BUSINESS) {
+
+
+            // ✅ CREATE
+
             if (request instanceof ProfileCreateRequest r) {
-                profile.setBusinessAddress(r.getBusinessAddress());
-                profile.setContactInfo(r.getContactInfo());
-            } else if (request instanceof ProfileUpdateRequest r) {
-                profile.setBusinessAddress(r.getBusinessAddress());
-                profile.setContactInfo(r.getContactInfo());
+
+                profile.setBusinessAddress(
+                        r.getBusinessAddress() != null ? r.getBusinessAddress() : ""
+                );
+
+                profile.setContactInfo(
+                        r.getContactInfo() != null ? r.getContactInfo() : ""
+                );
+
             }
+
+
+            // ✅ UPDATE  ⭐ THIS WAS MISSING ⭐
+
+            if (request instanceof ProfileUpdateRequest r) {
+
+                profile.setBusinessAddress(
+                        r.getBusinessAddress() != null ? r.getBusinessAddress() : ""
+                );
+
+                profile.setContactInfo(
+                        r.getContactInfo() != null ? r.getContactInfo() : ""
+                );
+
+            }
+
         }
+
+
+        // ================= PERSONAL =================
+
+        else {
+
+            profile.setCategory("GENERAL");
+
+        }
+
     }
 
-    // ================= RESPONSE MAPPER =================
+
+    // ================= RESPONSE =================
+
     private ProfileResponse mapToResponse(User user, UserProfile profile) {
 
         ProfileResponse response = new ProfileResponse();
+
         response.setUserId(user.getUserId());
         response.setUsername(user.getUsername());
         response.setFullName(profile.getFullName());
@@ -323,7 +340,6 @@ public class ProfileServiceImpl implements ProfileService {
         response.setLocation(profile.getLocation());
         response.setWebsite(profile.getWebsite());
         response.setProfileVisibility(profile.getProfileVisibility());
-
         response.setProfileType(profile.getProfileType());
         response.setCategory(profile.getCategory());
         response.setExternalLinks(profile.getExternalLinks());
@@ -333,14 +349,65 @@ public class ProfileServiceImpl implements ProfileService {
         return response;
     }
 
-    // ================= SAFE PROFILE TYPE RESOLVER =================
+// ================= TYPE RESOLVER =================
+
     private ProfileType resolveProfileType(String userType) {
-        try {
-            return ProfileType.valueOf(userType);
-        } catch (Exception e) {
+
+        return ProfileType.fromString(userType);
+
+    }
+
+    @Override
+    @Transactional
+    public void deleteBusinessHours(Long userId, String dayOfWeek) {
+
+        UserProfile profile = userProfileRepository
+                .findByUser_UserId(userId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Profile not found")
+                );
+
+        if (profile.getProfileType() != ProfileType.BUSINESS) {
             throw new IllegalStateException(
-                    "Invalid user type value: " + userType
+                    "Only BUSINESS profile allowed"
             );
         }
+
+        BusinessHours hours = businessHoursRepository
+                .findByProfile_ProfileId(profile.getProfileId())
+                .stream()
+                .filter(h ->
+                        h.getDayOfWeek().equalsIgnoreCase(dayOfWeek)
+                )
+                .findFirst()
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Business hours not found for " + dayOfWeek
+                        )
+                );
+
+        businessHoursRepository.delete(hours);
     }
+    @Override
+    @Transactional
+    public void deleteAllBusinessHours(Long userId) {
+
+        UserProfile profile = userProfileRepository
+                .findByUser_UserId(userId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Profile not found")
+                );
+
+        if (profile.getProfileType() != ProfileType.BUSINESS) {
+            throw new IllegalStateException(
+                    "Only BUSINESS profile allowed"
+            );
+        }
+
+        businessHoursRepository.deleteByProfile_ProfileId(
+                profile.getProfileId()
+        );
+
+    }
+
 }

@@ -28,7 +28,7 @@ public class ProfileShowcaseServiceImpl implements ProfileShowcaseService {
                 .findByUser_UserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Profile not found"));
 
-        if (profile.getProfileType() == ProfileType.USER) {
+        if (profile.getProfileType() == ProfileType.PERSONAL) {
             throw new IllegalStateException(
                     "Showcase allowed only for CREATOR or BUSINESS profiles"
             );
