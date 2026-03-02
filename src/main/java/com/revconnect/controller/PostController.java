@@ -3,6 +3,7 @@ package com.revconnect.controller;
 import com.revconnect.dto.request.PostCreateRequest;
 import com.revconnect.dto.response.PostResponse;
 import com.revconnect.service.PostService;
+import com.revconnect.service.SavedPostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,7 @@ import java.util.List;
 public class PostController {
 
     private final PostService postService;
+    private final SavedPostService savedPostService;
 
     // =========================
     // CREATE POST (JSON)
@@ -89,4 +91,49 @@ public class PostController {
     ) {
         return ResponseEntity.ok(postService.unpinPost(postId, userId));
     }
+
+
+    // =========================
+    // GLOBAL FEED (JSON)
+    // =========================
+        @GetMapping("/feed")
+        public ResponseEntity<List<PostResponse>> getGlobalFeed(
+                @RequestParam Long viewerId
+        ) {
+            return ResponseEntity.ok(postService.getGlobalFeed(viewerId));
+    }
+
+    // =========================
+    // SAVE POST
+    // =========================
+        @PostMapping("/{postId}/save")
+        public ResponseEntity<String> savePost(
+                @PathVariable Long postId,
+                @RequestParam Long userId
+        ) {
+            savedPostService.savePost(userId, postId);
+            return ResponseEntity.ok("Post saved successfully");
+        }
+
+        // =========================
+    // UNSAVE POST
+    // =========================
+        @DeleteMapping("/{postId}/unsave")
+        public ResponseEntity<String> unsavePost(
+                @PathVariable Long postId,
+                @RequestParam Long userId
+        ) {
+            savedPostService.unsavePost(userId, postId);
+            return ResponseEntity.ok("Post unsaved successfully");
+        }
+
+        // =========================
+    // GET SAVED POSTS
+    // =========================
+        @GetMapping("/saved")
+        public ResponseEntity<List<PostResponse>> getSavedPosts(
+                @RequestParam Long userId
+        ) {
+            return ResponseEntity.ok(savedPostService.getSavedPosts(userId));
+        }
 }

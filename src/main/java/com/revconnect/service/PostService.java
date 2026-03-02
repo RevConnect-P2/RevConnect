@@ -38,4 +38,10 @@ public interface PostService {
 
     // Unpin a post
     PostResponse unpinPost(Long postId, Long userId);
+
+    /**
+     * Get global feed (all visible posts)
+     */
+    List<PostResponse> getGlobalFeed(Long viewerUserId);
+
 }

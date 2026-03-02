@@ -111,7 +111,7 @@
 
 <!-- NAVBAR -->
 
-<div th:replace="layout/navbar :: navbar(${user})"></div>
+<div th:replace="~{layout/navbar :: navbar(${user})}"></div>
 
 
 
@@ -201,86 +201,87 @@
 
             <!-- NO POSTS MESSAGE -->
 
-            <div th:if="${posts == null}"
+<!--            <div th:if="${posts == null}"-->
 
-                 class="card feed-card text-center p-4">
-
-
-                No posts available
+<!--                 class="card feed-card text-center p-4">-->
 
 
-            </div>
+<!--                No posts available-->
 
 
+<!--            </div>-->
 
+
+            <!-- FEED POSTS (Rendered by JS) -->
+            <div id="feedContainer"></div>
 
             <!-- POSTS LIST -->
 
-            <div th:each="post : ${posts}"
+<!--            <div th:each="post : ${posts}"-->
 
-                 class="card feed-card mb-3">
-
-
-                <div class="card-body">
+<!--                 class="card feed-card mb-3">-->
 
 
-                    <div class="post-user"
-
-                         th:text="${post.user.username}">
-
-                        Username
-
-                    </div>
+<!--                <div class="card-body">-->
 
 
-                    <div class="post-text mt-2"
+<!--                    <div class="post-user"-->
 
-                         th:text="${post.content}">
+<!--                         th:text="${post.username}">-->
 
-                        Post content
+<!--                        Username-->
 
-                    </div>
-
-
-                    <hr>
+<!--                    </div>-->
 
 
-                    <div class="row text-center">
+<!--                    <div class="post-text mt-2"-->
+
+<!--                         th:text="${post.content}">-->
+
+<!--                        Post content-->
+
+<!--                    </div>-->
 
 
-                        <div class="col post-action">
-
-                            <i class="bi bi-hand-thumbs-up"></i>
-
-                            Like
-
-                        </div>
+<!--                    <hr>-->
 
 
-                        <div class="col post-action">
-
-                            <i class="bi bi-chat"></i>
-
-                            Comment
-
-                        </div>
+<!--                    <div class="row text-center">-->
 
 
-                        <div class="col post-action">
+<!--                        <div class="col post-action">-->
 
-                            <i class="bi bi-share"></i>
+<!--                            <i class="bi bi-hand-thumbs-up"></i>-->
 
-                            Share
+<!--                            Like-->
 
-                        </div>
-
-
-                    </div>
+<!--                        </div>-->
 
 
-                </div>
+<!--                        <div class="col post-action">-->
 
-            </div>
+<!--                            <i class="bi bi-chat"></i>-->
+
+<!--                            Comment-->
+
+<!--                        </div>-->
+
+
+<!--                        <div class="col post-action">-->
+
+<!--                            <i class="bi bi-share"></i>-->
+
+<!--                            Share-->
+
+<!--                        </div>-->
+
+
+<!--                    </div>-->
+
+
+<!--                </div>-->
+
+<!--            </div>-->
 
 
 
@@ -303,8 +304,13 @@
 
 </div>
 
-
-
+<script th:inline="javascript">
+    window.CURRENT_USER_ID = [[${user.userId}]];
+</script>
+<script src="/js/posts.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", fetchFeedPosts);
+</script>
 </body>
 
 </html>

@@ -262,7 +262,7 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         List<Post> visiblePosts =
-                postRepository.findByUserAndScheduledAtIsNullOrScheduledAtLessThanEqual(
+                postRepository.findVisiblePostsByUser(
                         user,
                         LocalDateTime.now()
                 );
@@ -360,4 +360,26 @@ public class PostServiceImpl implements PostService {
 
         return postMapper.toPostResponse(saved, List.of(), List.of());
     }
+
+    @Override
+    public List<PostResponse> getGlobalFeed(Long viewerUserId) {
+
+        List<Post> visiblePosts =
+                postRepository.findByScheduledAtIsNullOrScheduledAtLessThanEqual(
+                        LocalDateTime.now()
+                );
+
+        List<PostResponse> responses = new ArrayList<>();
+
+        visiblePosts.stream()
+                .sorted((p1, p2) -> p2.getCreatedAt().compareTo(p1.getCreatedAt()))
+                .forEach(post ->
+                        responses.add(
+                                postMapper.toPostResponse(post, List.of(), List.of())
+                        )
+                );
+
+        return responses;
+    }
+
 }
