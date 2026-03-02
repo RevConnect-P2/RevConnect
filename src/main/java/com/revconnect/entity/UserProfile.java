@@ -1,5 +1,6 @@
 package com.revconnect.entity;
 
+import com.revconnect.enums.ProfileType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -7,13 +8,11 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "USER_PROFILE")
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
 public class UserProfile {
 
     @Id
@@ -32,7 +31,7 @@ public class UserProfile {
     private String fullName;
 
 
-    @Column(name = "BIO")
+    @Column(name = "BIO", columnDefinition = "CLOB")
     private String bio;
 
 
@@ -48,25 +47,47 @@ public class UserProfile {
     private String website;
 
 
+
+    /**
+     * PERSONAL / CREATOR / BUSINESS
+     * Default = PERSONAL
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "PROFILE_TYPE", nullable = false)
+    private ProfileType profileType;
+
+
+
+    // CREATOR fields
+
     @Column(name = "CATEGORY")
     private String category;
-
-
-    @Column(name = "CONTACT_INFO")
-    private String contactInfo;
-
-
-    @Column(name = "BUSINESS_ADDRESS")
-    private String businessAddress;
 
 
     @Column(name = "EXTERNAL_LINKS")
     private String externalLinks;
 
 
+
+    // BUSINESS fields
+
+    @Column(name = "BUSINESS_ADDRESS")
+    private String businessAddress;
+
+
+    @Column(name = "CONTACT_INFO")
+    private String contactInfo;
+
+
+
+    // PROFILE SETTINGS
+
     @Column(name = "PROFILE_VISIBILITY")
     private String profileVisibility;
 
+
+
+    // TIMESTAMP
 
     @Column(name = "CREATED_AT", updatable = false)
     private LocalDateTime createdAt;
@@ -77,16 +98,27 @@ public class UserProfile {
 
 
 
-    // Oracle timestamp auto insert
+    /**
+     * AUTO CREATE TIMESTAMP + DEFAULT PROFILE TYPE
+     */
     @PrePersist
     protected void onCreate() {
 
         createdAt = LocalDateTime.now();
 
+        if (profileType == null) {
+
+            profileType = ProfileType.PERSONAL;
+
+        }
+
     }
 
 
-    // Oracle timestamp auto update
+
+    /**
+     * AUTO UPDATE TIMESTAMP
+     */
     @PreUpdate
     protected void onUpdate() {
 
