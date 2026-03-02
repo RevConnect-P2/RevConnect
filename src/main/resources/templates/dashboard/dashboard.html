@@ -11,12 +11,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
     <style>
-
         body {
             background: #f3f2ef;
         }
 
-        /* FEED CARD */
         .feed-card {
             border-radius: 12px;
             border: none;
@@ -24,7 +22,6 @@
             margin-bottom: 16px;
         }
 
-        /* POST INPUT */
         .post-input {
             background: #eef3f8;
             border-radius: 30px;
@@ -38,7 +35,6 @@
             cursor: pointer;
         }
 
-        /* POST ACTION */
         .post-action {
             padding: 10px 0;
             border-radius: 6px;
@@ -50,17 +46,14 @@
             cursor: pointer;
         }
 
-        /* POST USER NAME */
         .post-user {
             font-weight: 600;
         }
 
-        /* POST TEXT */
         .post-text {
             font-size: 14px;
             line-height: 1.6;
         }
-
     </style>
 
 </head>
@@ -68,7 +61,7 @@
 <body>
 
 <!-- NAVBAR -->
-<div th:replace="layout/navbar :: navbar(${user})"></div>
+<div th:replace="~{layout/navbar :: navbar(${user})}"></div>
 
 <div class="container mt-4">
     <div class="row">
@@ -109,43 +102,31 @@
                 </div>
             </div>
 
-            <!-- NO POSTS MESSAGE -->
-            <div th:if="${posts == null}" class="card feed-card text-center p-4">
-                No posts available
-            </div>
+            <!-- FEED FILTER BAR -->
+            <div class="card feed-card">
+                <div class="card-body d-flex gap-2">
+                    <button class="btn btn-sm btn-primary feed-filter-btn"
+                            data-filter="ALL"
+                            onclick="setFeedFilter('ALL')">
+                        All
+                    </button>
 
-            <!-- POSTS LIST -->
-            <div th:each="post : ${posts}" class="card feed-card">
+                    <button class="btn btn-sm btn-outline-primary feed-filter-btn"
+                            data-filter="NORMAL"
+                            onclick="setFeedFilter('NORMAL')">
+                        Normal
+                    </button>
 
-                <div class="card-body">
-
-                    <div class="post-user" th:text="${post.user.username}">
-                        Username
-                    </div>
-
-                    <div class="post-text mt-2" th:text="${post.content}">
-                        Post content
-                    </div>
-
-                    <hr>
-
-                    <div class="row text-center">
-                        <div class="col post-action">
-                            <i class="bi bi-hand-thumbs-up"></i><br>
-                            Like
-                        </div>
-                        <div class="col post-action">
-                            <i class="bi bi-chat"></i><br>
-                            Comment
-                        </div>
-                        <div class="col post-action">
-                            <i class="bi bi-share"></i><br>
-                            Share
-                        </div>
-                    </div>
-
+                    <button class="btn btn-sm btn-outline-primary feed-filter-btn"
+                            data-filter="PROMOTIONAL"
+                            onclick="setFeedFilter('PROMOTIONAL')">
+                        Promotional
+                    </button>
                 </div>
             </div>
+
+            <!-- FEED POSTS (Rendered by JS) -->
+            <div id="feedContainer"></div>
 
         </div>
 
@@ -156,6 +137,14 @@
 
     </div>
 </div>
+
+<script th:inline="javascript">
+    window.CURRENT_USER_ID = [[${user.userId}]];
+</script>
+<script src="/js/posts.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", fetchFeedPosts);
+</script>
 
 </body>
 </html>

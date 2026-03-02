@@ -8,10 +8,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import com.revconnect.service.PostService;
+import lombok.RequiredArgsConstructor;
+
 import java.util.ArrayList; // ✅ IMPORTANT
 
 @Controller
+@RequiredArgsConstructor
 public class DashboardController {
+    private final PostService postService;
 
     @GetMapping("/dashboard")
     public String dashboard(HttpSession session, Model model)
@@ -32,8 +37,11 @@ public class DashboardController {
         model.addAttribute("user", user);
 
 
-        // ✅ Temporary empty post list (prevents error)
-        model.addAttribute("posts", new ArrayList<>());
+        // ✅ REAL POSTS NOW
+        model.addAttribute(
+                "posts",
+                postService.getPostsByUser(user.getUserId())
+        );
 
 
         // ✅ Temporary stats (team members will implement later)

@@ -1,0 +1,42 @@
+<!-- Post Card Fragment -->
+<div th:fragment="postCard" class="card shadow-sm mb-3">
+
+    <div class="card-body">
+
+        <!-- ========================= -->
+        <!-- POST HEADER -->
+        <!-- ========================= -->
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <div>
+                <strong class="text-dark post-username">username</strong>
+            </div>
+            <small class="text-muted post-time">just now</small>
+        </div>
+
+        <!-- ========================= -->
+        <!-- POST CONTENT -->
+        <!-- ========================= -->
+        <p class="mb-2 post-content">
+            This is a sample post content. Real content will be injected by JavaScript.
+        </p>
+
+        <!-- ========================= -->
+        <!-- HASHTAGS -->
+        <!-- ========================= -->
+        <div class="mb-2 post-hashtags">
+            <span class="badge bg-light text-primary">#java</span>
+            <span class="badge bg-light text-primary">#springboot</span>
+        </div>
+
+        <!-- ========================= -->
+        <!-- POST ACTIONS (FUTURE) -->
+        <!-- ========================= -->
+        <div class="d-flex justify-content-end">
+            <button class="btn btn-sm btn-outline-danger d-none post-delete-btn">
+                Delete
+            </button>
+        </div>
+
+    </div>
+
+</div>
