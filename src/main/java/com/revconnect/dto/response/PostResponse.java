@@ -34,4 +34,17 @@ public class PostResponse {
 
     // 🆕 Tagged Products / Services
     private List<TagResponse> tags;
+
+    // ✅ ADD THESE TWO
+    private Long likeCount;
+    private boolean likedByCurrentUser;
+
+    private Long commentCount;
+
+    private Long shareCount;
+
+    private Boolean isSharedPost;
+    private String sharedByUsername;
+    private String originalAuthorUsername;
+
 }
