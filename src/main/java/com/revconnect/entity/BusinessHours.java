@@ -3,7 +3,7 @@ package com.revconnect.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity
 @Table(
@@ -12,13 +12,11 @@ import java.time.LocalDateTime;
                 @UniqueConstraint(columnNames = {"PROFILE_ID", "DAY_OF_WEEK"})
         }
 )
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
 public class BusinessHours {
 
     @Id
@@ -26,31 +24,25 @@ public class BusinessHours {
     @Column(name = "HOUR_ID")
     private Long hourId;
 
-
     // Each business profile has multiple business hours
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "PROFILE_ID", nullable = false)
     private UserProfile profile;
 
-
     // MONDAY, TUESDAY, etc
     @Column(name = "DAY_OF_WEEK", nullable = false, length = 20)
     private String dayOfWeek;
 
-
     @Column(name = "OPEN_TIME")
-    private LocalDateTime openTime;
-
+    private LocalTime openTime;     // ✅ LocalTime ONLY
 
     @Column(name = "CLOSE_TIME")
-    private LocalDateTime closeTime;
-
+    private LocalTime closeTime;    // ✅ LocalTime ONLY
 
     // Oracle stores Boolean as NUMBER(1)
+    @Builder.Default
     @Column(name = "IS_CLOSED")
     private Boolean isClosed = false;
-
-
 
     // Validate before insert/update
     @PrePersist
@@ -60,21 +52,16 @@ public class BusinessHours {
         if (Boolean.FALSE.equals(isClosed)) {
 
             if (openTime == null || closeTime == null) {
-
                 throw new IllegalStateException(
                         "Open and Close time must be provided if business is open"
                 );
             }
 
             if (closeTime.isBefore(openTime)) {
-
                 throw new IllegalStateException(
                         "Close time cannot be before open time"
                 );
             }
-
         }
-
     }
-
 }

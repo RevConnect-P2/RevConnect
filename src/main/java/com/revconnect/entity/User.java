@@ -58,6 +58,10 @@ public class User {
     @Column(name = "UPDATED_AT")
     private LocalDateTime updatedAt;
 
+    // ✅ ADD THIS PART
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+    private UserProfile userProfile;
+
 
     // Automatically insert timestamp
     @PrePersist

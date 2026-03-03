@@ -367,7 +367,6 @@ public class PostServiceImpl implements PostService {
 
         return postMapper.toPostResponse(saved, List.of(), List.of());
     }
-
     @Override
     public List<PostResponse> getGlobalFeed(Long viewerUserId) {
 
@@ -467,6 +466,20 @@ public class PostServiceImpl implements PostService {
                         .tagType(t.getTagType())
                         .build())
                 .toList();
+    }
+
+    // =========================
+// COUNT POSTS BY USER (FOR PROFILE PAGE)
+// =========================
+    @Override
+    public long countPostsByUser(Long userId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("User not found"));
+
+        return postRepository.countByUser(user);
+
     }
 
 }

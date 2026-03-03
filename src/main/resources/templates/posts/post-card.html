@@ -1,5 +1,6 @@
 <!-- Post Card Fragment -->
 <div th:fragment="postCard" class="card shadow-sm mb-3" xmlns:th="http://www.w3.org/1999/xhtml">
+<div th:fragment="postCard(post)" class="card shadow-sm mb-3">
 
     <div class="card-body">
 
@@ -8,33 +9,84 @@
         <!-- ========================= -->
         <div class="d-flex justify-content-between align-items-center mb-2">
             <div>
-                <strong class="text-dark post-username">username</strong>
+                <strong class="text-dark"
+                        th:text="${post.username}">
+                    Username
+                </strong>
             </div>
-            <small class="text-muted post-time">just now</small>
+
+            <small class="text-muted"
+                   th:text="${#temporals.format(post.createdAt,'dd MMM yyyy hh:mm a')}">
+            </small>
         </div>
 
         <!-- ========================= -->
         <!-- POST CONTENT -->
         <!-- ========================= -->
-        <p class="mb-2 post-content">
-            This is a sample post content. Real content will be injected by JavaScript.
+        <p class="mb-2"
+           th:text="${post.content}">
         </p>
 
         <!-- ========================= -->
         <!-- HASHTAGS -->
         <!-- ========================= -->
-        <div class="mb-2 post-hashtags">
-            <span class="badge bg-light text-primary">#java</span>
-            <span class="badge bg-light text-primary">#springboot</span>
+        <div class="mb-2"
+             th:if="${post.hashtags != null}">
+            <span th:each="tag : ${post.hashtags}"
+                  class="badge bg-light text-primary me-1"
+                  th:text="'#' + ${tag}">
+            </span>
         </div>
 
         <!-- ========================= -->
-        <!-- POST ACTIONS (FUTURE) -->
+        <!-- TAGGED PRODUCT / SERVICE -->
         <!-- ========================= -->
-        <div class="d-flex justify-content-end">
-            <button class="btn btn-sm btn-outline-danger d-none post-delete-btn">
-                Delete
-            </button>
+        <div th:if="${post.tags != null and !post.tags.isEmpty()}"
+             class="mb-2">
+
+            <span th:each="tag : ${post.tags}"
+                  class="badge bg-success me-1"
+                  th:text="${tag.tagType} + ': ' + ${tag.tagName}">
+            </span>
+
+        </div>
+
+        <!-- ========================= -->
+        <!-- PROMOTIONAL CTA BUTTON -->
+        <!-- ========================= -->
+        <div th:if="${post.postType == 'PROMOTIONAL'}"
+             class="mb-2">
+
+            <a th:if="${post.ctaLink != null}"
+               th:href="${post.ctaLink}"
+               target="_blank"
+               class="btn btn-primary btn-sm">
+
+                <span th:text="${post.ctaText}">Claim Offer</span>
+
+            </a>
+
+        </div>
+
+        <hr>
+
+        <!-- ========================= -->
+        <!-- POST ACTIONS -->
+        <!-- ========================= -->
+        <div class="d-flex justify-content-around text-muted">
+
+            <div class="post-action">
+                👍 Like
+            </div>
+
+            <div class="post-action">
+                💬 Comment
+            </div>
+
+            <div class="post-action">
+                🔗 Share
+            </div>
+
         </div>
 
     </div>
