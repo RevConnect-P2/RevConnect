@@ -60,9 +60,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     // ================================
     long countByUser(User user);
 
-    // ================================
-// 5️⃣ Visible posts (Scheduled support)
-// ================================
     List<Post> findByScheduledAtIsNullOrScheduledAtLessThanEqual(LocalDateTime now);
-
 }

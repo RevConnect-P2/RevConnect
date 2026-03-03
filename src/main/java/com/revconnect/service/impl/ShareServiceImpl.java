@@ -10,6 +10,8 @@ import com.revconnect.service.ShareService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ShareServiceImpl implements ShareService {
@@ -56,5 +58,16 @@ public class ShareServiceImpl implements ShareService {
     public Long getShareCount(Long postId) {
 
         return shareRepository.countByOriginalPost_PostId(postId);
+    }
+
+
+    @Override
+    public List<String> getUsersWhoShared(Long postId) {
+
+        return shareRepository
+                .findByOriginalPost_PostId(postId)
+                .stream()
+                .map(share -> share.getSharedBy().getUsername())
+                .toList();
     }
 }

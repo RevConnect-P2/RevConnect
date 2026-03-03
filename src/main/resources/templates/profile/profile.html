@@ -204,57 +204,22 @@
         <h5>Posts</h5>
         <hr>
 
-        <div th:if="${posts.isEmpty()}"
-             class="text-center text-muted">
-            No posts yet
+        <div id="profilePostsContainer">
+            <p class="text-center text-muted">Loading posts...</p>
         </div>
-
-        <div th:each="post : ${posts}"
-             class="card mb-3 shadow-sm">
-
-            <div class="card-body">
-
-                <div class="d-flex align-items-center mb-2">
-                    <img src="/images/default-profile.png"
-                         class="post-header-img">
-                    <div>
-                        <b th:text="${post.username}"></b><br>
-                        <small class="text-muted"
-                               th:text="${#temporals.format(post.createdAt,'dd MMM yyyy hh:mm a')}">
-                        </small>
-                    </div>
-                </div>
-
-                <p th:text="${post.content}"></p>
-
-                <span class="badge bg-primary mb-2"
-                      th:text="${post.postType}">
-                </span>
-
-                <hr>
-
-                <div class="d-flex justify-content-around text-muted">
-
-                    <div class="post-action">
-                        <i class="fa-regular fa-thumbs-up"></i> Like
-                    </div>
-
-                    <div class="post-action">
-                        <i class="fa-regular fa-comment"></i> Comment
-                    </div>
-
-                    <div class="post-action">
-                        <i class="fa-solid fa-share"></i> Share
-                    </div>
-
-                </div>
-
-            </div>
-        </div>
+    </div>
 
     </div>
 
 </div>
+<script th:inline="javascript">
+    window.CURRENT_USER_ID = [[${profile.userId}]];
+</script>
 
+<script src="/js/posts.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", fetchProfilePosts);
+</script>
 </body>
 </html>

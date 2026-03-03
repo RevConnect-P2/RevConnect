@@ -12,50 +12,52 @@
 
     <style>
         body {
-            background: #f3f2ef;
+            background-color: #f8f9fa; /* Lighter background for contrast */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         .feed-card {
             border-radius: 12px;
-            border: none;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-            margin-bottom: 16px;
+            border: 1px solid rgba(0,0,0,0.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05); /* Softer, wider shadow */
+            margin-bottom: 20px;
+            transition: transform 0.2s;
         }
 
+        /* "Badass" Input styling */
         .post-input {
-            background: #eef3f8;
-            border-radius: 30px;
-            padding: 12px 16px;
-            color: #666;
-            transition: 0.3s;
+            background: #ffffff;
+            border: 1px solid #e1e4e8;
+            border-radius: 8px;
+            padding: 14px 20px;
+            color: #555;
+            font-weight: 500;
+            transition: all 0.2s ease;
         }
 
         .post-input:hover {
-            background: #e2eaf1;
-            cursor: pointer;
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1);
         }
 
         .post-action {
-            padding: 10px 0;
-            border-radius: 6px;
-            transition: 0.2s;
+            color: #6c757d;
+            font-weight: 600;
+            font-size: 0.85rem;
         }
 
         .post-action:hover {
-            background: #eef3f8;
-            cursor: pointer;
+            background: #f1f3f5;
+            border-radius: 8px;
         }
 
-        .post-user {
-            font-weight: 600;
-        }
-
-        .post-text {
-            font-size: 14px;
-            line-height: 1.6;
+        /* Modern Filter Bar */
+        .feed-filter-btn {
+            border-radius: 20px !important;
+            padding: 6px 16px !important;
+            font-weight: 500;
         }
     </style>
-
 </head>
 
 <body>

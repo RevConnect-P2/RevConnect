@@ -10,6 +10,7 @@ import com.revconnect.service.LikeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -90,5 +91,14 @@ public class LikeServiceImpl implements LikeService {
             postLikeRepository.save(like);
             return true; // liked
         }
+    }
+
+    @Override
+    public List<String> getUsersWhoLiked(Long postId) {
+
+        return postLikeRepository.findByPost_PostId(postId)
+                .stream()
+                .map(like -> like.getUser().getUsername())
+                .toList();
     }
 }
