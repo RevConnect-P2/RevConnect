@@ -29,6 +29,9 @@ public class PostServiceImpl implements PostService {
     private final PostHashtagRepository postHashtagRepository;
     private final PostTagRepository postTagRepository;
     private final PostMapper postMapper;
+    private final PostLikeRepository postLikeRepository;
+    private final CommentRepository commentRepository;
+    private final ShareRepository shareRepository;
 
     // =========================
     // CREATE POST
@@ -364,27 +367,86 @@ public class PostServiceImpl implements PostService {
 
         return postMapper.toPostResponse(saved, List.of(), List.of());
     }
-
     @Override
     public List<PostResponse> getGlobalFeed(Long viewerUserId) {
 
-        List<Post> visiblePosts =
-                postRepository.findByScheduledAtIsNullOrScheduledAtLessThanEqual(
+        List<PostResponse> responses = new ArrayList<>();
+
+        // ================= NORMAL POSTS =================
+        List<Post> posts =
+                postRepository.findGlobalFeedPosts(
+                        viewerUserId,
                         LocalDateTime.now()
                 );
 
-        List<PostResponse> responses = new ArrayList<>();
+        for (Post post : posts) {
 
-        visiblePosts.stream()
-                .sorted((p1, p2) -> p2.getCreatedAt().compareTo(p1.getCreatedAt()))
-                .forEach(post -> {
-                    List<Hashtag> hashtags = getHashtagsForPost(post);
-                    List<TagResponse> tags = getTagsForPost(post);
+            List<Hashtag> hashtags = getHashtagsForPost(post);
+            List<TagResponse> tags = getTagsForPost(post);
 
-                    responses.add(
-                            postMapper.toPostResponse(post, hashtags, tags)
-                    );
-                });
+            PostResponse response =
+                    postMapper.toPostResponse(post, hashtags, tags);
+
+            // Like count
+            Long likeCount =
+                    postLikeRepository.countByPost_PostId(post.getPostId());
+            response.setLikeCount(likeCount);
+
+            // Comment count
+            Long commentCount =
+                    commentRepository.countByPost_PostId(post.getPostId());
+            response.setCommentCount(commentCount);
+
+            // Share count
+            Long shareCount =
+                    shareRepository.countByOriginalPost_PostId(post.getPostId());
+            response.setShareCount(shareCount);
+
+            responses.add(response);
+        }
+
+        // ================= SHARED POSTS =================
+        List<Share> shares =
+                shareRepository.findAllByOrderByCreatedAtDesc();
+
+        for (Share share : shares) {
+
+            Post originalPost = share.getOriginalPost();
+            User sharedBy = share.getSharedBy();
+
+            List<Hashtag> hashtags = getHashtagsForPost(originalPost);
+            List<TagResponse> tags = getTagsForPost(originalPost);
+
+            PostResponse response =
+                    postMapper.toPostResponse(originalPost, hashtags, tags);
+
+            // 🔥 Show who shared
+            response.setIsSharedPost(true);
+            response.setSharedByUsername(sharedBy.getUsername());
+            response.setOriginalAuthorUsername(originalPost.getUser().getUsername());
+
+            // Like count
+            Long likeCount =
+                    postLikeRepository.countByPost_PostId(originalPost.getPostId());
+            response.setLikeCount(likeCount);
+
+            // Comment count
+            Long commentCount =
+                    commentRepository.countByPost_PostId(originalPost.getPostId());
+            response.setCommentCount(commentCount);
+
+            // Share count
+            Long shareCount =
+                    shareRepository.countByOriginalPost_PostId(originalPost.getPostId());
+            response.setShareCount(shareCount);
+
+            responses.add(response);
+        }
+
+        // ================= SORT FEED =================
+        responses.sort((r1, r2) ->
+                r2.getCreatedAt().compareTo(r1.getCreatedAt())
+        );
 
         return responses;
     }
@@ -405,6 +467,20 @@ public class PostServiceImpl implements PostService {
                         .tagType(t.getTagType())
                         .build())
                 .toList();
+    }
+
+    // =========================
+// COUNT POSTS BY USER (FOR PROFILE PAGE)
+// =========================
+    @Override
+    public long countPostsByUser(Long userId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("User not found"));
+
+        return postRepository.countByUser(user);
+
     }
 
 }

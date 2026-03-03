@@ -148,6 +148,7 @@ function formatDate(dateTime) {
 }
 
 function createFeedPostCard(post, options = {}) {
+
     const card = document.createElement("div");
     card.className = "card feed-card mb-3";
 
@@ -158,10 +159,7 @@ function createFeedPostCard(post, options = {}) {
     const tagsHtml = (post.tags || [])
         .map(tag => `
             <span class="badge me-2
-             ${
-                tag.tagType === 'PRODUCT'
-                    ? 'bg-info'
-                    : 'bg-success'}">
+                ${tag.tagType === 'PRODUCT' ? 'bg-info' : 'bg-success'}">
                 ${tag.tagType}: ${tag.tagName}
             </span>
         `)
@@ -170,29 +168,56 @@ function createFeedPostCard(post, options = {}) {
     card.innerHTML = `
         <div class="card-body">
 
+            <!-- 🔁 Shared Banner -->
+            ${post.isSharedPost ? `
+                <div class="text-muted small mb-2">
+                    🔁 ${post.sharedByUsername} shared
+                    ${post.originalAuthorUsername}'s post
+                </div>
+            ` : ``}
+
+            <!-- Post Header -->
             <div class="d-flex justify-content-between">
-                <strong>${post.username}</strong>
+                <strong>
+                    ${post.isSharedPost
+                        ? post.originalAuthorUsername
+                        : post.username}
+                </strong>
+
                 ${options.showPinned && post.pinned
                     ? `<span class="text-warning">📌 Pinned</span>`
                     : ""}
             </div>
 
+            <!-- Post Content -->
             <p class="post-text mt-2">${post.content}</p>
 
             ${hashtags ? `<div class="mb-2">${hashtags}</div>` : ""}
 
             ${tagsHtml ? `<div class="mt-2">${tagsHtml}</div>` : ""}
+
             ${
                 post.postType === "PROMOTIONAL" &&
                 post.ctaText &&
                 post.ctaLink
                 ? `
-                <div class="mt-2">
-                    <a href="/products/${post.postId}"
-                       class="btn btn-sm btn-primary">
-                        ${post.ctaText}
-                    </a>
-                </div>
+               <div class="mt-2">
+                   ${
+                       post.postType === "PROMOTIONAL" &&
+                       post.ctaText &&
+                       post.ctaLink
+                       ? `
+                       <div class="mt-2">
+                           <a href="${post.ctaLink}"
+                              target="_blank"
+                              class="btn btn-sm btn-primary">
+                               ${post.ctaText}
+                           </a>
+                       </div>
+                       `
+                       : ""
+                   }
+               </div>
                 `
                 : ""
             }
@@ -205,23 +230,62 @@ function createFeedPostCard(post, options = {}) {
 
             <hr>
 
+            <!-- ACTION ROW -->
             <div class="row text-center align-items-center">
 
-                <div class="col post-action">👍 Like</div>
-                <div class="col post-action">💬 Comment</div>
-                <div class="col post-action">🔗 Share</div>
+                <!-- LIKE -->
+                <div class="col post-action"
+                     style="cursor:pointer"
+                     onclick="likePostAction(${post.postId}, this)">
+                     👍 <span>${post.likeCount || 0}</span>
+                </div>
 
+                <!-- COMMENT -->
+                <div class="col post-action"
+                     style="cursor:pointer"
+                     onclick="toggleCommentBox(${post.postId})">
+                     💬 <span>${post.commentCount || 0}</span>
+                </div>
+
+                <!-- SHARE -->
+                <div class="col post-action"
+                     style="cursor:pointer"
+                     onclick="sharePostAction(${post.postId}, this)">
+                     🔗 <span>${post.shareCount || 0}</span>
+                </div>
+
+                <!-- SAVE -->
                 <div class="col post-action text-end">
                     <i class="bi ${options.isSaved ? 'bi-bookmark-fill' : 'bi-bookmark'}"
                        style="cursor:pointer;font-size:18px"
-                       onclick="
-                       ${options.isSaved
-                            ? `unsavePost(${post.postId}, this)`
-                            : `savePost(${post.postId}, this)`}"
+                       onclick="${
+                           options.isSaved
+                           ? `unsavePost(${post.postId}, this)`
+                           : `savePost(${post.postId}, this)`
+                       }"
                        title="Save post"></i>
                 </div>
 
             </div>
+
+            <!-- COMMENT BOX -->
+            <div id="comment-box-${post.postId}"
+                 class="mt-2"
+                 style="display:none;">
+
+                <input type="text"
+                       id="comment-input-${post.postId}"
+                       class="form-control form-control-sm"
+                       placeholder="Write a comment...">
+
+                <button class="btn btn-sm btn-primary mt-1"
+                        onclick="submitCommentAction(${post.postId})">
+                    Post
+                </button>
+            </div>
+
+            <!-- COMMENT LIST -->
+            <div id="comment-list-${post.postId}" class="mt-2"></div>
 
         </div>
     `;
@@ -607,6 +671,153 @@ function updatePost() {
     .catch(err => alert(err.message));
 }
 
+// ===============================
+// LIKE POST
+// ===============================
+function likePostAction(postId, element) {
+
+    fetch(`/posts/${postId}/like`, {
+        method: "POST"
+    })
+    .then(res => {
+        if (!res.ok) throw new Error("Like failed");
+        return res.json();
+    })
+    .then(newCount => {
+
+        const countSpan = element.querySelector("span");
+        countSpan.innerText = newCount;
+
+    })
+    .catch(err => console.error(err));
+}
+
+
+// ===============================
+// SHARE POST
+// ===============================
+function sharePostAction(postId, element) {
+
+    fetch(`/posts/${postId}/share`, {
+        method: "POST"
+    })
+    .then(res => {
+        if (!res.ok) throw new Error("Share failed");
+
+        const countSpan = element.querySelector("span");
+        let currentCount = parseInt(countSpan.innerText);
+
+        // Disable after first share
+        if (!element.classList.contains("shared")) {
+            countSpan.innerText = currentCount + 1;
+            element.classList.add("shared");
+        }
+    })
+    .catch(err => console.error(err));
+}
+
+
+// ===============================
+// TOGGLE COMMENT BOX
+function toggleCommentBox(postId) {
+
+    const box = document.getElementById(`comment-box-${postId}`);
+    const list = document.getElementById(`comment-list-${postId}`);
+
+    if (!box) return;
+
+    const isHidden = box.style.display === "none" || box.style.display === "";
+
+    if (isHidden) {
+        box.style.display = "block";
+        fetchComments(postId);   // 🔥 load comments when opening
+    } else {
+        box.style.display = "none";
+        list.innerHTML = "";     // optional: clear when closing
+    }
+}
+
+
+// ===============================
+// SUBMIT COMMENT
+// ===============================
+function submitCommentAction(postId) {
+
+    const input = document.getElementById(`comment-input-${postId}`);
+    const commentText = input.value.trim();
+
+    if (!commentText) {
+        alert("Comment cannot be empty");
+        return;
+    }
+
+    fetch(`/posts/${postId}/comments`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(commentText)
+    })
+    .then(res => {
+        if (!res.ok) throw new Error("Comment failed");
+        return res.text();
+    })
+    .then(() => {
+
+        // Clear input
+        input.value = "";
+
+        // Reload comments list 🔥
+        fetchComments(postId);
+
+        // Update comment count safely
+        const commentCol = input.closest(".row")
+            .querySelector(".post-action:nth-child(2) span");
+
+        let currentCount = parseInt(commentCol.innerText) || 0;
+        commentCol.innerText = currentCount + 1;
+
+    })
+    .catch(err => console.error(err));
+}
+
 //document.addEventListener("DOMContentLoaded", () => {
 //    fetchFeedPosts();
 //});
+
+function fetchComments(postId) {
+
+    fetch(`/posts/${postId}/comments`)
+    .then(res => {
+        if (!res.ok) throw new Error("Failed to fetch comments");
+        return res.json();
+    })
+    .then(comments => {
+
+        const list = document.getElementById(`comment-list-${postId}`);
+        list.innerHTML = "";
+
+        if (!comments || comments.length === 0) {
+            list.innerHTML = "<small class='text-muted'>No comments yet</small>";
+            return;
+        }
+
+        comments.forEach(comment => {
+
+            const div = document.createElement("div");
+            div.className = "border rounded p-2 mb-2 bg-light";
+
+            div.innerHTML = `
+                <strong>${comment.username}</strong>
+                <small class="text-muted ms-2">
+                    ${new Date(comment.createdAt).toLocaleString()}
+                </small>
+                <div>${comment.commentText}</div>
+            `;
+
+            list.appendChild(div);
+        });
+
+    })
+    .catch(err => console.error(err));
+}
