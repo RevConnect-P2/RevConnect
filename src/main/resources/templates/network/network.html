@@ -220,9 +220,13 @@
 
         <!-- LEFT SIDEBAR -->
         <div class="col-md-3">
-            <div class="sidebar-card">
-                <!-- You can include left sidebar if needed -->
-                <p><strong>Welcome,</strong> <span th:text="${user.username}"></span></p>
+            <div class="col-md-3"
+                 th:replace="layout/left-sidebar :: leftSidebar(
+             ${user},
+             ${connectionsCount},
+             ${followersCount},
+             ${followingCount}
+         )">
             </div>
         </div>
 

@@ -27,18 +27,15 @@ public class ConnectionController {
     // MAIN NETWORK PAGE
     @GetMapping
     public String connectionsPage(Principal principal, Model model) {
-
         User currentUser = userService.getUserByEmailOrThrow(principal.getName());
 
         List<Connection> connections = connectionService.getConnections(currentUser);
         List<Connection> pendingReceived = connectionService.getPendingRequests(currentUser);
         List<Connection> pendingSent = connectionService.getPendingSentRequests(currentUser);
 
-        // FOLLOW DATA
         List<User> followers = followService.getFollowers(currentUser);
         List<User> following = followService.getFollowing(currentUser);
 
-        // AVAILABLE USERS
         List<User> availableUsers = userService.getAllOtherUsers(currentUser.getUserId());
 
         model.addAttribute("followers", followers);
@@ -51,12 +48,9 @@ public class ConnectionController {
 
         // CONNECTION STATUS
         Map<Long, String> connectionStatusMap = new HashMap<>();
-
-        // FOLLOW STATUS
         Map<Long, Boolean> followStatusMap = new HashMap<>();
 
         for (User u : availableUsers) {
-
             if (connections.stream().anyMatch(c ->
                     (c.getSender().getUserId().equals(currentUser.getUserId()) &&
                             c.getReceiver().getUserId().equals(u.getUserId())) ||
@@ -64,26 +58,26 @@ public class ConnectionController {
                                     c.getSender().getUserId().equals(u.getUserId()))
             )) {
                 connectionStatusMap.put(u.getUserId(), "Connected");
-            }
-
-            else if (pendingSent.stream().anyMatch(req ->
+            } else if (pendingSent.stream().anyMatch(req ->
                     req.getReceiver().getUserId().equals(u.getUserId())
             )) {
                 connectionStatusMap.put(u.getUserId(), "Requested");
-            }
-
-            else {
+            } else {
                 connectionStatusMap.put(u.getUserId(), "Connect");
             }
 
             boolean isFollowing = following.stream()
                     .anyMatch(f -> f.getUserId().equals(u.getUserId()));
-
             followStatusMap.put(u.getUserId(), isFollowing);
         }
 
         model.addAttribute("connectionStatusMap", connectionStatusMap);
         model.addAttribute("followStatusMap", followStatusMap);
+
+        // ✅ ADD COUNT ATTRIBUTES
+        model.addAttribute("connectionsCount", connections.size());
+        model.addAttribute("followersCount", followers.size());
+        model.addAttribute("followingCount", following.size());
 
         return "network/network";
     }
@@ -118,5 +112,22 @@ public class ConnectionController {
         User currentUser = userService.getUserByEmailOrThrow(principal.getName());
         connectionService.removeConnection(connectionId, currentUser);
         return "redirect:/network";
+    }
+
+    @GetMapping("/dashboard")
+    public String dashboard(Principal principal, Model model) {
+
+        User user = userService.getUserByEmailOrThrow(principal.getName());
+
+        int connectionsCount = connectionService.getConnections(user).size();
+        int followersCount = followService.getFollowers(user).size();
+        int followingCount = followService.getFollowing(user).size();
+
+        model.addAttribute("user", user);
+        model.addAttribute("connectionsCount", connectionsCount);
+        model.addAttribute("followersCount", followersCount);
+        model.addAttribute("followingCount", followingCount);
+
+        return "dashboard/dashboard"; // folderName/fileName
     }
 }
