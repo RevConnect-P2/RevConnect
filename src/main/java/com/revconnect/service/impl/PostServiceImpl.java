@@ -412,7 +412,8 @@ public class PostServiceImpl implements PostService {
 
         // ================= NORMAL POSTS =================
         List<Post> posts =
-                postRepository.findByScheduledAtIsNullOrScheduledAtLessThanEqual(
+                postRepository.findGlobalFeedPosts(
+                        viewerUserId,
                         LocalDateTime.now()
                 );
 
