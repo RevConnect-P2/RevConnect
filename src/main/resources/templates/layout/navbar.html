@@ -16,14 +16,23 @@
             RevConnect
         </a>
 
-
         <!-- SEARCH -->
-        <form class="d-flex w-50">
-            <input class="form-control rounded-pill"
-                   type="search"
-                   placeholder="Search RevConnect">
-        </form>
+        <div class="position-relative w-50">
+            <input
+                    id="globalSearchInput"
+                    class="form-control rounded-pill"
+                    type="search"
+                    placeholder="Search RevConnect"
+                    autocomplete="off"
+            >
 
+            <!-- SEARCH RESULTS -->
+            <div
+                    id="searchResults"
+                    class="list-group position-absolute w-100 mt-2 shadow"
+                    style="z-index:1000; display:none;">
+            </div>
+        </div>
 
 
         <!-- RIGHT MENU -->
@@ -126,6 +135,6 @@
     </div>
 
 </nav>
-
+<script src="/js/search.js"></script>
 </body>
 </html>

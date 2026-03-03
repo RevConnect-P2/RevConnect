@@ -13,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -159,5 +160,25 @@ public class PageController {
 
             return "profile/business-hours";
         }
+    }
+
+    // ================= PUBLIC PROFILE PAGE =================
+    @GetMapping("/profile/{userId}")
+    public String viewPublicProfile(
+            @PathVariable Long userId,
+            Model model
+    ) {
+        ProfileResponse profile = profileService.getProfile(userId);
+        model.addAttribute("profile", profile);
+
+        // Optional: business hours for BUSINESS profiles
+        if (profile.getProfileType() == ProfileType.BUSINESS) {
+            model.addAttribute(
+                    "businessHours",
+                    profileService.getBusinessHours(userId)
+            );
+        }
+
+        return "profile/profile";
     }
 }
