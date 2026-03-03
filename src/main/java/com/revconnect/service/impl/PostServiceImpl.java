@@ -364,12 +364,12 @@ public class PostServiceImpl implements PostService {
 
         return postMapper.toPostResponse(saved, List.of(), List.of());
     }
-
     @Override
     public List<PostResponse> getGlobalFeed(Long viewerUserId) {
 
         List<Post> visiblePosts =
-                postRepository.findByScheduledAtIsNullOrScheduledAtLessThanEqual(
+                postRepository.findGlobalFeedPosts(
+                        viewerUserId,
                         LocalDateTime.now()
                 );
 
@@ -378,6 +378,7 @@ public class PostServiceImpl implements PostService {
         visiblePosts.stream()
                 .sorted((p1, p2) -> p2.getCreatedAt().compareTo(p1.getCreatedAt()))
                 .forEach(post -> {
+
                     List<Hashtag> hashtags = getHashtagsForPost(post);
                     List<TagResponse> tags = getTagsForPost(post);
 
@@ -405,6 +406,20 @@ public class PostServiceImpl implements PostService {
                         .tagType(t.getTagType())
                         .build())
                 .toList();
+    }
+
+    // =========================
+// COUNT POSTS BY USER (FOR PROFILE PAGE)
+// =========================
+    @Override
+    public long countPostsByUser(Long userId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("User not found"));
+
+        return postRepository.countByUser(user);
+
     }
 
 }

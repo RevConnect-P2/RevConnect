@@ -187,12 +187,23 @@ function createFeedPostCard(post, options = {}) {
                 post.ctaText &&
                 post.ctaLink
                 ? `
-                <div class="mt-2">
-                    <a href="/products/${post.postId}"
-                       class="btn btn-sm btn-primary">
-                        ${post.ctaText}
-                    </a>
-                </div>
+               <div class="mt-2">
+                   ${
+                       post.postType === "PROMOTIONAL" &&
+                       post.ctaText &&
+                       post.ctaLink
+                       ? `
+                       <div class="mt-2">
+                           <a href="${post.ctaLink}"
+                              target="_blank"
+                              class="btn btn-sm btn-primary">
+                               ${post.ctaText}
+                           </a>
+                       </div>
+                       `
+                       : ""
+                   }
+               </div>
                 `
                 : ""
             }
