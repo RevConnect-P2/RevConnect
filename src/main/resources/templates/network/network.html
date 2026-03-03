@@ -86,12 +86,29 @@
         .network-item span {
             font-weight: 500;
             font-size: 0.95rem;
+            flex: 1;
+        }
+
+        .network-item div {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .network-item div + div {
+            margin-left: 30px;
+        }
+
+        .network-item form {
+            margin: 0;
         }
 
         /* Buttons styling */
         .network-item button {
             font-size: 0.8rem;
             padding: 3px 8px;
+            white-space: nowrap;
+}
         }
 
         .btn-success {
@@ -257,28 +274,45 @@
                 <!-- AVAILABLE USERS TO CONNECT -->
                 <h6>People You May Know</h6>
                 <div th:each="u : ${availableUsers}" class="network-item">
+
                     <span th:text="${u.username}">Username</span>
 
-                    <!-- Connection button -->
-                    <!-- Connection button -->
-                    <div th:switch="${userStatusMap[u.userId] ?: 'Connect/Follow'}">
-                        <!-- Default: Can Connect or Follow -->
-                        <form th:case="'Connect/Follow'" th:action="@{/network/request/{id}(id=${u.userId})}" method="post" style="display:inline;">
+                    <!-- CONNECT BUTTON -->
+                    <div th:switch="${connectionStatusMap[u.userId]}">
+
+                        <form th:case="'Connect'" th:action="@{/network/request/{id}(id=${u.userId})}" method="post" style="display:inline;">
                             <button type="submit" class="btn btn-primary btn-sm ms-2">Connect</button>
                         </form>
-                        <button th:case="'Requested'" type="button" class="btn btn-secondary btn-sm ms-2" disabled>Requested</button>
-                        <button th:case="'Connected'" type="button" class="btn btn-success btn-sm ms-2" disabled>Connected</button>
+
+                        <button th:case="'Requested'" class="btn btn-secondary btn-sm ms-2" disabled>
+                            Requested
+                        </button>
+
+                        <button th:case="'Connected'" class="btn btn-success btn-sm ms-2" disabled>
+                            Connected
+                        </button>
+
                     </div>
 
-                    <!-- Follow button -->
-                    <div th:switch="${userStatusMap[u.userId]}">
-                        <form th:case="'Connect/Follow'" th:action="@{/network/follow/follow/{id}(id=${u.userId})}" method="post" style="display:inline;">
+                    <!-- FOLLOW BUTTON -->
+                    <div th:if="${u.userType == 'CREATOR' or u.userType == 'BUSINESS'}">
+
+                        <form th:if="${!followStatusMap[u.userId]}"
+                              th:action="@{/network/follow/follow/{id}(id=${u.userId})}"
+                              method="post" style="display:inline;">
                             <button type="submit" class="btn btn-success btn-sm ms-2">Follow</button>
                         </form>
-                        <form th:case="'Following'" th:action="@{/network/follow/unfollow/{id}(id=${u.userId})}" method="post" style="display:inline;">
-                            <button type="submit" class="btn btn-outline-secondary btn-sm ms-2">Following</button>
+
+                        <form th:if="${followStatusMap[u.userId]}"
+                              th:action="@{/network/follow/unfollow/{id}(id=${u.userId})}"
+                              method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-outline-secondary btn-sm ms-2">
+                                Following
+                            </button>
                         </form>
+
                     </div>
+
                 </div>
 
             </div>

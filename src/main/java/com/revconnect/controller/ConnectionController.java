@@ -27,52 +27,63 @@ public class ConnectionController {
     // MAIN NETWORK PAGE
     @GetMapping
     public String connectionsPage(Principal principal, Model model) {
+
         User currentUser = userService.getUserByEmailOrThrow(principal.getName());
 
         List<Connection> connections = connectionService.getConnections(currentUser);
-        List<Connection> pendingReceived = connectionService.getPendingRequests(currentUser); // received requests
-        List<Connection> pendingSent = connectionService.getPendingSentRequests(currentUser); // **you need this method**
+        List<Connection> pendingReceived = connectionService.getPendingRequests(currentUser);
+        List<Connection> pendingSent = connectionService.getPendingSentRequests(currentUser);
 
-        model.addAttribute("followers", followService.getFollowers(currentUser));
-        model.addAttribute("following", followService.getFollowing(currentUser));
-        model.addAttribute("availableUsers", userService.getAllOtherUsers(currentUser.getUserId()));
+        // FOLLOW DATA
+        List<User> followers = followService.getFollowers(currentUser);
+        List<User> following = followService.getFollowing(currentUser);
+
+        // AVAILABLE USERS
+        List<User> availableUsers = userService.getAllOtherUsers(currentUser.getUserId());
+
+        model.addAttribute("followers", followers);
+        model.addAttribute("following", following);
+        model.addAttribute("availableUsers", availableUsers);
 
         model.addAttribute("connections", connections);
         model.addAttribute("pendingRequests", pendingReceived);
         model.addAttribute("user", currentUser);
 
-        // Build userStatusMap
-        Map<Long, String> userStatusMap = new HashMap<>();
+        // CONNECTION STATUS
+        Map<Long, String> connectionStatusMap = new HashMap<>();
 
-        List<User> following = followService.getFollowing(currentUser);
+        // FOLLOW STATUS
+        Map<Long, Boolean> followStatusMap = new HashMap<>();
 
-        for (User u : userService.getAllOtherUsers(currentUser.getUserId())) {
+        for (User u : availableUsers) {
 
             if (connections.stream().anyMatch(c ->
-                    (c.getSender().getUserId().equals(currentUser.getUserId()) && c.getReceiver().getUserId().equals(u.getUserId())) ||
-                            (c.getReceiver().getUserId().equals(currentUser.getUserId()) && c.getSender().getUserId().equals(u.getUserId()))
+                    (c.getSender().getUserId().equals(currentUser.getUserId()) &&
+                            c.getReceiver().getUserId().equals(u.getUserId())) ||
+                            (c.getReceiver().getUserId().equals(currentUser.getUserId()) &&
+                                    c.getSender().getUserId().equals(u.getUserId()))
             )) {
-                userStatusMap.put(u.getUserId(), "Connected");
+                connectionStatusMap.put(u.getUserId(), "Connected");
             }
 
             else if (pendingSent.stream().anyMatch(req ->
                     req.getReceiver().getUserId().equals(u.getUserId())
             )) {
-                userStatusMap.put(u.getUserId(), "Requested");
-            }
-
-            else if (following.stream().anyMatch(f ->
-                    f.getUserId().equals(u.getUserId())
-            )) {
-                userStatusMap.put(u.getUserId(), "Following");
+                connectionStatusMap.put(u.getUserId(), "Requested");
             }
 
             else {
-                userStatusMap.put(u.getUserId(), "Connect/Follow");
+                connectionStatusMap.put(u.getUserId(), "Connect");
             }
+
+            boolean isFollowing = following.stream()
+                    .anyMatch(f -> f.getUserId().equals(u.getUserId()));
+
+            followStatusMap.put(u.getUserId(), isFollowing);
         }
 
-        model.addAttribute("userStatusMap", userStatusMap);
+        model.addAttribute("connectionStatusMap", connectionStatusMap);
+        model.addAttribute("followStatusMap", followStatusMap);
 
         return "network/network";
     }
