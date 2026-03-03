@@ -233,12 +233,18 @@ function createFeedPostCard(post, options = {}) {
             <!-- ACTION ROW -->
             <div class="row text-center align-items-center">
 
-                <!-- LIKE -->
-                <div class="col post-action"
-                     style="cursor:pointer"
-                     onclick="likePostAction(${post.postId}, this)">
-                     👍 <span>${post.likeCount || 0}</span>
-                </div>
+               <!-- LIKE -->
+               <!-- LIKE -->
+               <div class="col post-action like-action"
+                    style="cursor:pointer"
+                    onclick="likePostAction(${post.postId}, this)">
+                    👍
+                    <span class="like-count"
+                          style="cursor:pointer; font-weight:600;"
+                          onclick="toggleLikeList(event, ${post.postId})">
+                          ${post.likeCount || 0}
+                    </span>
+               </div>
 
                 <!-- COMMENT -->
                 <div class="col post-action"
@@ -251,7 +257,11 @@ function createFeedPostCard(post, options = {}) {
                 <div class="col post-action"
                      style="cursor:pointer"
                      onclick="sharePostAction(${post.postId}, this)">
-                     🔗 <span>${post.shareCount || 0}</span>
+                     🔗
+                     <span style="cursor:pointer; font-weight:600;"
+                           onclick="toggleShareList(event, ${post.postId})">
+                           ${post.shareCount || 0}
+                     </span>
                 </div>
 
                 <!-- SAVE -->
@@ -286,9 +296,30 @@ function createFeedPostCard(post, options = {}) {
 
             <!-- COMMENT LIST -->
             <div id="comment-list-${post.postId}" class="mt-2"></div>
-
+            <!-- LIKE LIST -->
+            <div id="like-list-${post.postId}"
+                 class="mt-2"
+                 style="display:none;"></div>
         </div>
+            <div id="share-list-${post.postId}"
+                 class="mt-2"
+                 style="display:none;"></div>
     `;
+const likeDiv = card.querySelector(".like-action");
+const likeCountSpan = card.querySelector(".like-count");
+
+if (likeDiv) {
+    likeDiv.addEventListener("click", function () {
+        likePostAction(post.postId, likeDiv);
+    });
+}
+
+if (likeCountSpan) {
+    likeCountSpan.addEventListener("click", function (event) {
+        event.stopPropagation();   // prevents like toggle
+        showLikes(post.postId);
+    });
+}
 
     return card;
 }
@@ -703,15 +734,18 @@ function sharePostAction(postId, element) {
     })
     .then(res => {
         if (!res.ok) throw new Error("Share failed");
+        return res.json();   // returns updated count
+    })
+    .then(newCount => {
 
         const countSpan = element.querySelector("span");
-        let currentCount = parseInt(countSpan.innerText);
+        countSpan.innerText = newCount;
 
-        // Disable after first share
-        if (!element.classList.contains("shared")) {
-            countSpan.innerText = currentCount + 1;
-            element.classList.add("shared");
-        }
+        element.classList.add("shared");
+
+        // 🔥 REFRESH FEED
+        fetchFeedPosts();
+
     })
     .catch(err => console.error(err));
 }
@@ -721,19 +755,44 @@ function sharePostAction(postId, element) {
 // TOGGLE COMMENT BOX
 function toggleCommentBox(postId) {
 
-    const box = document.getElementById(`comment-box-${postId}`);
-    const list = document.getElementById(`comment-list-${postId}`);
+    const commentBox =
+        document.getElementById(`comment-box-${postId}`);
 
-    if (!box) return;
+    const commentList =
+        document.getElementById(`comment-list-${postId}`);
 
-    const isHidden = box.style.display === "none" || box.style.display === "";
+    const likeContainer =
+        document.getElementById(`like-list-${postId}`);
+
+    const shareContainer =
+        document.getElementById(`share-list-${postId}`);
+
+    if (!commentBox) return;
+
+    const isHidden =
+        commentBox.style.display === "none" ||
+        commentBox.style.display === "";
+
+    // 🔥 CLOSE LIKE + SHARE FIRST
+    if (likeContainer) {
+        likeContainer.style.display = "none";
+        likeContainer.innerHTML = "";
+    }
+
+    if (shareContainer) {
+        shareContainer.style.display = "none";
+        shareContainer.innerHTML = "";
+    }
 
     if (isHidden) {
-        box.style.display = "block";
-        fetchComments(postId);   // 🔥 load comments when opening
+
+        commentBox.style.display = "block";
+        fetchComments(postId);
+
     } else {
-        box.style.display = "none";
-        list.innerHTML = "";     // optional: clear when closing
+
+        commentBox.style.display = "none";
+        if (commentList) commentList.innerHTML = "";
     }
 }
 
@@ -820,4 +879,212 @@ function fetchComments(postId) {
 
     })
     .catch(err => console.error(err));
+}
+
+// ===============================
+// FETCH PROFILE POSTS
+// ===============================
+function fetchProfilePosts() {
+
+    const container = document.getElementById("profilePostsContainer");
+    if (!container) return;
+
+    container.innerHTML = "<p class='text-center text-muted'>Loading posts...</p>";
+
+    fetch(`/posts/my/data?userId=${currentUser.userId}`)
+        .then(res => {
+            if (!res.ok) throw new Error("Failed to load profile posts");
+            return res.json();
+        })
+        .then(posts => {
+
+            container.innerHTML = "";
+
+            if (!posts || posts.length === 0) {
+                container.innerHTML =
+                    "<div class='card text-center p-4'>No posts yet</div>";
+                return;
+            }
+
+            posts.forEach(post => {
+                const card = createFeedPostCard(post, {
+                    showPinned: true,
+                    isSaved: false
+                });
+
+                container.appendChild(card);
+            });
+
+        })
+        .catch(err => {
+            console.error(err);
+            container.innerHTML =
+                "<p class='text-center text-danger'>Error loading posts</p>";
+        });
+}
+        // ===============================
+        // SHOW USERS WHO LIKED
+        // ===============================
+//function showLikes(postId) {
+//
+//    fetch(`/posts/${postId}/likes`)
+//    .then(res => res.json())
+//    .then(users => {
+//
+//        if (!users || users.length === 0) {
+//            alert("No likes yet");
+//            return;
+//        }
+//
+//        alert("Liked by:\n\n" + users.join("\n"));
+//    })
+//    .catch(err => console.error(err));
+//}
+
+function toggleLikeList(event, postId) {
+
+    event.stopPropagation();
+
+    const likeContainer =
+        document.getElementById(`like-list-${postId}`);
+
+    const shareContainer =
+        document.getElementById(`share-list-${postId}`);
+
+    const commentBox =
+        document.getElementById(`comment-box-${postId}`);
+
+    const commentList =
+        document.getElementById(`comment-list-${postId}`);
+
+    if (!likeContainer) return;
+
+    const isHidden =
+        likeContainer.style.display === "none" ||
+        likeContainer.style.display === "";
+
+    // 🔥 CLOSE SHARE
+    if (shareContainer) {
+        shareContainer.style.display = "none";
+        shareContainer.innerHTML = "";
+    }
+
+    // 🔥 CLOSE COMMENT
+    if (commentBox) {
+        commentBox.style.display = "none";
+    }
+
+    if (commentList) {
+        commentList.innerHTML = "";
+    }
+
+    if (isHidden) {
+
+        likeContainer.style.display = "block";
+
+        fetch(`/posts/${postId}/likes`)
+        .then(res => res.json())
+        .then(users => {
+
+            likeContainer.innerHTML = "";
+
+            if (!users || users.length === 0) {
+                likeContainer.innerHTML =
+                    "<small class='text-muted'>No likes yet</small>";
+                return;
+            }
+
+            users.forEach(username => {
+
+                const div = document.createElement("div");
+                div.className =
+                    "border rounded p-2 mb-2 bg-light";
+
+                div.innerHTML =
+                    `<strong>${username}</strong>`;
+
+                likeContainer.appendChild(div);
+            });
+
+        });
+
+    } else {
+
+        likeContainer.style.display = "none";
+        likeContainer.innerHTML = "";
+    }
+}
+
+function toggleShareList(event, postId) {
+
+    event.stopPropagation();
+
+    const shareContainer =
+        document.getElementById(`share-list-${postId}`);
+
+    const likeContainer =
+        document.getElementById(`like-list-${postId}`);
+
+    const commentBox =
+        document.getElementById(`comment-box-${postId}`);
+
+    const commentList =
+        document.getElementById(`comment-list-${postId}`);
+
+    if (!shareContainer) return;
+
+    const isHidden =
+        shareContainer.style.display === "none" ||
+        shareContainer.style.display === "";
+
+    // 🔥 CLOSE LIKE
+    if (likeContainer) {
+        likeContainer.style.display = "none";
+        likeContainer.innerHTML = "";
+    }
+
+    // 🔥 CLOSE COMMENT
+    if (commentBox) {
+        commentBox.style.display = "none";
+    }
+
+    if (commentList) {
+        commentList.innerHTML = "";
+    }
+
+    if (isHidden) {
+
+        shareContainer.style.display = "block";
+
+        fetch(`/posts/${postId}/shares`)
+        .then(res => res.json())
+        .then(users => {
+
+            shareContainer.innerHTML = "";
+
+            if (!users || users.length === 0) {
+                shareContainer.innerHTML =
+                    "<small class='text-muted'>No shares yet</small>";
+                return;
+            }
+
+            users.forEach(username => {
+
+                const div = document.createElement("div");
+                div.className =
+                    "border rounded p-2 mb-2 bg-light";
+
+                div.innerHTML =
+                    `<strong>${username}</strong>`;
+
+                shareContainer.appendChild(div);
+            });
+
+        });
+
+    } else {
+
+        shareContainer.style.display = "none";
+        shareContainer.innerHTML = "";
+    }
 }

@@ -57,10 +57,31 @@ public class SocialInteractionController {
 
     // ================= SHARE =================
     @PostMapping("/{postId}/share")
-    public ResponseEntity<?> sharePost(@PathVariable Long postId,
-                                       Principal principal) {
+    public ResponseEntity<Long> sharePost(@PathVariable Long postId,
+                                          Principal principal) {
 
         shareService.sharePost(postId, principal.getName());
-        return ResponseEntity.ok("Post shared");
+
+        Long updatedCount = shareService.getShareCount(postId);
+
+        return ResponseEntity.ok(updatedCount);
+    }
+
+    // ================= GET USERS WHO LIKED =================
+    @GetMapping("/{postId}/likes")
+    public ResponseEntity<?> getUsersWhoLiked(@PathVariable Long postId) {
+
+        return ResponseEntity.ok(
+                likeService.getUsersWhoLiked(postId)
+        );
+    }
+
+    // ================= GET USERS WHO SHARED =================
+    @GetMapping("/{postId}/shares")
+    public ResponseEntity<?> getUsersWhoShared(@PathVariable Long postId) {
+
+        return ResponseEntity.ok(
+                shareService.getUsersWhoShared(postId)
+        );
     }
 }

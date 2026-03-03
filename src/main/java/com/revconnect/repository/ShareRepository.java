@@ -13,5 +13,6 @@ public interface ShareRepository extends JpaRepository<Share, Long> {
     Long countByOriginalPost_PostId(Long postId);
 
     List<Share> findAllByOrderByCreatedAtDesc();
+    List<Share> findByOriginalPost_PostId(Long postId);
 
 }

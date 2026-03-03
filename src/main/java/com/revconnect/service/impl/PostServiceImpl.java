@@ -275,21 +275,59 @@ public class PostServiceImpl implements PostService {
         // pinned posts first
         visiblePosts.stream()
                 .filter(Post::getPinned)
-                .forEach(post -> responses.add(
-                        postMapper.toPostResponse(
-                                post,
-                                getHashtagsForPost(post),
-                                getTagsForPost(post)
-                        )
-                ));
+                .forEach(post -> {
+
+                    PostResponse response =
+                            postMapper.toPostResponse(
+                                    post,
+                                    getHashtagsForPost(post),
+                                    getTagsForPost(post)
+                            );
+
+                    // ✅ ADD THESE 3 LINES
+                    response.setLikeCount(
+                            postLikeRepository.countByPost_PostId(post.getPostId())
+                    );
+
+                    response.setCommentCount(
+                            commentRepository.countByPost_PostId(post.getPostId())
+                    );
+
+                    response.setShareCount(
+                            shareRepository.countByOriginalPost_PostId(post.getPostId())
+                    );
+
+                    responses.add(response);
+                });
 
         // remaining posts
         visiblePosts.stream()
                 .filter(post -> !post.getPinned())
                 .sorted((p1, p2) -> p2.getCreatedAt().compareTo(p1.getCreatedAt()))
-                .forEach(post -> responses.add(
-                        postMapper.toPostResponse(post, List.of(), List.of())
-                ));
+                .forEach(post -> {
+
+                    PostResponse response =
+                            postMapper.toPostResponse(
+                                    post,
+                                    getHashtagsForPost(post),
+                                    getTagsForPost(post)
+                            );
+
+                    // ✅ ADD THESE 3 LINES
+                    response.setLikeCount(
+                            postLikeRepository.countByPost_PostId(post.getPostId())
+                    );
+
+                    response.setCommentCount(
+                            commentRepository.countByPost_PostId(post.getPostId())
+                    );
+
+                    response.setShareCount(
+                            shareRepository.countByOriginalPost_PostId(post.getPostId())
+                    );
+
+                    responses.add(response);
+                });
 
         return responses;
     }

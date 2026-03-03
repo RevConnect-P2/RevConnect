@@ -60,4 +60,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     // ================================
     long countByUser(User user);
 
+    List<Post> findByScheduledAtIsNullOrScheduledAtLessThanEqual(LocalDateTime now);
 }
