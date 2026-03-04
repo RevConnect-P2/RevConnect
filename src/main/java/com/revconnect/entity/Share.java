@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 public class Share {
 
     @Id
+
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "SHARE_ID")
     private Long shareId;
