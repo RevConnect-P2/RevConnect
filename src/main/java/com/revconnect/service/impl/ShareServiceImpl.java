@@ -31,11 +31,8 @@ public class ShareServiceImpl implements ShareService {
     @Override
     public void sharePost(Long postId, String email) {
 
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
+        User user = getUserByEmail(email);
+        Post post = getPostById(postId);
 
         Optional<Share> existingShare =
                 shareRepository.findByOriginalPost_PostIdAndSharedBy_UserId(
@@ -55,21 +52,7 @@ public class ShareServiceImpl implements ShareService {
 
         shareRepository.save(share);
 
-        // 🔔 CREATE SHARE NOTIFICATION
-        Long senderId = user.getUserId();
-        Long receiverId = post.getUser().getUserId();
-
-        // prevent self-notification
-        if (!senderId.equals(receiverId)) {
-
-            notificationService.createNotification(
-                    senderId,
-                    receiverId,
-                    postId,
-                    NotificationType.SHARE,
-                    null
-            );
-        }
+        createShareNotification(user, post);
     }
 
     // =========================
@@ -78,8 +61,7 @@ public class ShareServiceImpl implements ShareService {
     @Override
     public void unsharePost(Long postId, String email) {
 
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = getUserByEmail(email);
 
         Share share = shareRepository
                 .findByOriginalPost_PostIdAndSharedBy_UserId(
@@ -92,16 +74,13 @@ public class ShareServiceImpl implements ShareService {
     }
 
     // =========================
-    // TOGGLE SHARE / UNSHARE
+    // TOGGLE SHARE
     // =========================
     @Override
     public boolean toggleShare(Long postId, String email) {
 
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
+        User user = getUserByEmail(email);
+        Post post = getPostById(postId);
 
         Optional<Share> existingShare =
                 shareRepository.findByOriginalPost_PostIdAndSharedBy_UserId(
@@ -110,18 +89,21 @@ public class ShareServiceImpl implements ShareService {
                 );
 
         // already shared → unshare
-        if(existingShare.isPresent()){
+        if (existingShare.isPresent()) {
+
             shareRepository.delete(existingShare.get());
             return false;
         }
 
-        // not shared → create share
+        // create share
         Share share = Share.builder()
                 .originalPost(post)
                 .sharedBy(user)
                 .build();
 
         shareRepository.save(share);
+
+        createShareNotification(user, post);
 
         return true;
     }
@@ -131,6 +113,7 @@ public class ShareServiceImpl implements ShareService {
     // =========================
     @Override
     public Long getShareCount(Long postId) {
+
         return shareRepository.countByOriginalPost_PostId(postId);
     }
 
@@ -140,10 +123,44 @@ public class ShareServiceImpl implements ShareService {
     @Override
     public List<String> getUsersWhoShared(Long postId) {
 
-        return shareRepository
-                .findByOriginalPost_PostId(postId)
-                .stream()
-                .map(share -> share.getSharedBy().getUsername())
-                .toList();
+        // optimized query from repository
+        return shareRepository.findUsernamesWhoShared(postId);
+    }
+
+    // =========================
+    // HELPER METHODS
+    // =========================
+
+    private User getUserByEmail(String email) {
+
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    private Post getPostById(Long postId) {
+
+        return postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+    }
+
+    // =========================
+    // CREATE SHARE NOTIFICATION
+    // =========================
+    private void createShareNotification(User sender, Post post) {
+
+        Long senderId = sender.getUserId();
+        Long receiverId = post.getUser().getUserId();
+
+        // prevent self notification
+        if (!senderId.equals(receiverId)) {
+
+            notificationService.createNotification(
+                    senderId,
+                    receiverId,
+                    post.getPostId(),
+                    NotificationType.SHARE,
+                    null
+            );
+        }
     }
 }

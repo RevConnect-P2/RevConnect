@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/posts")
@@ -22,12 +23,26 @@ public class SocialInteractionController {
 
     // ================= LIKE =================
     @PostMapping("/{postId}/like")
-    public long toggleLike(@PathVariable Long postId,
-                           Principal principal) {
+    public ResponseEntity<?> toggleLike(@PathVariable Long postId,
+                                        Principal principal) {
 
-        likeService.toggleLike(postId, principal.getName());
+        if (principal == null) {
+            throw new RuntimeException("User not authenticated");
+        }
 
-        return postLikeRepository.countByPost_PostId(postId);
+        System.out.println("LIKE API HIT");
+
+        boolean liked = likeService.toggleLike(postId, principal.getName());
+
+        long likeCount =
+                postLikeRepository.countByPost_PostId(postId);
+
+        return ResponseEntity.ok(
+                Map.of(
+                        "liked", liked,
+                        "likeCount", likeCount
+                )
+        );
     }
 
     // ================= COMMENT =================
@@ -36,10 +51,18 @@ public class SocialInteractionController {
                                         @RequestBody String commentText,
                                         Principal principal) {
 
+        if (principal == null) {
+            throw new RuntimeException("User not authenticated");
+        }
+
+        System.out.println("COMMENT API HIT");
+
         commentService.addComment(postId, principal.getName(), commentText);
+
         return ResponseEntity.ok("Comment added");
     }
 
+    // ================= GET COMMENTS =================
     @GetMapping("/{postId}/comments")
     public ResponseEntity<?> getComments(@PathVariable Long postId) {
 
@@ -48,19 +71,30 @@ public class SocialInteractionController {
         );
     }
 
-    // ================= SHARE (TOGGLE) =================
+    // ================= SHARE =================
     @PostMapping("/{postId}/share")
-    public ResponseEntity<Long> toggleShare(@PathVariable Long postId,
-                                            Principal principal) {
+    public ResponseEntity<?> toggleShare(@PathVariable Long postId,
+                                         Principal principal) {
 
-        shareService.toggleShare(postId, principal.getName());
+        if (principal == null) {
+            throw new RuntimeException("User not authenticated");
+        }
 
-        Long updatedCount = shareService.getShareCount(postId);
+        System.out.println("SHARE API HIT");
 
-        return ResponseEntity.ok(updatedCount);
+        boolean shared = shareService.toggleShare(postId, principal.getName());
+
+        long shareCount = shareService.getShareCount(postId);
+
+        return ResponseEntity.ok(
+                Map.of(
+                        "shared", shared,
+                        "shareCount", shareCount
+                )
+        );
     }
 
-    // ================= GET USERS WHO LIKED =================
+    // ================= USERS WHO LIKED =================
     @GetMapping("/{postId}/likes")
     public ResponseEntity<?> getUsersWhoLiked(@PathVariable Long postId) {
 

@@ -13,8 +13,8 @@
         .notification-count{
 
             position:absolute;
-            top:-5px;
-            right:8px;
+            top:-6px;
+            right:5px;
 
             background:red;
             color:white;
@@ -32,15 +32,17 @@
 
 <body>
 
+<!-- ========================= -->
 <!-- NAVBAR FRAGMENT -->
+<!-- ========================= -->
 
 <nav th:fragment="navbar(user)"
-     class="navbar navbar-expand-lg sticky-top">
+     class="navbar navbar-expand-lg sticky-top bg-white shadow-sm">
 
     <div class="container">
 
         <!-- LOGO -->
-        <a href="/dashboard"
+        <a th:href="@{/dashboard}"
            class="navbar-brand fw-bold text-primary"
            style="font-size:22px;">
 
@@ -48,7 +50,7 @@
 
         </a>
 
-        <!-- SEARCH -->
+        <!-- SEARCH BAR -->
 
         <form class="d-flex w-50">
 
@@ -58,7 +60,7 @@
 
         </form>
 
-        <!-- RIGHT MENU -->
+        <!-- RIGHT SIDE MENU -->
 
         <ul class="navbar-nav ms-auto align-items-center">
 
@@ -66,8 +68,8 @@
 
             <li class="nav-item text-center mx-3">
 
-                <a href="/dashboard"
-                   class="nav-link">
+                <a th:href="@{/dashboard}"
+                   class="nav-link text-dark">
 
                     <i class="bi bi-house fs-5"></i>
 
@@ -83,8 +85,8 @@
 
             <li class="nav-item text-center mx-3">
 
-                <a href="/network"
-                   class="nav-link">
+                <a th:href="@{/network}"
+                   class="nav-link text-dark">
 
                     <i class="bi bi-people fs-5"></i>
 
@@ -101,12 +103,14 @@
             <li class="nav-item text-center mx-3">
 
                 <a th:href="@{/notifications}"
-                   class="nav-link text-dark position-relative notification-link">
+                   class="nav-link position-relative notification-link">
 
                     <i class="bi bi-bell fs-5"></i>
 
+                    <!-- Notification Count Badge -->
+
                     <span class="notification-count"
-                          th:if="${unreadCount > 0}"
+                          th:if="${unreadCount != null and unreadCount > 0}"
                           th:text="${unreadCount}">
                     </span>
 
@@ -122,8 +126,8 @@
 
             <li class="nav-item text-center mx-3">
 
-                <a href="/profile"
-                   class="nav-link">
+                <a th:href="@{/profile}"
+                   class="nav-link text-dark">
 
                     <i class="bi bi-person-circle fs-5"></i>
 
@@ -140,7 +144,7 @@
 
             <li class="nav-item mx-3">
 
-                <a href="/logout"
+                <a th:href="@{/logout}"
                    class="btn btn-danger btn-sm rounded-pill">
 
                     Logout

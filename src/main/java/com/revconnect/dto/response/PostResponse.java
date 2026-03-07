@@ -12,6 +12,9 @@ import java.util.List;
 @Builder
 public class PostResponse {
 
+    // =========================
+    // POST DETAILS
+    // =========================
     private Long postId;
 
     private String content;
@@ -21,30 +24,63 @@ public class PostResponse {
     private Boolean pinned;
 
     private String ctaText;
+
     private String ctaLink;
 
     private LocalDateTime scheduledAt;
 
     private LocalDateTime createdAt;
 
+
+
+    // =========================
+    // AUTHOR
+    // =========================
     private Long userId;
+
     private String username;
 
+
+
+    // =========================
+    // HASHTAGS
+    // =========================
     private List<String> hashtags;
 
-    // 🆕 Tagged Products / Services
+
+
+    // =========================
+    // PRODUCT / SERVICE TAGS
+    // =========================
     private List<TagResponse> tags;
 
-    // ✅ ADD THESE TWO
-    private Long likeCount;
-    private boolean likedByCurrentUser;
 
-    private Long commentCount;
 
-    private Long shareCount;
+    // =========================
+    // INTERACTIONS
+    // =========================
+    @Builder.Default
+    private Long likeCount = 0L;
 
-    private Boolean isSharedPost;
+    @Builder.Default
+    private boolean likedByCurrentUser = false;
+
+    @Builder.Default
+    private Long commentCount = 0L;
+
+    @Builder.Default
+    private Long shareCount = 0L;
+
+
+    // =========================
+// SHARE INFO (FOR FEED)
+// =========================
+    @Builder.Default
+    @com.fasterxml.jackson.annotation.JsonProperty("isSharedPost")
+    private boolean isSharedPost = false;
+
     private String sharedByUsername;
+
     private String originalAuthorUsername;
 
 }

@@ -1,6 +1,7 @@
 package com.revconnect.controller;
 
 import com.revconnect.entity.User;
+import com.revconnect.service.NotificationService;
 import com.revconnect.service.PostService;
 
 import jakarta.servlet.http.HttpSession;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class DashboardController {
 
     private final PostService postService;
+    private final NotificationService notificationService; // 🔔 add this
 
     @GetMapping("/dashboard")
     public String dashboard(HttpSession session, Model model) {
@@ -31,13 +33,19 @@ public class DashboardController {
         // ✅ Send user to dashboard
         model.addAttribute("user", user);
 
+        // 🔔 ADD NOTIFICATION COUNT
+        long unreadCount =
+                notificationService.getUnreadCount(user.getUserId());
+
+        model.addAttribute("unreadCount", unreadCount);
+
         // ✅ GLOBAL FEED
         model.addAttribute(
                 "posts",
                 postService.getGlobalFeed(user.getUserId())
         );
 
-        // ✅ TRENDING HASHTAGS (NEW FEATURE)
+        // ✅ TRENDING HASHTAGS
         model.addAttribute(
                 "trendingTags",
                 postService.getTrendingHashtags()

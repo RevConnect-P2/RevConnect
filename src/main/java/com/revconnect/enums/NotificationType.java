@@ -2,11 +2,21 @@ package com.revconnect.enums;
 
 public enum NotificationType {
 
+    // ========================
+    // Post interactions
+    // ========================
     LIKE,
     COMMENT,
+    SHARE,
+
+    // ========================
+    // Social interactions
+    // ========================
     FOLLOW,
     CONNECTION,
-    SHARE,
-    POST
 
+    // ========================
+    // New post created
+    // ========================
+    POST
 }

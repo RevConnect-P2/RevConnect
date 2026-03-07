@@ -8,68 +8,53 @@ import java.util.List;
 public interface PostService {
 
     // =====================================
-    // Create post
+    // CREATE / UPDATE / DELETE POST
     // =====================================
     PostResponse createPost(Long userId, PostCreateRequest request);
 
-
-    // =====================================
-    // Update post
-    // =====================================
     PostResponse updatePost(Long postId, Long userId, PostCreateRequest request);
 
-
-    // =====================================
-    // Delete post
-    // =====================================
     void deletePost(Long postId, Long userId);
 
 
-    // =====================================
-    // Get posts by user (profile page)
-    // =====================================
-    List<PostResponse> getPostsByUser(Long userId);
-
 
     // =====================================
-    // Get post by id
+    // GET POSTS
     // =====================================
     PostResponse getPostById(Long postId);
 
+    List<PostResponse> getPostsByUser(Long userId);
+
+    List<PostResponse> getGlobalFeed(Long viewerUserId);
+
+
 
     // =====================================
-    // Pin / Unpin post
+    // PIN / UNPIN POST
     // =====================================
     PostResponse pinPost(Long postId, Long userId);
 
     PostResponse unpinPost(Long postId, Long userId);
 
 
-    // =====================================
-    // Global feed
-    // =====================================
-    List<PostResponse> getGlobalFeed(Long viewerUserId);
-
 
     // =====================================
-    // Count posts (profile stats)
+    // PROFILE STATS
     // =====================================
     long countPostsByUser(Long userId);
 
 
-    // ====================================================
-    // NEW FEATURE 1️⃣ Trending hashtags (for sidebar)
-    // ====================================================
+
+    // =====================================
+    // HASHTAG FEATURES
+    // =====================================
     List<String> getTrendingHashtags();
 
-
-    // ====================================================
-    // NEW FEATURE 2️⃣ Get posts by hashtag
-    // ====================================================
     List<PostResponse> getPostsByHashtag(String hashtag);
-    // =====================================
-// SHARE / UNSHARE POST
-// =====================================
-    Long toggleShare(Long postId, Long userId);
 
+
+
+    // =====================================
+    // SHARE / UNSHARE POST
+    // =====================================
 }

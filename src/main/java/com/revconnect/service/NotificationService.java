@@ -7,27 +7,36 @@ import java.util.List;
 
 public interface NotificationService {
 
-    void createNotification(Long senderId,
-                            Long receiverId,
-                            Long referenceId,
-                            NotificationType type,
-                            String extraText);
+    // CREATE NOTIFICATION
+    void createNotification(
+            Long senderId,
+            Long receiverId,
+            Long referenceId,
+            NotificationType type,
+            String extraText
+    );
 
+    // GET ALL NOTIFICATIONS
     List<NotificationResponse> getUserNotifications(Long userId);
 
+    // UNREAD COUNT
     long getUnreadCount(Long userId);
 
-    void markAsRead(Long id);
+    // MARK AS READ
+    void markAsRead(Long notificationId);
 
-    void deleteNotification(Long id);
+    // MARK AS UNREAD
+    void markAsUnread(Long notificationId);
 
-    void markAsUnread(Long id);
-
+    // MARK ALL AS READ
     void markAllAsRead(Long userId);
 
-    List<NotificationResponse> getNotificationsByType(Long userId,
-                                                      NotificationType type);
+    // DELETE NOTIFICATION
+    void deleteNotification(Long notificationId);
 
+    // FILTER BY TYPE
+    List<NotificationResponse> getNotificationsByType(Long userId, NotificationType type);
+
+    // UNREAD COUNT BY TYPE
     long getUnreadCountByType(Long userId, NotificationType type);
-
 }

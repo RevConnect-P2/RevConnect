@@ -22,58 +22,76 @@ public class NotificationController {
     private final NotificationService notificationService;
     private final UserRepository userRepository;
 
-    // show notification count in navbar
-    @ModelAttribute
-    public void notificationCount(Model model, Principal principal){
+    // =========================
+    // HELPER METHOD
+    // =========================
+    private User getLoggedInUser(Principal principal) {
 
-        if(principal != null){
-
-            String email = principal.getName();
-
-            User user = userRepository.findByEmail(email)
-                    .orElseThrow();
-
-            long unreadCount =
-                    notificationService.getUnreadCount(user.getUserId());
-
-            model.addAttribute("unreadCount", unreadCount);
+        if (principal == null) {
+            throw new RuntimeException("User not authenticated");
         }
-    }
-
-    // open notifications page
-    @GetMapping
-    public String viewNotifications(Model model, Principal principal){
 
         String email = principal.getName();
 
-        User user = userRepository.findByEmail(email)
+        return userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+    }
 
-        model.addAttribute("notifications",
-                notificationService.getUserNotifications(user.getUserId()));
+    // =========================
+    // NOTIFICATION COUNT (NAVBAR)
+    // =========================
+    @ModelAttribute
+    public void notificationCount(Model model, Principal principal) {
+
+        if (principal == null) {
+            model.addAttribute("unreadCount", 0);
+            return;
+        }
+
+        User user = getLoggedInUser(principal);
+
+        long unreadCount =
+                notificationService.getUnreadCount(user.getUserId());
+
+        model.addAttribute("unreadCount", unreadCount);
+    }
+
+    // =========================
+    // VIEW ALL NOTIFICATIONS
+    // =========================
+    @GetMapping
+    public String viewNotifications(Model model, Principal principal) {
+
+        User user = getLoggedInUser(principal);
+
+        List<NotificationResponse> notifications =
+                notificationService.getUserNotifications(user.getUserId());
+
+        model.addAttribute("notifications", notifications);
 
         return "notifications/notifications";
     }
 
-    // filter notifications
+    // =========================
+    // FILTER NOTIFICATIONS
+    // =========================
     @GetMapping("/filter")
     public String filterNotifications(@RequestParam(required = false) NotificationType type,
                                       Model model,
                                       Principal principal) {
 
-        String email = principal.getName();
-
-        User user = userRepository.findByEmail(email).orElseThrow();
+        User user = getLoggedInUser(principal);
 
         List<NotificationResponse> notifications;
-
         long unreadCount;
 
         if (type == null) {
 
-            notifications = notificationService.getUserNotifications(user.getUserId());
+            notifications =
+                    notificationService.getUserNotifications(user.getUserId());
 
-            unreadCount = notificationService.getUnreadCount(user.getUserId());
+            unreadCount =
+                    notificationService.getUnreadCount(user.getUserId());
 
         } else {
 
@@ -90,56 +108,60 @@ public class NotificationController {
 
         return "notifications/notifications";
     }
-    // mark notification read
+
+    // =========================
+    // MARK SINGLE NOTIFICATION AS READ
+    // =========================
     @PostMapping("/read/{id}")
     public String markRead(@PathVariable Long id,
-                           @RequestParam(required=false) NotificationType type){
+                           @RequestParam(required = false) NotificationType type) {
 
         notificationService.markAsRead(id);
 
-        if(type == null){
+        if (type == null) {
             return "redirect:/notifications";
         }
 
         return "redirect:/notifications/filter?type=" + type;
     }
 
-    // delete notification
+    // =========================
+    // MARK SINGLE NOTIFICATION AS UNREAD
+    // =========================
+    @PostMapping("/unread/{id}")
+    public String markUnread(@PathVariable Long id,
+                             @RequestParam(required = false) NotificationType type) {
+
+        notificationService.markAsUnread(id);
+
+        if (type == null) {
+            return "redirect:/notifications";
+        }
+
+        return "redirect:/notifications/filter?type=" + type;
+    }
+
+    // =========================
+    // DELETE NOTIFICATION
+    // =========================
     @PostMapping("/delete/{id}")
-    public String deleteNotification(@PathVariable Long id){
+    public String deleteNotification(@PathVariable Long id) {
 
         notificationService.deleteNotification(id);
 
         return "redirect:/notifications";
     }
-    @GetMapping("/dashboard")
-    public String dashboard() {
-        return "dashboard/dashboard";
-    }
 
-    @PostMapping("/unread/{id}")
-    public String markUnread(@PathVariable Long id,
-                             @RequestParam(required=false) NotificationType type){
-
-        notificationService.markAsUnread(id);
-
-        if(type == null){
-            return "redirect:/notifications";
-        }
-
-        return "redirect:/notifications/filter?type=" + type;
-    }
-
+    // =========================
+    // MARK ALL AS READ
+    // =========================
     @PostMapping("/read-all")
-    public String markAllRead(Principal principal){
+    public String markAllRead(Principal principal) {
 
-        String email = principal.getName();
-
-        User user = userRepository.findByEmail(email).orElseThrow();
+        User user = getLoggedInUser(principal);
 
         notificationService.markAllAsRead(user.getUserId());
 
         return "redirect:/notifications";
     }
-
 }

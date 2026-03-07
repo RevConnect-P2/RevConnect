@@ -5,7 +5,10 @@ import com.revconnect.dto.response.PostResponse;
 import com.revconnect.service.PostService;
 import com.revconnect.service.SavedPostService;
 import com.revconnect.service.ShareService;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +21,8 @@ public class PostController {
 
     private final PostService postService;
     private final SavedPostService savedPostService;
+
+    // ✅ NEW
     private final ShareService shareService;
 
     // =========================
@@ -26,7 +31,7 @@ public class PostController {
     @PostMapping
     public ResponseEntity<PostResponse> createPost(
             @RequestParam Long userId,
-            @RequestBody PostCreateRequest request
+            @Valid @RequestBody PostCreateRequest request
     ) {
         return ResponseEntity.ok(postService.createPost(userId, request));
     }
@@ -38,7 +43,7 @@ public class PostController {
     public ResponseEntity<PostResponse> updatePost(
             @PathVariable Long postId,
             @RequestParam Long userId,
-            @RequestBody PostCreateRequest request
+            @Valid @RequestBody PostCreateRequest request
     ) {
         return ResponseEntity.ok(postService.updatePost(postId, userId, request));
     }
@@ -56,16 +61,6 @@ public class PostController {
     }
 
     // =========================
-    // GET MY POSTS
-    // =========================
-    @GetMapping("/my/data")
-    public ResponseEntity<List<PostResponse>> getMyPosts(
-            @RequestParam Long userId
-    ) {
-        return ResponseEntity.ok(postService.getPostsByUser(userId));
-    }
-
-    // =========================
     // GET POST BY ID
     // =========================
     @GetMapping("/{postId}")
@@ -73,6 +68,26 @@ public class PostController {
             @PathVariable Long postId
     ) {
         return ResponseEntity.ok(postService.getPostById(postId));
+    }
+
+    // =========================
+    // GET USER POSTS
+    // =========================
+    @GetMapping("/user")
+    public ResponseEntity<List<PostResponse>> getPostsByUser(
+            @RequestParam Long userId
+    ) {
+        return ResponseEntity.ok(postService.getPostsByUser(userId));
+    }
+
+    // =========================
+    // GLOBAL FEED
+    // =========================
+    @GetMapping("/feed")
+    public ResponseEntity<List<PostResponse>> getGlobalFeed(
+            @RequestParam Long viewerUserId
+    ) {
+        return ResponseEntity.ok(postService.getGlobalFeed(viewerUserId));
     }
 
     // =========================
@@ -97,15 +112,7 @@ public class PostController {
         return ResponseEntity.ok(postService.unpinPost(postId, userId));
     }
 
-    // =========================
-    // GLOBAL FEED
-    // =========================
-    @GetMapping("/feed")
-    public ResponseEntity<List<PostResponse>> getGlobalFeed(
-            @RequestParam Long viewerId
-    ) {
-        return ResponseEntity.ok(postService.getGlobalFeed(viewerId));
-    }
+
 
     // =========================
     // GET POSTS BY HASHTAG
@@ -115,6 +122,14 @@ public class PostController {
             @PathVariable String tag
     ) {
         return ResponseEntity.ok(postService.getPostsByHashtag(tag));
+    }
+
+    // =========================
+    // TRENDING HASHTAGS
+    // =========================
+    @GetMapping("/hashtags/trending")
+    public ResponseEntity<List<String>> getTrendingHashtags() {
+        return ResponseEntity.ok(postService.getTrendingHashtags());
     }
 
     // =========================
@@ -150,6 +165,4 @@ public class PostController {
     ) {
         return ResponseEntity.ok(savedPostService.getSavedPosts(userId));
     }
-
-
 }

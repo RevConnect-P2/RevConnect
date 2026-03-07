@@ -23,6 +23,9 @@ public class NotificationServiceImpl implements NotificationService {
     private final NotificationMapper notificationMapper;
     private final UserRepository userRepository;
 
+    // =========================================
+    // CREATE NOTIFICATION
+    // =========================================
     @Override
     public void createNotification(Long senderId,
                                    Long receiverId,
@@ -30,121 +33,149 @@ public class NotificationServiceImpl implements NotificationService {
                                    NotificationType type,
                                    String extraText) {
 
-        User sender = userRepository.findById(senderId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        String username = sender.getUsername();
-
-        String message = "";
-
-        switch (type) {
-
-            case LIKE:
-                message = username + " liked your post";
-                break;
-
-            case COMMENT:
-                message = username + " commented: \"" + extraText + "\"";
-                break;
-
-            case FOLLOW:
-                message = username + " started following you";
-                break;
-
-            case CONNECTION:
-                message = username + " sent you a connection request";
-                break;
-
-            case SHARE:
-                message = username + " shared your post";
-                break;
-
-            case POST:
-                message = username + " posted a new update";
-                break;
+        // Prevent self-notifications
+        if (senderId.equals(receiverId)) {
+            return;
         }
 
-        Notification notification = new Notification();
+        User sender = userRepository.findById(senderId)
+                .orElseThrow(() -> new RuntimeException("Sender not found"));
 
-        notification.setSenderId(senderId);
-        notification.setReceiverId(receiverId);
+        User receiver = userRepository.findById(receiverId)
+                .orElseThrow(() -> new RuntimeException("Receiver not found"));
+
+        String message = buildMessage(sender.getUsername(), type, extraText);
+
+        Notification notification = new Notification();
+        notification.setSender(sender);
+        notification.setReceiver(receiver);
         notification.setReferenceId(referenceId);
         notification.setType(type);
         notification.setMessage(message);
+        notification.setRead(false);
 
         notificationRepository.save(notification);
+
+        System.out.println("Notification created: " + message);
     }
 
+    // =========================================
+    // MESSAGE BUILDER
+    // =========================================
+    private String buildMessage(String username,
+                                NotificationType type,
+                                String extraText) {
+
+        return switch (type) {
+            case LIKE -> username + " liked your post";
+            case COMMENT -> username + " commented: \"" + (extraText != null ? extraText : "") + "\"";
+            case FOLLOW -> username + " started following you";
+            case CONNECTION -> username + " sent you a connection request";
+            case SHARE -> username + " shared your post";
+            case POST -> username + " created a new post";
+            default -> username + " sent a notification";
+        };
+    }
+
+    // =========================================
+    // GET USER NOTIFICATIONS
+    // =========================================
     @Override
     public List<NotificationResponse> getUserNotifications(Long userId) {
 
         return notificationRepository
-                .findByReceiverIdOrderByCreatedAtDesc(userId)
+                .findByReceiver_UserIdOrderByCreatedAtDesc(userId)
                 .stream()
                 .map(notificationMapper::toResponse)
                 .collect(Collectors.toList());
     }
 
+    // =========================================
+    // GET UNREAD COUNT
+    // =========================================
     @Override
     public long getUnreadCount(Long userId) {
 
         return notificationRepository
-                .countByReceiverIdAndIsReadFalse(userId);
+                .countByReceiver_UserIdAndReadFalse(userId);
     }
 
+    // =========================================
+    // MARK AS READ
+    // =========================================
     @Override
-    public void markAsRead(Long id) {
+    public void markAsRead(Long notificationId) {
 
         Notification notification = notificationRepository
-                .findById(id)
-                .orElseThrow();
+                .findById(notificationId)
+                .orElseThrow(() -> new RuntimeException("Notification not found"));
 
         notification.setRead(true);
 
         notificationRepository.save(notification);
     }
 
+    // =========================================
+    // MARK AS UNREAD
+    // =========================================
     @Override
-    public void deleteNotification(Long id) {
+    public void markAsUnread(Long notificationId) {
 
-        notificationRepository.deleteById(id);
-    }
-
-    @Override
-    public List<NotificationResponse> getNotificationsByType(Long userId,
-                                                             NotificationType type) {
-
-        return notificationRepository
-                .findByReceiverIdAndType(userId, type)
-                .stream()
-                .map(notificationMapper::toResponse)
-                .collect(Collectors.toList());
-    }
-    @Override
-    public void markAsUnread(Long id){
-
-        Notification notification =
-                notificationRepository.findById(id).orElseThrow();
+        Notification notification = notificationRepository
+                .findById(notificationId)
+                .orElseThrow(() -> new RuntimeException("Notification not found"));
 
         notification.setRead(false);
 
         notificationRepository.save(notification);
     }
 
+    // =========================================
+    // MARK ALL AS READ
+    // =========================================
     @Override
-    public void markAllAsRead(Long userId){
+    public void markAllAsRead(Long userId) {
 
         List<Notification> notifications =
-                notificationRepository.findByReceiverIdAndIsReadFalse(userId);
+                notificationRepository
+                        .findByReceiver_UserIdAndReadFalseOrderByCreatedAtDesc(userId);
 
         notifications.forEach(n -> n.setRead(true));
 
         notificationRepository.saveAll(notifications);
     }
+
+    // =========================================
+    // DELETE NOTIFICATION
+    // =========================================
     @Override
-    public long getUnreadCountByType(Long userId, NotificationType type) {
+    public void deleteNotification(Long notificationId) {
+
+        notificationRepository.deleteById(notificationId);
+    }
+
+    // =========================================
+    // FILTER BY TYPE
+    // =========================================
+    @Override
+    public List<NotificationResponse> getNotificationsByType(Long userId,
+                                                             NotificationType type) {
 
         return notificationRepository
-                .countByReceiverIdAndTypeAndIsReadFalse(userId, type);
+                .findByReceiver_UserIdAndTypeOrderByCreatedAtDesc(userId, type)
+                .stream()
+                .map(notificationMapper::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    // =========================================
+    // UNREAD COUNT BY TYPE
+    // =========================================
+    @Override
+    public long getUnreadCountByType(Long userId,
+                                     NotificationType type) {
+
+        return notificationRepository
+                .countByReceiver_UserIdAndTypeAndReadFalse(userId, type);
     }
 }

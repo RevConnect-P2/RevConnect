@@ -433,7 +433,7 @@ function fetchFeedPosts() {
     feedContainer.innerHTML = "<p class='text-center text-muted'>Loading feed...</p>";
 
     fetchSavedPosts()
-        .then(() => fetch(`/posts/feed?viewerId=${currentUser.userId}`))
+        .then(() => fetch(`/posts/feed?viewerUserId=${currentUser.userId}`))
         .then(res => {
             if (!res.ok) throw new Error("Failed to load feed");
             return res.json();
@@ -615,7 +615,7 @@ function fetchMyPostsPage() {
     container.innerHTML =
         "<p class='text-center text-muted'>Loading your posts...</p>";
 
-    fetch(`/posts/my/data?userId=${currentUser.userId}`)
+    fetch(`/posts/user?userId=${currentUser.userId}`)
         .then(res => {
             if (!res.ok) throw new Error("Failed to load my posts");
             return res.json();
@@ -733,54 +733,58 @@ function updatePost() {
     .catch(err => alert(err.message));
 }
 
-/// ===============================
- // LIKE POST
- // ===============================
- function likePostAction(postId, element) {
+// ===============================
+// LIKE POST
+// ===============================
+function likePostAction(postId, element) {
 
-     fetch(`/posts/${postId}/like`, {
-         method: "POST"
-     })
-     .then(res => {
-         if (!res.ok) throw new Error("Like failed");
-         return res.json();
-     })
-     .then(newCount => {
+   fetch(`/posts/${postId}/like`, {
+       method: "POST",
+       credentials: "same-origin"
+   })
+    .then(res => {
+        if (!res.ok) throw new Error("Like failed");
+        return res.json();
+    })
+    .then(data => {
 
-         // update like count
-         const countSpan = element.querySelector(".like-count");
+        // update like count
+        const countSpan = element.querySelector(".like-count");
 
-         if (countSpan) {
-             countSpan.innerText = newCount;
-         }
+        if (countSpan) {
+            countSpan.innerText = data.likeCount;
+        }
 
-         // toggle active color
-         element.classList.toggle("liked");
+        // update button state
+        if (data.liked) {
+            element.classList.add("liked");
+        } else {
+            element.classList.remove("liked");
+        }
 
-     })
-     .catch(err => console.error("Like error:", err));
- }
-
-
+    })
+    .catch(err => console.error("Like error:", err));
+}
  // ===============================
  // SHARE POST
  // ===============================
  function sharePostAction(postId, element) {
 
-     fetch(`/posts/${postId}/share`, {
-         method: "POST"
-     })
+    fetch(`/posts/${postId}/share`, {
+        method: "POST",
+        credentials: "same-origin"
+    })
      .then(res => {
          if (!res.ok) throw new Error("Share failed");
          return res.json();
      })
-     .then(newCount => {
+     .then(data => {
 
          // update share count
          const countSpan = element.querySelector(".share-count");
 
          if (countSpan) {
-             countSpan.innerText = newCount;
+             countSpan.innerText = data.shareCount;
          }
 
          // toggle share highlight
@@ -848,13 +852,14 @@ function submitCommentAction(postId) {
         return;
     }
 
-    fetch(`/posts/${postId}/comments`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(commentText)
-    })
+   fetch(`/posts/${postId}/comments`, {
+       method: "POST",
+       credentials: "same-origin",
+       headers: {
+           "Content-Type": "application/json"
+       },
+       body: JSON.stringify(commentText)
+   })
     .then(res => {
         if (!res.ok) throw new Error("Comment failed");
         return res.text();
@@ -929,7 +934,7 @@ function fetchProfilePosts() {
 
     container.innerHTML = "<p class='text-center text-muted'>Loading posts...</p>";
 
-    fetch(`/posts/my/data?userId=${currentUser.userId}`)
+    fetch(`/posts/user?userId=${currentUser.userId}`)
         .then(res => {
             if (!res.ok) throw new Error("Failed to load profile posts");
             return res.json();

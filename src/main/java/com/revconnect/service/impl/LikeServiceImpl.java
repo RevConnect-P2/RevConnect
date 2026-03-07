@@ -9,6 +9,7 @@ import com.revconnect.repository.PostRepository;
 import com.revconnect.repository.UserRepository;
 import com.revconnect.service.LikeService;
 import com.revconnect.service.NotificationService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,14 +25,14 @@ public class LikeServiceImpl implements LikeService {
     private final PostLikeRepository postLikeRepository;
     private final NotificationService notificationService;
 
+    // =====================================
+    // LIKE POST
+    // =====================================
     @Override
     public void likePost(Long postId, String email) {
 
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
+        User user = getUserByEmail(email);
+        Post post = getPostById(postId);
 
         Optional<PostLike> existingLike =
                 postLikeRepository.findByPost_PostIdAndUser_Email(postId, email);
@@ -47,19 +48,12 @@ public class LikeServiceImpl implements LikeService {
 
         postLikeRepository.save(like);
 
-        // 🔔 Notification
-        if (!post.getUser().getUserId().equals(user.getUserId())) {
-
-            notificationService.createNotification(
-                    user.getUserId(),
-                    post.getUser().getUserId(),
-                    postId,
-                    NotificationType.LIKE,
-                    null
-            );
-        }
+        createLikeNotification(user, post);
     }
 
+    // =====================================
+    // UNLIKE POST
+    // =====================================
     @Override
     public void unlikePost(Long postId, String email) {
 
@@ -70,54 +64,82 @@ public class LikeServiceImpl implements LikeService {
         postLikeRepository.delete(like);
     }
 
+    // =====================================
+    // TOGGLE LIKE
+    // =====================================
     @Override
-    public boolean toggleLike(Long postId, String principalValue) {
+    public boolean toggleLike(Long postId, String email) {
 
-        User user = userRepository.findByEmail(principalValue)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
+        User user = getUserByEmail(email);
+        Post post = getPostById(postId);
 
         Optional<PostLike> existingLike =
-                postLikeRepository.findByUserAndPost(user, post);
+                postLikeRepository.findByPost_PostIdAndUser_Email(postId, email);
 
+        // If already liked → remove like
         if (existingLike.isPresent()) {
 
             postLikeRepository.delete(existingLike.get());
             return false;
-
-        } else {
-
-            PostLike like = new PostLike();
-            like.setUser(user);
-            like.setPost(post);
-
-            postLikeRepository.save(like);
-
-            // 🔔 Notification
-            if (!post.getUser().getUserId().equals(user.getUserId())) {
-
-                notificationService.createNotification(
-                        user.getUserId(),
-                        post.getUser().getUserId(),
-                        postId,
-                        NotificationType.LIKE,
-                        null
-                );
-            }
-
-            return true;
         }
+
+        // If not liked → add like
+        PostLike like = PostLike.builder()
+                .user(user)
+                .post(post)
+                .build();
+
+        postLikeRepository.save(like);
+
+        createLikeNotification(user, post);
+
+        return true;
     }
 
+    // =====================================
+    // USERS WHO LIKED
+    // =====================================
     @Override
     public List<String> getUsersWhoLiked(Long postId) {
 
-        return postLikeRepository.findByPost_PostId(postId)
+        return postLikeRepository
+                .findByPost_PostId(postId)
                 .stream()
                 .map(like -> like.getUser().getUsername())
                 .toList();
     }
 
+    // =====================================
+    // HELPER METHODS
+    // =====================================
+
+    private User getUserByEmail(String email) {
+
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    private Post getPostById(Long postId) {
+
+        return postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+    }
+
+    private void createLikeNotification(User sender, Post post) {
+
+        Long senderId = sender.getUserId();
+        Long receiverId = post.getUser().getUserId();
+
+        // prevent self notification
+        if (!senderId.equals(receiverId)) {
+
+            notificationService.createNotification(
+                    senderId,
+                    receiverId,
+                    post.getPostId(),
+                    NotificationType.LIKE,
+                    null
+            );
+        }
+    }
 }
