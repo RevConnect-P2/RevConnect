@@ -11,4 +11,5 @@ public interface CommentService {
     List<CommentResponse> getCommentsByPostId(Long postId);
 
     void deleteComment(Long commentId, String email);
+
 }

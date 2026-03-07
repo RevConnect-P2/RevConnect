@@ -3,10 +3,13 @@ package com.revconnect.service.impl;
 import com.revconnect.entity.Post;
 import com.revconnect.entity.Share;
 import com.revconnect.entity.User;
+import com.revconnect.enums.NotificationType;
 import com.revconnect.repository.PostRepository;
 import com.revconnect.repository.ShareRepository;
 import com.revconnect.repository.UserRepository;
+import com.revconnect.service.NotificationService;
 import com.revconnect.service.ShareService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +22,7 @@ public class ShareServiceImpl implements ShareService {
     private final ShareRepository shareRepository;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final NotificationService notificationService;   // 🔔 add this
 
     @Override
     public void sharePost(Long postId, String email) {
@@ -29,11 +33,11 @@ public class ShareServiceImpl implements ShareService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
-        // If already shared → just return silently
+        // If already shared → do nothing
         if (shareRepository
                 .findByOriginalPost_PostIdAndSharedBy_Email(postId, email)
                 .isPresent()) {
-            return;   // ✅ DO NOTHING (no error)
+            return;
         }
 
         Share share = Share.builder()
@@ -42,6 +46,23 @@ public class ShareServiceImpl implements ShareService {
                 .build();
 
         shareRepository.save(share);
+
+        // 🔔 CREATE SHARE NOTIFICATION
+
+        Long senderId = user.getUserId();
+        Long receiverId = post.getUser().getUserId();
+
+        // prevent self-notification
+        if (!senderId.equals(receiverId)) {
+
+            notificationService.createNotification(
+                    senderId,
+                    receiverId,
+                    postId,
+                    NotificationType.SHARE,
+                    null
+            );
+        }
     }
 
     @Override
@@ -59,7 +80,6 @@ public class ShareServiceImpl implements ShareService {
 
         return shareRepository.countByOriginalPost_PostId(postId);
     }
-
 
     @Override
     public List<String> getUsersWhoShared(Long postId) {
