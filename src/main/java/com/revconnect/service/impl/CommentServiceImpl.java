@@ -4,10 +4,12 @@ import com.revconnect.dto.response.CommentResponse;
 import com.revconnect.entity.Comment;
 import com.revconnect.entity.Post;
 import com.revconnect.entity.User;
+import com.revconnect.enums.NotificationType;
 import com.revconnect.repository.CommentRepository;
 import com.revconnect.repository.PostRepository;
 import com.revconnect.repository.UserRepository;
 import com.revconnect.service.CommentService;
+import com.revconnect.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,7 @@ public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final NotificationService notificationService;
 
     @Override
     public void addComment(Long postId, String email, String commentText) {
@@ -37,6 +40,18 @@ public class CommentServiceImpl implements CommentService {
                 .build();
 
         commentRepository.save(comment);
+
+        // 🔔 Notification
+        if (!post.getUser().getUserId().equals(user.getUserId())) {
+
+            notificationService.createNotification(
+                    user.getUserId(),
+                    post.getUser().getUserId(),
+                    postId,
+                    NotificationType.COMMENT,
+                    commentText
+            );
+        }
     }
 
     @Override
@@ -47,7 +62,7 @@ public class CommentServiceImpl implements CommentService {
                 .map(comment -> CommentResponse.builder()
                         .commentId(comment.getCommentId())
                         .commentText(comment.getCommentText())
-                        .username(comment.getUser().getUsername()) // ✅ FIX
+                        .username(comment.getUser().getUsername())
                         .createdAt(comment.getCreatedAt())
                         .build())
                 .toList();

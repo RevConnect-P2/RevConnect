@@ -95,7 +95,7 @@ public class CommentServiceImplTest {
         when(commentRepository.findByPost_PostId(10L))
                 .thenReturn(List.of(comment));
 
-        List<?> result = commentService.getCommentsByPost(10L);
+        List<?> result = commentService.getCommentsByPostId(postId);
 
         assertEquals(1, result.size());
     }

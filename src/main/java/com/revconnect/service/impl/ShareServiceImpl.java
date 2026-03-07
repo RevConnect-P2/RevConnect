@@ -3,10 +3,13 @@ package com.revconnect.service.impl;
 import com.revconnect.entity.Post;
 import com.revconnect.entity.Share;
 import com.revconnect.entity.User;
+import com.revconnect.enums.NotificationType;
 import com.revconnect.repository.PostRepository;
 import com.revconnect.repository.ShareRepository;
 import com.revconnect.repository.UserRepository;
+import com.revconnect.service.NotificationService;
 import com.revconnect.service.ShareService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +23,7 @@ public class ShareServiceImpl implements ShareService {
     private final ShareRepository shareRepository;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final NotificationService notificationService;
 
     // =========================
     // SHARE POST
@@ -50,6 +54,22 @@ public class ShareServiceImpl implements ShareService {
                 .build();
 
         shareRepository.save(share);
+
+        // 🔔 CREATE SHARE NOTIFICATION
+        Long senderId = user.getUserId();
+        Long receiverId = post.getUser().getUserId();
+
+        // prevent self-notification
+        if (!senderId.equals(receiverId)) {
+
+            notificationService.createNotification(
+                    senderId,
+                    receiverId,
+                    postId,
+                    NotificationType.SHARE,
+                    null
+            );
+        }
     }
 
     // =========================
@@ -74,6 +94,7 @@ public class ShareServiceImpl implements ShareService {
     // =========================
     // TOGGLE SHARE / UNSHARE
     // =========================
+    @Override
     public boolean toggleShare(Long postId, String email) {
 
         User user = userRepository.findByEmail(email)
@@ -110,7 +131,6 @@ public class ShareServiceImpl implements ShareService {
     // =========================
     @Override
     public Long getShareCount(Long postId) {
-
         return shareRepository.countByOriginalPost_PostId(postId);
     }
 
