@@ -1,8 +1,38 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <style>
+
+        .notification-link{
+color:black !important;
+text-decoration:none !important;
+}
+
+.notification-count{
+
+position:absolute;
+top:-5px;
+right:8px;
+
+background:red;
+color:white;
+
+font-size:11px;
+font-weight:bold;
+
+padding:3px 6px;
+border-radius:50%;
+
+}
+    </style>
+
+</head>
+
 <body>
 
-<!-- PROFESSIONAL NAVBAR FRAGMENT -->
+<!-- NAVBAR FRAGMENT -->
 
 <nav th:fragment="navbar(user)"
      class="navbar navbar-expand-lg bg-white shadow-sm sticky-top">
@@ -13,24 +43,31 @@
         <a href="/dashboard"
            class="navbar-brand fw-bold text-primary"
            style="font-size:22px;">
+
             RevConnect
+
         </a>
 
 
         <!-- SEARCH -->
+
         <form class="d-flex w-50">
+
             <input class="form-control rounded-pill"
                    type="search"
                    placeholder="Search RevConnect">
+
         </form>
 
 
 
         <!-- RIGHT MENU -->
+
         <ul class="navbar-nav ms-auto align-items-center">
 
 
             <!-- HOME -->
+
             <li class="nav-item text-center mx-3">
 
                 <a href="/dashboard"
@@ -49,6 +86,7 @@
 
 
             <!-- NETWORK -->
+
             <li class="nav-item text-center mx-3">
 
                 <a href="/network"
@@ -67,20 +105,20 @@
 
 
             <!-- NOTIFICATIONS -->
-            <li class="nav-item text-center mx-3 position-relative">
 
-                <a href="/notifications"
-                   class="nav-link text-dark">
+            <li class="nav-item text-center mx-3">
+
+                <a th:href="@{/notifications}"
+                   class="nav-link text-dark position-relative notification-link">
 
                     <i class="bi bi-bell fs-5"></i>
 
-                    <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">
-                        3
-                    </span>
+                    <span class="notification-count"
+                          th:if="${unreadCount > 0}"
+                          th:text="${unreadCount}">
+</span>
 
-                    <div style="font-size:12px;">
-                        Notifications
-                    </div>
+                    <div style="font-size:12px;">Notifications</div>
 
                 </a>
 
@@ -89,6 +127,7 @@
 
 
             <!-- PROFILE -->
+
             <li class="nav-item text-center mx-3">
 
                 <a href="/profile"
@@ -108,6 +147,7 @@
 
 
             <!-- LOGOUT -->
+
             <li class="nav-item mx-3">
 
                 <a href="/logout"
@@ -121,7 +161,6 @@
 
 
         </ul>
-
 
     </div>
 
