@@ -1,215 +1,100 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<body>
-
-<!-- PROFESSIONAL LEFT SIDEBAR -->
-
 <div th:fragment="leftSidebar(user, connectionsCount, followersCount, followingCount)">
 
+    <div class="card profile-card mb-3">
 
-    <!-- PROFILE CARD -->
+        <div class="profile-cover"></div>
 
-    <div class="card border-0 shadow-sm rounded-4 mb-3">
-
-        <!-- COVER -->
-        <div style="
-        height:80px;
-        background:linear-gradient(90deg,#0a66c2,#378fe9);
-        border-radius:12px 12px 0 0;">
-        </div>
-
-
-        <!-- PROFILE IMAGE -->
         <div class="text-center">
 
             <img src="https://i.pravatar.cc/100?img=12"
-
-                 class="rounded-circle shadow"
-
-                 style="
-             width:75px;
-             margin-top:-40px;
-             border:3px solid white;">
+                 class="profile-avatar shadow">
 
         </div>
 
-
-
-        <!-- USER INFO -->
         <div class="card-body text-center">
 
             <h6 class="fw-bold mb-0"
                 th:text="${user.username}">
             </h6>
 
-
             <p class="text-muted small mb-2"
                th:text="${user.email}">
             </p>
 
-
             <hr class="mb-2">
 
-
-            <!-- STATS -->
             <div class="row text-center small">
 
                 <div class="col">
-
                     <div class="fw-bold"
                          th:text="${connectionsCount}">
                     </div>
-
                     <div class="text-muted">
                         Connections
                     </div>
-
                 </div>
 
-
                 <div class="col">
-
                     <div class="fw-bold"
                          th:text="${followersCount}">
                     </div>
-
                     <div class="text-muted">
                         Followers
                     </div>
-
                 </div>
 
-
                 <div class="col">
-
                     <div class="fw-bold"
                          th:text="${followingCount}">
                     </div>
-
                     <div class="text-muted">
                         Following
                     </div>
-
                 </div>
 
             </div>
 
-
             <hr>
 
-
-            <!-- PROFILE BUTTON -->
             <a href="/profile"
                class="btn btn-primary btn-sm w-100 rounded-pill">
-
                 View Profile
-
             </a>
-
 
         </div>
 
     </div>
 
-
-
-    <!-- QUICK LINKS -->
-
-    <div class="card border-0 shadow-sm rounded-4">
-
+    <div class="card profile-card">
 
         <div class="card-body">
 
             <h6 class="fw-bold mb-3">
-
                 Quick Links
-
             </h6>
 
-
-            <a href="/posts"
-               class="sidebar-link">
-
+            <a href="/posts" class="sidebar-link">
                 <i class="bi bi-file-post me-2"></i>
-
                 My Posts
-
             </a>
 
-
-            <a href="/saved"
-               class="sidebar-link">
-
+            <a href="/saved" class="sidebar-link">
                 <i class="bi bi-bookmark me-2"></i>
-
                 Saved Posts
-
             </a>
 
-
-            <a href="/network"
-               class="sidebar-link">
-
+            <a href="/network" class="sidebar-link">
                 <i class="bi bi-people me-2"></i>
-
                 Connections
-
             </a>
 
-
-            <a href="/profile"
-               class="sidebar-link">
-
+            <a href="/profile" class="sidebar-link">
                 <i class="bi bi-person me-2"></i>
-
                 Profile
-
             </a>
-
 
         </div>
 
     </div>
 
-
 </div>
-
-
-
-<!-- STYLE -->
-
-<style>
-
-    .sidebar-link{
-
-    display:block;
-
-    padding:8px;
-
-    border-radius:8px;
-
-    text-decoration:none;
-
-    color:#333;
-
-    font-size:14px;
-
-    transition:0.2s;
-
-    }
-
-    .sidebar-link:hover{
-
-    background:#eef3f8;
-
-    color:#0a66c2;
-
-    font-weight:500;
-
-    }
-
-</style>
-
-
-</body>
-</html>

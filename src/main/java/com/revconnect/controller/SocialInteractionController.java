@@ -14,6 +14,7 @@ import java.security.Principal;
 @RequestMapping("/posts")
 @RequiredArgsConstructor
 public class SocialInteractionController {
+
     private final PostLikeRepository postLikeRepository;
     private final LikeService likeService;
     private final CommentService commentService;
@@ -28,14 +29,6 @@ public class SocialInteractionController {
 
         return postLikeRepository.countByPost_PostId(postId);
     }
-
-//    @DeleteMapping("/{postId}/unlike")
-//    public ResponseEntity<?> unlikePost(@PathVariable Long postId,
-//                                        Principal principal) {
-//
-//        likeService.unlikePost(postId, principal.getName());
-//        return ResponseEntity.ok("Post unliked");
-//    }
 
     // ================= COMMENT =================
     @PostMapping("/{postId}/comments")
@@ -55,12 +48,12 @@ public class SocialInteractionController {
         );
     }
 
-    // ================= SHARE =================
+    // ================= SHARE (TOGGLE) =================
     @PostMapping("/{postId}/share")
-    public ResponseEntity<Long> sharePost(@PathVariable Long postId,
-                                          Principal principal) {
+    public ResponseEntity<Long> toggleShare(@PathVariable Long postId,
+                                            Principal principal) {
 
-        shareService.sharePost(postId, principal.getName());
+        shareService.toggleShare(postId, principal.getName());
 
         Long updatedCount = shareService.getShareCount(postId);
 
@@ -73,15 +66,6 @@ public class SocialInteractionController {
 
         return ResponseEntity.ok(
                 likeService.getUsersWhoLiked(postId)
-        );
-    }
-
-    // ================= GET USERS WHO SHARED =================
-    @GetMapping("/{postId}/shares")
-    public ResponseEntity<?> getUsersWhoShared(@PathVariable Long postId) {
-
-        return ResponseEntity.ok(
-                shareService.getUsersWhoShared(postId)
         );
     }
 }

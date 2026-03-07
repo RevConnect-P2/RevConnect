@@ -8,11 +8,15 @@ import java.util.Optional;
 
 public interface ShareRepository extends JpaRepository<Share, Long> {
 
-    Optional<Share> findByOriginalPost_PostIdAndSharedBy_Email(Long postId, String email);
+    // check if user already shared the post
+    Optional<Share> findByOriginalPost_PostIdAndSharedBy_UserId(Long postId, Long userId);
 
+    // count total shares
     Long countByOriginalPost_PostId(Long postId);
 
+    // used for global feed shared posts
     List<Share> findAllByOrderByCreatedAtDesc();
-    List<Share> findByOriginalPost_PostId(Long postId);
 
+    // used for share list UI
+    List<Share> findByOriginalPost_PostId(Long postId);
 }

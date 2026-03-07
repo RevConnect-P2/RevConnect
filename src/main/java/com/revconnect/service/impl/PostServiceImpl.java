@@ -258,6 +258,42 @@ public class PostServiceImpl implements PostService {
         postRepository.delete(post);
     }
 
+    // =========================
+// SHARE / UNSHARE POST
+// =========================
+    @Override
+    @Transactional
+    public Long toggleShare(Long postId, Long userId) {
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        Share existingShare =
+                shareRepository.findByOriginalPost_PostIdAndSharedBy_UserId(postId, userId)
+                        .orElse(null);
+
+        if (existingShare != null) {
+
+            // UNSHARE
+            shareRepository.delete(existingShare);
+
+        } else {
+
+            // SHARE
+            Share share = Share.builder()
+                    .originalPost(post)
+                    .sharedBy(user)
+                    .build();
+
+            shareRepository.save(share);
+        }
+
+        return shareRepository.countByOriginalPost_PostId(postId);
+    }
+
     @Override
     public List<PostResponse> getPostsByUser(Long userId) {
 
@@ -519,6 +555,59 @@ public class PostServiceImpl implements PostService {
 
         return postRepository.countByUser(user);
 
+    }
+    // =========================
+/// =========================
+// TRENDING HASHTAGS
+// =========================
+@Override
+public List<String> getTrendingHashtags() {
+
+    return postRepository.findTrendingHashtags(
+            org.springframework.data.domain.PageRequest.of(0, 5)
+    );
+}
+
+
+
+    // =========================
+// POSTS BY HASHTAG
+// =========================
+    @Override
+    public List<PostResponse> getPostsByHashtag(String hashtag) {
+
+        List<Post> posts =
+                postRepository.findPostsByHashtag(hashtag);
+
+        List<PostResponse> responses = new ArrayList<>();
+
+        for (Post post : posts) {
+
+            List<Hashtag> hashtags = getHashtagsForPost(post);
+            List<TagResponse> tags = getTagsForPost(post);
+
+            PostResponse response =
+                    postMapper.toPostResponse(post, hashtags, tags);
+
+            // Like count
+            Long likeCount =
+                    postLikeRepository.countByPost_PostId(post.getPostId());
+            response.setLikeCount(likeCount);
+
+            // Comment count
+            Long commentCount =
+                    commentRepository.countByPost_PostId(post.getPostId());
+            response.setCommentCount(commentCount);
+
+            // Share count
+            Long shareCount =
+                    shareRepository.countByOriginalPost_PostId(post.getPostId());
+            response.setShareCount(shareCount);
+
+            responses.add(response);
+        }
+
+        return responses;
     }
 
 }

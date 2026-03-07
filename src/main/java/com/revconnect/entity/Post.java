@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "POSTS")
@@ -64,21 +65,56 @@ public class Post {
 
 
 
-    // Auto set created time
+    // =========================
+    // RELATIONSHIPS (CASCADE)
+    // =========================
+
+
+    // Comments
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments;
+
+
+    // Likes
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PostLike> likes;
+
+
+    // Shares
+    @OneToMany(mappedBy = "originalPost", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Share> shares;
+
+
+    // Hashtags
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PostHashtag> hashtags;
+
+
+    // Tags
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PostTag> tags;
+
+
+    // Saved posts
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SavedPost> savedPosts;
+
+
+
+    // =========================
+    // TIMESTAMPS
+    // =========================
+
+
     @PrePersist
     protected void onCreate() {
-
         createdAt = LocalDateTime.now();
-
     }
 
 
-    // Auto update time
     @PreUpdate
     protected void onUpdate() {
-
         updatedAt = LocalDateTime.now();
-
     }
 
 }

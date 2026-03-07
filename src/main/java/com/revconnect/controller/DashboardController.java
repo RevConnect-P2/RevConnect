@@ -31,13 +31,19 @@ public class DashboardController {
         // ✅ Send user to dashboard
         model.addAttribute("user", user);
 
-        // ✅ FIXED GLOBAL FEED (visibility-aware)
+        // ✅ GLOBAL FEED
         model.addAttribute(
                 "posts",
                 postService.getGlobalFeed(user.getUserId())
         );
 
-        // ✅ Temporary stats (team members will implement later)
+        // ✅ TRENDING HASHTAGS (NEW FEATURE)
+        model.addAttribute(
+                "trendingTags",
+                postService.getTrendingHashtags()
+        );
+
+        // ✅ Temporary stats
         model.addAttribute("connectionsCount", 0);
         model.addAttribute("followersCount", 0);
         model.addAttribute("followingCount", 0);

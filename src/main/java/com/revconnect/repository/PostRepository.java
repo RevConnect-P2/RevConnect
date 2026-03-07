@@ -2,6 +2,8 @@ package com.revconnect.repository;
 
 import com.revconnect.entity.Post;
 import com.revconnect.entity.User;
+
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,7 +21,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
 
     // ================================
-    // 2️⃣ Visible posts of logged-in user (Profile Page)
+    // 2️⃣ Visible posts of logged-in user
     // ================================
     @Query("""
         SELECT p FROM Post p
@@ -34,7 +36,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
 
     // ================================
-    // 3️⃣ ✅ GLOBAL FEED (FIXED VERSION)
+    // 3️⃣ GLOBAL FEED
     // ================================
     @Query("""
         SELECT p FROM Post p
@@ -60,5 +62,36 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     // ================================
     long countByUser(User user);
 
+
+    // ================================
+    // 5️⃣ Scheduled posts
+    // ================================
     List<Post> findByScheduledAtIsNullOrScheduledAtLessThanEqual(LocalDateTime now);
+
+
+
+    // ======================================================
+    // 6️⃣ TRENDING HASHTAGS (FIXED)
+    // ======================================================
+    @Query("""
+        SELECT ph.hashtag.tagName
+        FROM PostHashtag ph
+        GROUP BY ph.hashtag.tagName
+        ORDER BY COUNT(ph.post) DESC
+    """)
+    List<String> findTrendingHashtags(Pageable pageable);
+
+
+
+    // ======================================================
+    // 7️⃣ FIND POSTS BY HASHTAG
+    // ======================================================
+    @Query("""
+        SELECT ph.post
+        FROM PostHashtag ph
+        WHERE ph.hashtag.tagName = :tag
+        ORDER BY ph.post.createdAt DESC
+    """)
+    List<Post> findPostsByHashtag(@Param("tag") String tag);
+
 }

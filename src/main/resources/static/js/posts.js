@@ -176,18 +176,26 @@ function createFeedPostCard(post, options = {}) {
                 </div>
             ` : ``}
 
-            <!-- Post Header -->
-            <div class="d-flex justify-content-between">
-                <strong>
-                    ${post.isSharedPost
-                        ? post.originalAuthorUsername
-                        : post.username}
-                </strong>
+           <!-- Post Header -->
+           <div class="d-flex align-items-center justify-content-between mb-2">
 
-                ${options.showPinned && post.pinned
-                    ? `<span class="text-warning">📌 Pinned</span>`
-                    : ""}
-            </div>
+               <div>
+                   <div class="post-username">
+                       ${post.isSharedPost
+                           ? post.originalAuthorUsername
+                           : post.username}
+                   </div>
+
+                   <div class="post-time">
+                       ${formatDate(post.createdAt)}
+                   </div>
+               </div>
+
+               ${options.showPinned && post.pinned
+                   ? `<span class="text-warning">📌 Pinned</span>`
+                   : ""}
+
+           </div>
 
             <!-- Post Content -->
             <p class="post-text mt-2">${post.content}</p>
@@ -230,53 +238,68 @@ function createFeedPostCard(post, options = {}) {
 
             <hr>
 
-            <!-- ACTION ROW -->
-            <div class="row text-center align-items-center">
+       <!-- ACTION ROW -->
+       <div class="row text-center align-items-center post-actions">
 
-               <!-- LIKE -->
-               <!-- LIKE -->
-               <div class="col post-action like-action"
-                    style="cursor:pointer"
-                    onclick="likePostAction(${post.postId}, this)">
-                    👍
-                    <span class="like-count"
-                          style="cursor:pointer; font-weight:600;"
-                          onclick="toggleLikeList(event, ${post.postId})">
-                          ${post.likeCount || 0}
-                    </span>
-               </div>
+           <!-- LIKE -->
+           <div class="col post-action like-action"
+                onclick="likePostAction(${post.postId}, this)">
 
-                <!-- COMMENT -->
-                <div class="col post-action"
-                     style="cursor:pointer"
-                     onclick="toggleCommentBox(${post.postId})">
-                     💬 <span>${post.commentCount || 0}</span>
-                </div>
+               <i class="bi bi-hand-thumbs-up"></i>
+               <span class="ms-1">Like</span>
 
-                <!-- SHARE -->
-                <div class="col post-action"
-                     style="cursor:pointer"
-                     onclick="sharePostAction(${post.postId}, this)">
-                     🔗
-                     <span style="cursor:pointer; font-weight:600;"
-                           onclick="toggleShareList(event, ${post.postId})">
-                           ${post.shareCount || 0}
-                     </span>
-                </div>
+               <span class="like-count ms-1"
+                     onclick="toggleLikeList(event, ${post.postId})">
+                     ${post.likeCount || 0}
+               </span>
 
-                <!-- SAVE -->
-                <div class="col post-action text-end">
-                    <i class="bi ${options.isSaved ? 'bi-bookmark-fill' : 'bi-bookmark'}"
-                       style="cursor:pointer;font-size:18px"
-                       onclick="${
-                           options.isSaved
-                           ? `unsavePost(${post.postId}, this)`
-                           : `savePost(${post.postId}, this)`
-                       }"
-                       title="Save post"></i>
-                </div>
+           </div>
 
-            </div>
+
+           <!-- COMMENT -->
+           <div class="col post-action comment-action"
+                onclick="toggleCommentBox(${post.postId})">
+
+               <i class="bi bi-chat"></i>
+               <span class="ms-1">Comment</span>
+
+               <span class="comment-count ms-1">
+                   ${post.commentCount || 0}
+               </span>
+
+           </div>
+
+
+           <!-- SHARE -->
+           <div class="col post-action share-action"
+                onclick="sharePostAction(${post.postId}, this)">
+
+               <i class="bi bi-arrow-repeat"></i>
+               <span class="ms-1">Share</span>
+
+               <span class="share-count ms-1"
+                     onclick="toggleShareList(event, ${post.postId})">
+                     ${post.shareCount || 0}
+               </span>
+
+           </div>
+
+
+           <!-- SAVE -->
+           <div class="col post-action text-end">
+
+               <i class="bi ${options.isSaved ? 'bi-bookmark-fill' : 'bi-bookmark'} save-icon"
+                  style="cursor:pointer"
+                  onclick="${
+                      options.isSaved
+                      ? `unsavePost(${post.postId}, this)`
+                      : `savePost(${post.postId}, this)`
+                  }"
+                  title="Save post"></i>
+
+           </div>
+
+       </div>
 
             <!-- COMMENT BOX -->
             <div id="comment-box-${post.postId}"
@@ -648,13 +671,21 @@ function unpinPostAction(postId) {
     })
     .catch(err => alert(err.message));
 }
-
 function deletePostAction(postId) {
+
     if (!confirm("Delete this post?")) return;
 
-    fetch(`/posts/${postId}?userId=${currentUser.userId}`, { method: "DELETE" })
-        .then(() => location.reload())
-        .catch(() => alert("Failed to delete post"));
+    fetch(`/posts/${postId}?userId=${CURRENT_USER_ID}`, {
+        method: "DELETE"
+    })
+    .then(response => {
+        if (response.ok) {
+            location.reload(); // refresh page
+        } else {
+            alert("Delete failed");
+        }
+    })
+    .catch(() => alert("Failed to delete post"));
 }
 
 function updatePost() {
@@ -702,55 +733,62 @@ function updatePost() {
     .catch(err => alert(err.message));
 }
 
-// ===============================
-// LIKE POST
-// ===============================
-function likePostAction(postId, element) {
+/// ===============================
+ // LIKE POST
+ // ===============================
+ function likePostAction(postId, element) {
 
-    fetch(`/posts/${postId}/like`, {
-        method: "POST"
-    })
-    .then(res => {
-        if (!res.ok) throw new Error("Like failed");
-        return res.json();
-    })
-    .then(newCount => {
+     fetch(`/posts/${postId}/like`, {
+         method: "POST"
+     })
+     .then(res => {
+         if (!res.ok) throw new Error("Like failed");
+         return res.json();
+     })
+     .then(newCount => {
 
-        const countSpan = element.querySelector("span");
-        countSpan.innerText = newCount;
+         // update like count
+         const countSpan = element.querySelector(".like-count");
 
-    })
-    .catch(err => console.error(err));
-}
+         if (countSpan) {
+             countSpan.innerText = newCount;
+         }
 
+         // toggle active color
+         element.classList.toggle("liked");
 
-// ===============================
-// SHARE POST
-// ===============================
-function sharePostAction(postId, element) {
-
-    fetch(`/posts/${postId}/share`, {
-        method: "POST"
-    })
-    .then(res => {
-        if (!res.ok) throw new Error("Share failed");
-        return res.json();   // returns updated count
-    })
-    .then(newCount => {
-
-        const countSpan = element.querySelector("span");
-        countSpan.innerText = newCount;
-
-        element.classList.add("shared");
-
-        // 🔥 REFRESH FEED
-        fetchFeedPosts();
-
-    })
-    .catch(err => console.error(err));
-}
+     })
+     .catch(err => console.error("Like error:", err));
+ }
 
 
+ // ===============================
+ // SHARE POST
+ // ===============================
+ function sharePostAction(postId, element) {
+
+     fetch(`/posts/${postId}/share`, {
+         method: "POST"
+     })
+     .then(res => {
+         if (!res.ok) throw new Error("Share failed");
+         return res.json();
+     })
+     .then(newCount => {
+
+         // update share count
+         const countSpan = element.querySelector(".share-count");
+
+         if (countSpan) {
+             countSpan.innerText = newCount;
+         }
+
+         // toggle share highlight
+         element.classList.toggle("shared");
+
+     })
+     .catch(err => console.error("Share error:", err));
+ }
 // ===============================
 // TOGGLE COMMENT BOX
 function toggleCommentBox(postId) {
@@ -1088,3 +1126,73 @@ function toggleShareList(event, postId) {
         shareContainer.innerHTML = "";
     }
 }
+
+
+//////////////////////////////////////////////////////////
+// LOAD POSTS BY HASHTAG (GLOBAL FUNCTION)
+//////////////////////////////////////////////////////////
+
+function loadHashtagPosts(tag) {
+
+    const feedContainer = document.getElementById("feedContainer");
+
+    if (!feedContainer) return;
+
+    feedContainer.innerHTML =
+        `<p class="text-center text-muted">Loading posts for #${tag}...</p>`;
+
+    fetch(`/posts/hashtag/${tag}`)
+        .then(res => {
+            if (!res.ok) throw new Error("Failed to load hashtag posts");
+            return res.json();
+        })
+        .then(posts => {
+
+            feedContainer.innerHTML = "";
+
+            if (!posts || posts.length === 0) {
+
+                feedContainer.innerHTML =
+                    `<div class="card feed-card text-center p-4">
+                        No posts found for #${tag}
+                     </div>`;
+
+                return;
+            }
+
+            posts.forEach(post => {
+
+                const card = createFeedPostCard(post, {
+                    showPinned: false,
+                    isSaved: savedPostIds.has(post.postId)
+                });
+
+                feedContainer.appendChild(card);
+
+            });
+
+        })
+        .catch(err => {
+
+            console.error(err);
+
+            feedContainer.innerHTML =
+                `<p class="text-center text-danger">
+                    Error loading hashtag posts
+                 </p>`;
+
+        });
+}
+// ===============================
+// LOAD FEED WHEN PAGE LOADS
+// ===============================
+document.addEventListener("DOMContentLoaded", function () {
+
+    // refresh userId after page loads
+    currentUser.userId = window.CURRENT_USER_ID;
+
+    if (currentUser.userId) {
+        fetchFeedPosts();
+    }
+
+});

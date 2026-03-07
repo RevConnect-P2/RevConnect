@@ -1,20 +1,17 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<!-- ========================= -->
-<!-- POST FEED FRAGMENT -->
-<!-- ========================= -->
 <div th:fragment="postFeed" class="mt-4">
 
-    <!-- ========================= -->
-    <!-- CREATE POST SECTION -->
-    <!-- ========================= -->
-    <div class="card shadow-sm mb-4">
+    <!-- CREATE POST -->
+    <div class="card feed-card mb-3">
+
         <div class="card-body">
 
-            <h6 class="fw-bold mb-3">Create Post</h6>
+            <h6 class="fw-bold mb-3">
+                Create Post
+            </h6>
 
-            <!-- Post Content -->
             <textarea
                     id="postContent"
                     class="form-control mb-3"
@@ -22,113 +19,138 @@
                     placeholder="What's on your mind?">
             </textarea>
 
-            <!-- Post Type + Pin -->
+            <!-- POST OPTIONS -->
             <div class="row g-2 mb-3">
+
                 <div class="col-md-4">
-                    <select id="postType" class="form-select form-select-sm">
-                        <option value="NORMAL">Normal Post</option>
-                        <option value="PROMOTIONAL">Promotional Post</option>
+
+                    <select id="postType"
+                            class="form-select form-select-sm">
+
+                        <option value="NORMAL">
+                            Normal Post
+                        </option>
+
+                        <option value="PROMOTIONAL">
+                            Promotional Post
+                        </option>
+
                     </select>
+
                 </div>
 
                 <div class="col-md-4 d-flex align-items-center">
-                    <input type="checkbox" id="pinned" class="form-check-input me-2">
-                    <label for="pinned" class="form-check-label small">
+
+                    <input type="checkbox"
+                           id="pinned"
+                           class="form-check-input me-2">
+
+                    <label for="pinned"
+                           class="form-check-label small">
                         Pin to profile
                     </label>
+
                 </div>
+
             </div>
 
-            <!-- Hashtags -->
-            <input
-                    type="text"
-                    id="hashtags"
-                    class="form-control form-control-sm mb-3"
-                    placeholder="#java #springboot">
+            <!-- HASHTAGS -->
+            <input type="text"
+                   id="hashtags"
+                   class="form-control form-control-sm mb-3"
+                   placeholder="#java #springboot">
 
-            <!-- CTA Section (only for promotional post) -->
-            <div id="ctaSection" class="row g-2 mb-3 d-none">
+            <!-- CTA SECTION -->
+            <div id="ctaSection"
+                 class="row g-2 mb-3 d-none">
+
                 <div class="col-md-6">
-                    <input
-                            type="text"
-                            id="ctaText"
-                            class="form-control form-control-sm"
-                            placeholder="CTA Text (e.g. Learn More)">
+
+                    <input type="text"
+                           id="ctaText"
+                           class="form-control form-control-sm"
+                           placeholder="CTA Text">
+
                 </div>
+
                 <div class="col-md-6">
-                    <input
-                            type="text"
-                            id="ctaLink"
-                            class="form-control form-control-sm"
-                            placeholder="CTA Link (https://...)">
+
+                    <input type="text"
+                           id="ctaLink"
+                           class="form-control form-control-sm"
+                           placeholder="CTA Link">
+
                 </div>
+
             </div>
 
-            <!-- Schedule -->
+            <!-- SCHEDULE -->
             <div class="row g-2 mb-3">
+
                 <div class="col-md-6">
-                    <input
-                            type="datetime-local"
-                            id="scheduledAt"
-                            class="form-control form-control-sm">
+
+                    <input type="datetime-local"
+                           id="scheduledAt"
+                           class="form-control form-control-sm">
+
                 </div>
+
             </div>
 
-            <!-- Post Button -->
+            <!-- POST BUTTON -->
             <div class="text-end">
+
                 <button type="button"
                         class="btn btn-primary btn-sm"
                         onclick="createPost()">
-                    Post
-                </button>
-            </div>
 
-            <!-- Feature Hints -->
-            <div class="mt-3 text-muted small">
-                Features:
-                <span class="badge bg-light text-dark">Hashtags</span>
-                <span class="badge bg-light text-dark">Promotional</span>
-                <span class="badge bg-light text-dark">CTA</span>
-                <span class="badge bg-light text-dark">Pin</span>
-                <span class="badge bg-light text-dark">Schedule</span>
+                    Post
+
+                </button>
+
             </div>
 
         </div>
+
     </div>
 
-    <!-- FEED FILTER BAR -->
-    <div class="card mb-3">
+    <!-- FILTER BAR -->
+    <div class="card feed-card mb-3">
+
         <div class="card-body d-flex gap-2">
+
             <button class="btn btn-sm btn-primary feed-filter-btn"
-                    data-filter="ALL"
                     onclick="setFeedFilter('ALL')">
                 All
             </button>
 
             <button class="btn btn-sm btn-outline-primary feed-filter-btn"
-                    data-filter="NORMAL"
                     onclick="setFeedFilter('NORMAL')">
                 Normal
             </button>
 
             <button class="btn btn-sm btn-outline-primary feed-filter-btn"
-                    data-filter="PROMOTIONAL"
                     onclick="setFeedFilter('PROMOTIONAL')">
                 Promotional
             </button>
+
         </div>
+
     </div>
 
-    <!-- ========================= -->
-    <!-- POSTS FEED SECTION -->
-    <!-- ========================= -->
+    <!-- POSTS CONTAINER -->
     <div id="feedContainer">
+
         <div class="text-center text-muted">
+
             <p class="small">
                 No posts yet. Start sharing your thoughts ✨
             </p>
+
         </div>
+
     </div>
 
 </div>
+
 </html>

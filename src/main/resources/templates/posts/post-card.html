@@ -1,68 +1,57 @@
-<!-- Post Card Fragment -->
-<div th:fragment="postCard" class="card shadow-sm mb-3" xmlns:th="http://www.w3.org/1999/xhtml">
-<div th:fragment="postCard(post)" class="card shadow-sm mb-3">
+<div th:fragment="postCard(post)"
+     class="card post-card mb-3">
 
     <div class="card-body">
 
-        <!-- ========================= -->
-        <!-- POST HEADER -->
-        <!-- ========================= -->
-        <div class="d-flex justify-content-between align-items-center mb-2">
-            <div>
-                <strong class="text-dark"
-                        th:text="${post.username}">
-                    Username
-                </strong>
-            </div>
+        <!-- HEADER -->
+        <div class="d-flex justify-content-between mb-2">
+
+            <strong th:text="${post.username}">
+                Username
+            </strong>
 
             <small class="text-muted"
                    th:text="${#temporals.format(post.createdAt,'dd MMM yyyy hh:mm a')}">
             </small>
+
         </div>
 
-        <!-- ========================= -->
-        <!-- POST CONTENT -->
-        <!-- ========================= -->
-        <p class="mb-2"
-           th:text="${post.content}">
+        <!-- CONTENT -->
+        <p th:text="${post.content}">
         </p>
 
-        <!-- ========================= -->
         <!-- HASHTAGS -->
-        <!-- ========================= -->
-        <div class="mb-2"
-             th:if="${post.hashtags != null}">
-            <span th:each="tag : ${post.hashtags}"
-                  class="badge bg-light text-primary me-1"
-                  th:text="'#' + ${tag}">
-            </span>
+        <div th:if="${post.hashtags != null}" class="mb-2">
+
+        <span th:each="tag : ${post.hashtags}"
+              class="badge bg-light text-primary me-1"
+              th:text="'#' + ${tag}">
+        </span>
+
         </div>
 
-        <!-- ========================= -->
-        <!-- TAGGED PRODUCT / SERVICE -->
-        <!-- ========================= -->
+        <!-- TAGGED PRODUCTS -->
         <div th:if="${post.tags != null and !post.tags.isEmpty()}"
              class="mb-2">
 
-            <span th:each="tag : ${post.tags}"
-                  class="badge bg-success me-1"
-                  th:text="${tag.tagType} + ': ' + ${tag.tagName}">
-            </span>
+        <span th:each="tag : ${post.tags}"
+              class="badge bg-success me-1"
+              th:text="${tag.tagType} + ': ' + ${tag.tagName}">
+        </span>
 
         </div>
 
-        <!-- ========================= -->
-        <!-- PROMOTIONAL CTA BUTTON -->
-        <!-- ========================= -->
+        <!-- PROMOTIONAL CTA -->
         <div th:if="${post.postType == 'PROMOTIONAL'}"
              class="mb-2">
 
-            <a th:if="${post.ctaLink != null}"
-               th:href="${post.ctaLink}"
+            <a th:href="${post.ctaLink}"
                target="_blank"
                class="btn btn-primary btn-sm">
 
-                <span th:text="${post.ctaText}">Claim Offer</span>
+            <span th:text="${post.ctaText}">
+                Claim Offer
+            </span>
 
             </a>
 
@@ -70,9 +59,7 @@
 
         <hr>
 
-        <!-- ========================= -->
-        <!-- POST ACTIONS -->
-        <!-- ========================= -->
+        <!-- ACTIONS -->
         <div class="d-flex justify-content-around text-muted">
 
             <div class="post-action">
@@ -91,26 +78,23 @@
 
     </div>
 
-    <!-- ========================= -->
-    <!-- LIKE COMMENT SHARE SECTION -->
-    <!-- ========================= -->
+    <!-- STATS + ACTION BUTTONS -->
     <div class="border-top pt-3 mt-3">
 
         <div class="d-flex justify-content-between mb-2 small text-muted">
+
         <span>
-            <i class="bi bi-hand-thumbs-up"></i>
-            <span th:text="${post.likeCount}">0</span>
+            👍 <span th:text="${post.likeCount}">0</span>
         </span>
 
             <span>
-            <i class="bi bi-chat-dots"></i>
-            <span th:text="${post.commentCount}">0</span> Comments
+            💬 <span th:text="${post.commentCount}">0</span> Comments
         </span>
 
             <span>
-            <i class="bi bi-arrow-repeat"></i>
-            <span th:text="${post.shareCount}">0</span> Shares
+            🔄 <span th:text="${post.shareCount}">0</span> Shares
         </span>
+
         </div>
 
         <div class="d-flex justify-content-around">
@@ -118,10 +102,11 @@
             <!-- LIKE -->
             <form th:action="@{/posts/{id}/like(id=${post.postId})}"
                   method="post">
-                <button type="submit"
-                        class="btn btn-sm btn-outline-primary">
-                    <i class="bi bi-hand-thumbs-up"></i> Like
+
+                <button class="btn btn-sm btn-outline-primary">
+                    👍 Like
                 </button>
+
             </form>
 
             <!-- COMMENT -->
@@ -135,19 +120,20 @@
                        placeholder="Write comment..."
                        required>
 
-                <button type="submit"
-                        class="btn btn-sm btn-outline-secondary">
+                <button class="btn btn-sm btn-outline-secondary">
                     Comment
                 </button>
+
             </form>
 
             <!-- SHARE -->
             <form th:action="@{/posts/{id}/share(id=${post.postId})}"
                   method="post">
-                <button type="submit"
-                        class="btn btn-sm btn-outline-success">
-                    <i class="bi bi-arrow-repeat"></i> Share
+
+                <button class="btn btn-sm btn-outline-success">
+                    🔗 Share
                 </button>
+
             </form>
 
         </div>

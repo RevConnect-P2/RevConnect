@@ -2,39 +2,32 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 
-<!-- PROFESSIONAL NAVBAR FRAGMENT -->
-
 <nav th:fragment="navbar(user)"
-     class="navbar navbar-expand-lg bg-white shadow-sm sticky-top">
+     class="navbar navbar-expand-lg sticky-top">
 
     <div class="container">
 
         <!-- LOGO -->
         <a href="/dashboard"
-           class="navbar-brand fw-bold text-primary"
-           style="font-size:22px;">
+           class="navbar-brand">
             RevConnect
         </a>
 
-
         <!-- SEARCH -->
         <form class="d-flex w-50">
-            <input class="form-control rounded-pill"
+            <input class="form-control"
                    type="search"
                    placeholder="Search RevConnect">
         </form>
 
-
-
         <!-- RIGHT MENU -->
         <ul class="navbar-nav ms-auto align-items-center">
-
 
             <!-- HOME -->
             <li class="nav-item text-center mx-3">
 
                 <a href="/dashboard"
-                   class="nav-link text-dark">
+                   class="nav-link">
 
                     <i class="bi bi-house fs-5"></i>
 
@@ -46,13 +39,11 @@
 
             </li>
 
-
-
             <!-- NETWORK -->
             <li class="nav-item text-center mx-3">
 
                 <a href="/network"
-                   class="nav-link text-dark">
+                   class="nav-link">
 
                     <i class="bi bi-people fs-5"></i>
 
@@ -64,13 +55,11 @@
 
             </li>
 
-
-
             <!-- NOTIFICATIONS -->
             <li class="nav-item text-center mx-3 position-relative">
 
                 <a href="/notifications"
-                   class="nav-link text-dark">
+                   class="nav-link">
 
                     <i class="bi bi-bell fs-5"></i>
 
@@ -86,13 +75,11 @@
 
             </li>
 
-
-
             <!-- PROFILE -->
             <li class="nav-item text-center mx-3">
 
                 <a href="/profile"
-                   class="nav-link text-dark">
+                   class="nav-link">
 
                     <i class="bi bi-person-circle fs-5"></i>
 
@@ -104,8 +91,6 @@
                 </a>
 
             </li>
-
-
 
             <!-- LOGOUT -->
             <li class="nav-item mx-3">
@@ -119,9 +104,7 @@
 
             </li>
 
-
         </ul>
-
 
     </div>
 
