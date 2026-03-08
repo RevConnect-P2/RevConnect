@@ -108,4 +108,14 @@ public class ConnectionServiceImpl implements ConnectionService {
 
         connectionRepository.deleteById(connectionId);
     }
+
+    // =========================
+    // COUNT USER CONNECTIONS
+    // =========================
+    @Override
+    public long getConnectionsCount(Long userId) {
+
+        return connectionRepository
+                .countBySender_UserIdOrReceiver_UserId(userId, userId);
+    }
 }

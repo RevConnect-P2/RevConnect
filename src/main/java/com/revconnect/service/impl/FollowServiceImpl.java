@@ -11,6 +11,7 @@ import com.revconnect.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -27,21 +28,16 @@ public class FollowServiceImpl implements FollowService {
     @Override
     public void followUser(Long followerId, Long followingId) {
 
-        if (followerId.equals(followingId)) {
-            throw new RuntimeException("You cannot follow yourself");
-        }
+        validateSelfFollow(followerId, followingId);
 
-        User follower = userRepository.findById(followerId)
-                .orElseThrow(() -> new RuntimeException("Follower not found"));
-
-        User following = userRepository.findById(followingId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User follower = getUser(followerId);
+        User following = getUser(followingId);
 
         Optional<Follow> existingFollow =
                 followRepository.findByFollowerAndFollowing(follower, following);
 
         if (existingFollow.isPresent()) {
-            throw new RuntimeException("Already following this user");
+            throw new RuntimeException("You are already following this user");
         }
 
         Follow follow = Follow.builder()
@@ -51,16 +47,7 @@ public class FollowServiceImpl implements FollowService {
 
         followRepository.save(follow);
 
-        // 🔔 Send notification
-        if (!followerId.equals(followingId)) {
-            notificationService.createNotification(
-                    followerId,
-                    followingId,
-                    null,
-                    NotificationType.FOLLOW,
-                    null
-            );
-        }
+        sendFollowNotification(followerId, followingId);
     }
 
     // =========================
@@ -69,15 +56,14 @@ public class FollowServiceImpl implements FollowService {
     @Override
     public void unfollowUser(Long followerId, Long followingId) {
 
-        User follower = userRepository.findById(followerId)
-                .orElseThrow(() -> new RuntimeException("Follower not found"));
+        validateSelfFollow(followerId, followingId);
 
-        User following = userRepository.findById(followingId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User follower = getUser(followerId);
+        User following = getUser(followingId);
 
         Follow follow = followRepository
                 .findByFollowerAndFollowing(follower, following)
-                .orElseThrow(() -> new RuntimeException("Follow relationship not found"));
+                .orElseThrow(() -> new RuntimeException("You are not following this user"));
 
         followRepository.delete(follow);
     }
@@ -88,27 +74,22 @@ public class FollowServiceImpl implements FollowService {
     @Override
     public boolean toggleFollow(Long followerId, Long followingId) {
 
-        if (followerId.equals(followingId)) {
-            throw new RuntimeException("You cannot follow yourself");
-        }
+        validateSelfFollow(followerId, followingId);
 
-        User follower = userRepository.findById(followerId)
-                .orElseThrow(() -> new RuntimeException("Follower not found"));
-
-        User following = userRepository.findById(followingId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User follower = getUser(followerId);
+        User following = getUser(followingId);
 
         Optional<Follow> existingFollow =
                 followRepository.findByFollowerAndFollowing(follower, following);
 
-        // Already following → unfollow
+        // If already following → unfollow
         if (existingFollow.isPresent()) {
 
             followRepository.delete(existingFollow.get());
             return false;
         }
 
-        // Follow
+        // Follow user
         Follow follow = Follow.builder()
                 .follower(follower)
                 .following(following)
@@ -116,7 +97,66 @@ public class FollowServiceImpl implements FollowService {
 
         followRepository.save(follow);
 
-        // 🔔 Notification
+        sendFollowNotification(followerId, followingId);
+
+        return true;
+    }
+
+    // =========================
+    // GET FOLLOWERS COUNT
+    // =========================
+    @Override
+    public long getFollowersCount(Long userId) {
+
+        return followRepository.countByFollowing_UserId(userId);
+    }
+
+    // =========================
+    // GET FOLLOWING COUNT
+    // =========================
+    @Override
+    public long getFollowingCount(Long userId) {
+
+        return followRepository.countByFollower_UserId(userId);
+    }
+
+    // =========================
+    // GET FOLLOWERS LIST
+    // =========================
+    @Override
+    public List<Follow> getFollowers(Long userId) {
+
+        return followRepository.findByFollowing_UserId(userId);
+    }
+
+    // =========================
+    // GET FOLLOWING LIST
+    // =========================
+    @Override
+    public List<Follow> getFollowing(Long userId) {
+
+        return followRepository.findByFollower_UserId(userId);
+    }
+
+    // =========================
+    // HELPER METHODS
+    // =========================
+
+    private User getUser(Long userId) {
+
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+    }
+
+    private void validateSelfFollow(Long followerId, Long followingId) {
+
+        if (followerId.equals(followingId)) {
+            throw new RuntimeException("You cannot follow yourself");
+        }
+    }
+
+    private void sendFollowNotification(Long followerId, Long followingId) {
+
         notificationService.createNotification(
                 followerId,
                 followingId,
@@ -124,7 +164,5 @@ public class FollowServiceImpl implements FollowService {
                 NotificationType.FOLLOW,
                 null
         );
-
-        return true;
     }
 }

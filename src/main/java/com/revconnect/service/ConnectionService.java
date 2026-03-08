@@ -14,4 +14,7 @@ public interface ConnectionService {
     // Remove connection
     void removeConnection(Long connectionId);
 
+    // ⭐ COUNT USER CONNECTIONS
+    long getConnectionsCount(Long userId);
+
 }

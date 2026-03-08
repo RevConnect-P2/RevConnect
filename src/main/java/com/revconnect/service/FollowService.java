@@ -1,13 +1,43 @@
 package com.revconnect.service;
 
+import com.revconnect.entity.Follow;
+
+import java.util.List;
+
 public interface FollowService {
 
-    // follow user
+    // =========================
+    // FOLLOW USER
+    // =========================
     void followUser(Long followerId, Long followingId);
 
-    // unfollow user
+    // =========================
+    // UNFOLLOW USER
+    // =========================
     void unfollowUser(Long followerId, Long followingId);
 
-    // toggle follow / unfollow
+    // =========================
+    // TOGGLE FOLLOW / UNFOLLOW
+    // =========================
     boolean toggleFollow(Long followerId, Long followingId);
+
+    // =========================
+    // GET FOLLOWERS COUNT
+    // =========================
+    long getFollowersCount(Long userId);
+
+    // =========================
+    // GET FOLLOWING COUNT
+    // =========================
+    long getFollowingCount(Long userId);
+
+    // =========================
+    // GET FOLLOWERS LIST
+    // =========================
+    List<Follow> getFollowers(Long userId);
+
+    // =========================
+    // GET FOLLOWING LIST
+    // =========================
+    List<Follow> getFollowing(Long userId);
 }

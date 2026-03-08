@@ -25,31 +25,42 @@
 
             <div class="row text-center small">
 
+                <!-- CONNECTIONS -->
                 <div class="col">
-                    <div class="fw-bold"
-                         th:text="${connectionsCount}">
-                    </div>
-                    <div class="text-muted">
-                        Connections
-                    </div>
+                    <a href="/network" class="text-decoration-none text-dark">
+                        <div class="fw-bold"
+                             th:text="${connectionsCount}">
+                        </div>
+                        <div class="text-muted">
+                            Connections
+                        </div>
+                    </a>
                 </div>
 
+                <!-- FOLLOWERS -->
                 <div class="col">
-                    <div class="fw-bold"
-                         th:text="${followersCount}">
-                    </div>
-                    <div class="text-muted">
-                        Followers
-                    </div>
+                    <a th:href="@{/profile/{username}/followers(username=${user.username})}"
+                       class="text-decoration-none text-dark">
+                        <div class="fw-bold"
+                             th:text="${followersCount}">
+                        </div>
+                        <div class="text-muted">
+                            Followers
+                        </div>
+                    </a>
                 </div>
 
+                <!-- FOLLOWING -->
                 <div class="col">
-                    <div class="fw-bold"
-                         th:text="${followingCount}">
-                    </div>
-                    <div class="text-muted">
-                        Following
-                    </div>
+                    <a th:href="@{/profile/{username}/following(username=${user.username})}"
+                       class="text-decoration-none text-dark">
+                        <div class="fw-bold"
+                             th:text="${followingCount}">
+                        </div>
+                        <div class="text-muted">
+                            Following
+                        </div>
+                    </a>
                 </div>
 
             </div>

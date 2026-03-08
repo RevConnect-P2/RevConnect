@@ -96,23 +96,51 @@
                 Profile Type
             </p>
 
+            <!-- FOLLOWERS / FOLLOWING -->
+            <div class="d-flex justify-content-center gap-4 mt-2">
+
+                <!-- FOLLOWERS -->
+                <a th:href="@{/profile/{username}/followers(username=${user.username})}"
+                   class="text-decoration-none text-dark text-center">
+
+                    <h6 class="mb-0" th:text="${followers}">0</h6>
+                    <small class="text-muted">Followers</small>
+
+                </a>
+
+                <!-- FOLLOWING -->
+                <a th:href="@{/profile/{username}/following(username=${user.username})}"
+                   class="text-decoration-none text-dark text-center">
+
+                    <h6 class="mb-0" th:text="${following}">0</h6>
+                    <small class="text-muted">Following</small>
+
+                </a>
+
+            </div>
+
             <div class="mt-3">
-
-                <button class="btn btn-primary action-btn"
+                <button id="followBtn"
+                        class="btn btn-primary action-btn"
                         onclick="followUser()">
-                    <i class="fa fa-user-plus"></i> Follow
-                </button>
 
-                <button class="btn btn-outline-primary action-btn"
+                    <i class="fa fa-user-plus"></i>
+                    <span id="followText">Follow</span>
+
+                </button>
+                <button id="connectBtn"
+                        class="btn btn-outline-primary action-btn"
                         onclick="connectUser()">
-                    <i class="fa fa-handshake"></i> Connect
+
+                    <i class="fa fa-handshake"></i>
+                    <span id="connectText">Connect</span>
+
                 </button>
 
             </div>
 
         </div>
     </div>
-
 
     <!-- ABOUT -->
     <div class="card shadow-sm p-4 mb-3">
@@ -241,26 +269,139 @@
 </script>
 
 <script src="/js/posts.js"></script>
+<script th:inline="javascript">
 
-<script>
+    // ======================
+    // LOGGED-IN USER ID
+    // ======================
+    window.CURRENT_USER_ID = [[${session.loggedUser.userId}]];
+    window.PROFILE_USER_ID = [[${user.userId}]];
 
+
+    // ======================
+    // FOLLOW / UNFOLLOW USER
+    // ======================
     function followUser(){
-    alert("Follow feature coming soon");
+
+    fetch(`/follow/toggle/${CURRENT_USER_ID}/${PROFILE_USER_ID}`,{
+    method:"POST"
+    })
+    .then(response => response.json())
+    .then(isFollowing => {
+
+    let btn = document.getElementById("followBtn");
+    let text = document.getElementById("followText");
+
+    if(isFollowing){
+
+    text.innerText = "Unfollow";
+    btn.classList.remove("btn-primary");
+    btn.classList.add("btn-danger");
+
+    alert("You are now following this user");
+
+    }else{
+
+    text.innerText = "Follow";
+    btn.classList.remove("btn-danger");
+    btn.classList.add("btn-primary");
+
+    alert("You unfollowed this user");
+
     }
 
+    location.reload();
+
+    })
+    .catch(error => {
+
+    console.error("Follow error:", error);
+    alert("Follow request failed");
+
+    });
+
+    }
+
+
+    // ======================
+    // SEND CONNECTION REQUEST
+    // ======================
     function connectUser(){
-    alert("Connection request feature coming soon");
+
+    fetch(`/connections/request/${CURRENT_USER_ID}/${PROFILE_USER_ID}`,{
+    method:"POST"
+    })
+    .then(response => response.text())
+    .then(message => {
+
+    let text = document.getElementById("connectText");
+
+    if(text){
+    text.innerText = "Request Sent";
     }
 
+    alert(message);
+
+    })
+    .catch(error => {
+
+    console.error("Connection error:", error);
+    alert("Connection request failed");
+
+    });
+
+    }
+
+
+    // ======================
+    // ACCEPT CONNECTION
+    // ======================
+    function acceptConnection(connectionId){
+
+    fetch(`/connections/accept/${connectionId}`,{
+    method:"POST"
+    })
+    .then(()=>{
+
+    alert("Connection accepted");
+    location.reload();
+
+    });
+
+    }
+
+
+    // ======================
+    // REJECT CONNECTION
+    // ======================
+    function rejectConnection(connectionId){
+
+    fetch(`/connections/reject/${connectionId}`,{
+    method:"POST"
+    })
+    .then(()=>{
+
+    alert("Connection rejected");
+    location.reload();
+
+    });
+
+    }
+
+
+    // ======================
+    // LOAD PROFILE POSTS
+    // ======================
     document.addEventListener("DOMContentLoaded", function(){
 
     if(window.PROFILE_USER_ID){
+
     fetchProfilePosts();
+
     }
 
     });
 
 </script>
-
 </body>
 </html>

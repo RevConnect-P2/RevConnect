@@ -9,13 +9,29 @@ import java.util.Optional;
 
 public interface FollowRepository extends JpaRepository<Follow, Long> {
 
-    // Find follow relationship
+    // =========================
+    // FIND FOLLOW RELATIONSHIP
+    // =========================
     Optional<Follow> findByFollowerAndFollowing(User follower, User following);
 
-    // Get followers of a user
+    // =========================
+    // GET FOLLOWERS OF A USER
+    // =========================
     List<Follow> findByFollowing_UserId(Long userId);
 
-    // Get users someone is following
+    // =========================
+    // GET USERS SOMEONE FOLLOWS
+    // =========================
     List<Follow> findByFollower_UserId(Long userId);
+
+    // =========================
+    // COUNT FOLLOWERS
+    // =========================
+    long countByFollowing_UserId(Long userId);
+
+    // =========================
+    // COUNT FOLLOWING
+    // =========================
+    long countByFollower_UserId(Long userId);
 
 }
