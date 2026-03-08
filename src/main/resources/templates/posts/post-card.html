@@ -2,10 +2,10 @@
 
 <div th:fragment="postCard(post)" class="card feed-card mb-3" xmlns:th="http://www.w3.org/1999/xhtml">
 
+    ```
     <div class="card-body">
 
         <!-- HEADER -->
-
         <div class="d-flex justify-content-between align-items-center mb-2">
 
             <strong th:text="${post.username}"></strong>
@@ -17,33 +17,25 @@
         </div>
 
         <!-- CONTENT -->
-
         <p th:text="${post.content}" class="mb-2"></p>
 
         <!-- HASHTAGS -->
-
         <div th:if="${post.hashtags != null}" class="mb-2">
-
-<span th:each="tag : ${post.hashtags}"
-      class="badge bg-secondary me-1"
-      th:text="'#' + ${tag}">
-</span>
-
+        <span th:each="tag : ${post.hashtags}"
+              class="badge bg-secondary me-1"
+              th:text="'#' + ${tag}">
+        </span>
         </div>
 
         <!-- TAGGED PRODUCTS -->
-
         <div th:if="${post.tags != null and !post.tags.isEmpty()}" class="mb-2">
-
-<span th:each="tag : ${post.tags}"
-      class="badge bg-success me-1"
-      th:text="${tag.tagType} + ': ' + ${tag.tagName}">
-</span>
-
+        <span th:each="tag : ${post.tags}"
+              class="badge bg-success me-1"
+              th:text="${tag.tagType} + ': ' + ${tag.tagName}">
+        </span>
         </div>
 
         <!-- PROMOTIONAL CTA -->
-
         <div th:if="${post.postType == 'PROMOTIONAL'}" class="mb-2">
 
             <a th:if="${post.ctaLink != null}"
@@ -59,136 +51,116 @@
 
         <hr>
 
-        <!-- LIKE COMMENT SHARE -->
-
+        <!-- LIKE / COMMENT / SHARE -->
         <div class="d-flex justify-content-around text-muted mb-2">
 
             <form th:action="@{/posts/{id}/like(id=${post.postId})}" method="post">
-
                 <button type="submit" class="btn btn-sm btn-outline-light">
-
                     <i class="bi bi-hand-thumbs-up"></i> Like
-
                 </button>
-
             </form>
 
             <button class="btn btn-sm btn-outline-light">
-
                 <i class="bi bi-chat-dots"></i> Comment
-
             </button>
 
             <form th:action="@{/posts/{id}/share(id=${post.postId})}" method="post">
-
                 <button type="submit" class="btn btn-sm btn-outline-light">
-
                     <i class="bi bi-arrow-repeat"></i> Share
-
                 </button>
-
             </form>
+
 
         </div>
 
         <!-- COUNTS -->
+        <div class="d-flex justify-content-between small text-muted mb-3">
 
-        <div class="d-flex justify-content-between small text-muted mb-2">
-
-<span>
-<i class="bi bi-hand-thumbs-up"></i>
-<span th:text="${post.likeCount}">0</span>
-</span>
-
-            <span>
-<i class="bi bi-chat-dots"></i>
-<span th:text="${post.commentCount}">0</span> Comments
-</span>
+        <span>
+            <i class="bi bi-hand-thumbs-up"></i>
+            <span th:text="${post.likeCount}">0</span>
+        </span>
 
             <span>
-<i class="bi bi-arrow-repeat"></i>
-<span th:text="${post.shareCount}">0</span> Shares
-</span>
+            <i class="bi bi-chat-dots"></i>
+            <span th:text="${post.commentCount}">0</span> Comments
+        </span>
+
+            <span>
+            <i class="bi bi-arrow-repeat"></i>
+            <span th:text="${post.shareCount}">0</span> Shares
+        </span>
 
         </div>
 
         <!-- COMMENT INPUT -->
-
+        <!-- COMMENT INPUT -->
         <form th:action="@{/posts/{id}/comments(id=${post.postId})}"
               method="post"
-              class="d-flex gap-2 mb-3">
+              class="comment-input-box">
+
+            <div class="comment-input-avatar">
+                <span th:text="${#strings.substring(post.username,0,1)}">U</span>
+            </div>
 
             <input type="text"
                    name="commentText"
-                   class="form-control form-control-sm"
-                   placeholder="Write comment..."
+                   placeholder="Write a comment..."
+                   class="comment-input-field"
                    required>
 
-            <button type="submit"
-                    class="btn btn-sm btn-danger">
-                Comment
+            <button type="submit" class="comment-post-btn">
+                Post
             </button>
 
         </form>
 
         <!-- COMMENTS -->
 
-        <div th:each="comment : ${post.comments}"
-             class="d-flex mb-2">
+        <div class="comments-section">
 
-            <div class="me-2">
+            <div th:each="comment : ${post.comments}" class="comment-item">
 
-                <div style="width:32px;height:32px;border-radius:50%;background:#333;
-display:flex;align-items:center;justify-content:center;
-font-weight:600;font-size:13px;color:white;">
-
+                <!-- Avatar -->
+                <div class="comment-avatar">
                     <span th:text="${#strings.substring(comment.username,0,1)}">U</span>
-
                 </div>
 
-            </div>
+                <!-- Comment Bubble -->
+                <div class="comment-content">
 
-            <div class="flex-grow-1">
+                    <div class="comment-header">
 
-                <div style="background:#1a1a1a;border-radius:12px;padding:8px 12px;">
+                <span class="comment-user"
+                      th:text="${comment.username}">
+                </span>
 
-                    <div class="d-flex justify-content-between">
-
-                        <div>
-
-                            <strong th:text="${comment.username}"></strong>
-
-                            <small class="text-muted ms-2"
-                                   th:text="${#temporals.format(comment.createdAt,'dd MMM HH:mm')}">
-                            </small>
-
-                        </div>
+                        <span class="comment-time"
+                              th:text="${#temporals.format(comment.createdAt,'dd MMM yyyy, hh:mm a')}">
+                </span>
 
                         <form th:action="@{/posts/comments/{id}(id=${comment.commentId})}"
                               method="post"
-                              style="margin:0">
+                              class="comment-delete">
 
                             <input type="hidden" name="_method" value="delete"/>
 
-                            <button type="submit"
-                                    class="btn btn-sm btn-link text-danger p-0">
-
+                            <button type="submit">
                                 <i class="bi bi-trash"></i>
-
                             </button>
 
                         </form>
 
                     </div>
 
-                    <div th:text="${comment.commentText}" class="mt-1"></div>
+                    <div class="comment-text"
+                         th:text="${comment.commentText}">
+                    </div>
 
                 </div>
 
             </div>
 
         </div>
-
     </div>
-
 </div>

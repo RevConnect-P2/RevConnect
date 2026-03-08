@@ -3,118 +3,62 @@
 <body>
 
 <nav th:fragment="navbar(user)"
-     class="navbar navbar-expand-lg bg-white shadow-sm sticky-top">
+     class="navbar navbar-expand-lg rev-navbar sticky-top">
 
-    <div class="container">
+    <div class="container align-items-center">
 
         <!-- LOGO -->
         <a href="/dashboard"
-           class="navbar-brand fw-bold text-primary"
-           style="font-size:22px;">
+           class="navbar-brand rev-logo me-4">
             RevConnect
         </a>
 
-
         <!-- SEARCH -->
-        <form class="d-flex w-50">
-            <input class="form-control rounded-pill"
+        <form class="d-flex rev-search mx-auto">
+            <input class="form-control search-input w-100"
                    type="search"
                    placeholder="Search RevConnect">
         </form>
 
-
         <!-- RIGHT MENU -->
-        <ul class="navbar-nav ms-auto align-items-center">
-
+        <ul class="navbar-nav ms-auto align-items-center flex-row gap-4">
 
             <!-- HOME -->
-            <li class="nav-item text-center mx-3">
-
-                <a href="/dashboard"
-                   class="nav-link text-dark">
-
-                    <i class="bi bi-house fs-5"></i>
-
-                    <div style="font-size:12px;">
-                        Home
-                    </div>
-
+            <li class="nav-item text-center">
+                <a href="/dashboard" class="nav-link text-decoration-none">
+                    <i class="bi bi-house nav-icon"></i>
+                    <div class="nav-label text-light">Home</div>
                 </a>
-
             </li>
-
 
             <!-- NETWORK -->
-            <li class="nav-item text-center mx-3">
-
-                <a href="/network"
-                   class="nav-link text-dark">
-
-                    <i class="bi bi-people fs-5"></i>
-
-                    <div style="font-size:12px;">
-                        Network
-                    </div>
-
+            <li class="nav-item text-center">
+                <a href="/network" class="nav-link text-decoration-none">
+                    <i class="bi bi-people nav-icon"></i>
+                    <div class="nav-label text-light">Network</div>
                 </a>
-
             </li>
-
 
             <!-- NOTIFICATIONS -->
-            <li class="nav-item text-center mx-3 position-relative">
-
-                <a href="/notifications"
-                   class="nav-link text-dark">
-
-                    <i class="bi bi-bell fs-5"></i>
-
-                    <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">
+            <li class="nav-item text-center position-relative">
+                <a href="/notifications" class="nav-link text-decoration-none pt-2">
+                    <i class="bi bi-bell nav-icon"></i>
+                    <span class="badge notification-badge rounded-pill">
                         3
                     </span>
-
-                    <div style="font-size:12px;">
-                        Notifications
-                    </div>
-
+                    <div class="nav-label text-light">Notifications</div>
                 </a>
-
             </li>
 
-
-            <!-- PROFILE -->
-            <li class="nav-item text-center mx-3">
-
-                <a href="/profile"
-                   class="nav-link text-dark">
-
-                    <i class="bi bi-person-circle fs-5"></i>
-
-                    <div style="font-size:12px;"
-                         th:text="${user.username}">
-                        Username
-                    </div>
-
-                </a>
-
-            </li>
-
-
+            <!-- PROFILE (Removed since it's not in screenshot navbar, only Logout is there, but keeping it if user wants, wait, the screenshot has Home, Network, Notifications, Logout. I should remove Profile from here or adjust icon depending on screenshot) -->
             <!-- LOGOUT -->
-            <li class="nav-item mx-3">
-
-                <a href="/logout"
-                   class="btn btn-danger btn-sm rounded-pill">
-
+            <li class="nav-item ms-3">
+                <a href="/logout" class="btn logout-btn">
                     Logout
-
                 </a>
-
             </li>
-
 
         </ul>
-
 
     </div>
 

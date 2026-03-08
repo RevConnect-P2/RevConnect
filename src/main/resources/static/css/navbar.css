@@ -1,0 +1,78 @@
+.rev-navbar{
+background:#070707 !important;
+border-bottom:1px solid #1f1f1f;
+padding:10px 0;
+}
+
+/* remove bootstrap navbar background */
+.navbar{
+background:#070707 !important;
+}
+
+/* logo */
+
+.rev-logo{
+color:white !important;
+font-size:22px;
+font-weight:700;
+}
+
+/* search bar */
+
+.rev-search{
+width:40%;
+}
+
+.search-input{
+background:#111111;
+border:1px solid #1f1f1f;
+color:white;
+border-radius:20px;
+padding:8px 15px;
+}
+
+.search-input::placeholder{
+color:#9ca3af;
+}
+
+/* icons */
+
+.nav-icon{
+color:#9ca3af !important;
+font-size:18px;
+}
+
+.nav-icon:hover{
+color:#ef4444 !important;
+}
+
+/* labels */
+
+.nav-label{
+font-size:12px;
+}
+
+/* notification badge */
+
+.notification-badge{
+background:#ef4444;
+position:absolute;
+top:0;
+right:-6px;
+font-size:10px;
+}
+
+/* logout button */
+
+.logout-btn{
+background:linear-gradient(90deg,#ef4444,#b91c1c);
+border:none;
+border-radius:20px;
+padding:6px 14px;
+color:white;
+font-size:13px;
+}
+
+.logout-btn:hover{
+background:linear-gradient(90deg,#dc2626,#991b1b);
+}

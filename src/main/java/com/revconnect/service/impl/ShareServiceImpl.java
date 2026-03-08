@@ -33,7 +33,7 @@ public class ShareServiceImpl implements ShareService {
         if (shareRepository
                 .findByOriginalPost_PostIdAndSharedBy_Email(postId, email)
                 .isPresent()) {
-            return;   // ✅ DO NOTHING (no error)
+            throw new RuntimeException("Already Submitted");
         }
 
         Share share = Share.builder()

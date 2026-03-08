@@ -1,78 +1,4 @@
 /* ========================= */
-/* GLOBAL BACKGROUND */
-/* ========================= */
-
-body{
-background:#070707;
-color:#f1f5f9;
-font-family:'Segoe UI',sans-serif;
-}
-
-
-/* ========================= */
-/* GLOBAL TEXT */
-/* ========================= */
-
-h1,h2,h3,h4,h5,h6{
-color:white;
-}
-
-p{
-color:#e5e7eb;
-}
-
-strong{
-color:white;
-}
-
-
-/* override bootstrap muted */
-.text-muted{
-color:#9ca3af !important;
-}
-
-
-/* ========================= */
-/* CARDS */
-/* ========================= */
-
-.card{
-background:#0f0f0f;
-border:none;
-border-radius:16px;
-color:#e5e7eb;
-box-shadow:0 0 25px rgba(0,0,0,0.6);
-}
-
-
-/* ========================= */
-/* NAVBAR */
-/* ========================= */
-
-.navbar{
-background:#0f0f0f !important;
-border-bottom:1px solid #1f1f1f;
-}
-
-.navbar .nav-link{
-color:#d1d5db !important;
-}
-
-.navbar .nav-link:hover{
-color:#ef4444 !important;
-}
-
-/* navbar icons */
-.navbar i{
-color:#d1d5db;
-}
-
-.navbar i:hover{
-color:#ef4444;
-}
-
-
-/* ========================= */
 /* SIDEBAR CARDS */
 /* ========================= */
 
@@ -81,6 +7,66 @@ background:#0f0f0f;
 border:none;
 border-radius:16px;
 box-shadow:0 0 25px rgba(0,0,0,0.6);
+color:white;
+margin-bottom:20px;
+overflow:hidden;
+}
+
+/* SIDEBAR COVER */
+
+.sidebar-cover{
+height:80px;
+background:linear-gradient(90deg,#ef4444,#991b1b);
+border-radius:16px 16px 0 0;
+position:relative;
+z-index:1;
+}
+
+/* PROFILE IMAGE */
+.profile-img{
+width:75px;
+height:75px;
+margin-top:-38px;
+border-radius:50%;
+border:3px solid #070707;
+display:block;
+margin-left:auto;
+margin-right:auto;
+position:relative;
+z-index:2;
+}
+
+/* PROFILE EMAIL */
+
+.sidebar-email{
+color:#9ca3af;
+font-size:13px;
+}
+
+/* STATS */
+
+.sidebar-stats .stat-label{
+color:#9ca3af;
+font-size:12px;
+}
+
+.sidebar-stats{
+margin-top:10px;
+margin-bottom:10px;
+}
+
+/* PROFILE BUTTON */
+
+.profile-btn{
+background:linear-gradient(90deg,#ef4444,#b91c1c);
+border:none;
+border-radius:20px;
+color:white;
+font-weight:500;
+}
+
+.profile-btn:hover{
+background:linear-gradient(90deg,#dc2626,#991b1b);
 }
 
 
@@ -89,8 +75,10 @@ box-shadow:0 0 25px rgba(0,0,0,0.6);
 /* ========================= */
 
 .sidebar-link{
-display:block;
-padding:8px;
+display:flex;
+align-items:center;
+gap:10px;
+padding:8px 10px;
 border-radius:8px;
 text-decoration:none;
 color:#d1d5db;
@@ -103,10 +91,21 @@ background:#1a1a1a;
 color:#ef4444;
 }
 
+/* ========================= */
+/* STICKY SIDEBAR */
+/* ========================= */
+
+.sidebar-sticky{
+position:sticky;
+top:90px;
+max-height:calc(100vh - 100px);
+overflow-y:auto;
+}
 
 /* ========================= */
-/* FEED POSTS */
+/* SIDEBAR COVER */
 /* ========================= */
+
 
 .feed-card{
 background:#0f0f0f;
@@ -114,47 +113,4 @@ border:none;
 border-radius:16px;
 box-shadow:0 0 25px rgba(0,0,0,0.6);
 margin-bottom:20px;
-padding:10px;
 }
-
-/* username */
-.feed-card strong{
-color:white;
-}
-
-/* post content */
-.feed-card p{
-color:#e5e7eb;
-}
-
-/* post icons */
-.feed-card i{
-color:#d1d5db;
-}
-
-
-/* ========================= */
-/* ACTION BUTTONS */
-/* ========================= */
-
-.post-action{
-color:#d1d5db;
-cursor:pointer;
-}
-
-.post-action:hover{
-color:#ef4444;
-}
-
-
-/* ========================= */
-/* BADGES */
-/* ========================= */
-
-.badge{
-background:#1a1a1a;
-color:#ef4444;
-}
-
-/* NAVBAR */
-

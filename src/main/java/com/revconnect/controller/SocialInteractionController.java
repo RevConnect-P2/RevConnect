@@ -57,14 +57,26 @@ public class SocialInteractionController {
 
     // ================= SHARE =================
     @PostMapping("/{postId}/share")
-    public ResponseEntity<Long> sharePost(@PathVariable Long postId,
-                                          Principal principal) {
+    public ResponseEntity<?> sharePost(@PathVariable Long postId,
+                                       Principal principal) {
 
-        shareService.sharePost(postId, principal.getName());
+        try {
 
-        Long updatedCount = shareService.getShareCount(postId);
+            shareService.sharePost(postId, principal.getName());
 
-        return ResponseEntity.ok(updatedCount);
+            Long updatedCount = shareService.getShareCount(postId);
+
+            return ResponseEntity.ok(updatedCount);
+
+        } catch (RuntimeException ex) {
+
+            if ("ALREADY_SHARED".equals(ex.getMessage())) {
+                return ResponseEntity.badRequest()
+                        .body("You have already shared this post");
+            }
+
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
     }
 
     // ================= GET USERS WHO LIKED =================
