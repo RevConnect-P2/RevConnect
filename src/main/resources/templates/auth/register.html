@@ -1,292 +1,134 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
 <head>
-
     <title>Create Account | RevConnect</title>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
-
-    <style>
-
-        body{
-        height:100vh;
-        background: linear-gradient(135deg,#0a66c2,#00a0dc);
-        display:flex;
-        justify-content:center;
-        align-items:center;
-        font-family: 'Segoe UI', sans-serif;
-        }
-
-
-        .register-card{
-
-        width:450px;
-        padding:30px;
-        border-radius:20px;
-        background: rgba(255,255,255,0.95);
-        box-shadow:0 10px 35px rgba(0,0,0,0.25);
-
-        }
-
-
-        .logo{
-
-        font-size:30px;
-        font-weight:bold;
-        color:#0a66c2;
-        text-align:center;
-
-        }
-
-
-        .subtitle{
-
-        text-align:center;
-        color:gray;
-        margin-bottom:20px;
-
-        }
-
-
-        .form-control{
-
-        border-radius:10px;
-        padding:10px;
-
-        }
-
-
-        .btn-primary{
-
-        border-radius:10px;
-        padding:10px;
-        font-weight:bold;
-
-        }
-
-
-        .eye{
-
-        cursor:pointer;
-
-        }
-
-    </style>
-
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
 </head>
 
-
 <body>
+<div class="top-nav">
 
+    <div class="top-nav">
 
-
-<div class="register-card">
-
-
-    <div class="logo">
-
-        RevConnect
-
-    </div>
-
-
-    <div class="subtitle">
-
-        Create your professional account
-
-    </div>
-
-
-
-    <!-- ERROR MESSAGE -->
-
-    <div th:if="${error}" class="alert alert-danger text-center">
-
-        <span th:text="${error}"></span>
-
-    </div>
-
-
-
-    <form th:action="@{/register}" method="post">
-
-
-        <!-- EMAIL -->
-
-        <div class="mb-3">
-
-            <label>Email</label>
-
-            <input type="email"
-                   class="form-control"
-                   name="email"
-                   placeholder="Enter email"
-                   required>
-
+        <div class="logo-area">
+            <div class="logo-dot"></div>
+            RevConnect
         </div>
 
+<!--        <div>-->
+<!--            <button class="btn-login">Login</button>-->
+<!--            <button class="btn-sign">Sign Up</button>-->
+<!--        </div>-->
 
+    </div>
 
-        <!-- USERNAME -->
+<div class="auth-container">
 
-        <div class="mb-3">
+    <!-- LEFT SIDE -->
+    <div class="left-panel">
 
-            <label>Username</label>
+        <h1 class="brand-title">RevConnect</h1>
 
-            <input type="text"
-                   class="form-control"
-                   name="username"
-                   placeholder="Enter username"
-                   required>
+        <p class="brand-subtitle">
+            Let's Connect
+        </p>
 
-        </div>
+        <p class="brand-desc">
+            Connect with friends, collaborate with creators and grow your network.
+        </p>
 
+    </div>
 
+    <!-- RIGHT SIDE -->
+    <div class="right-panel">
 
-        <!-- PASSWORD -->
+        <div class="form-card">
 
-        <div class="mb-3">
+            <div class="logo">Create Account</div>
+            <div class="subtitle">Create your professional account</div>
 
-            <label>Password</label>
+            <div th:if="${error}" class="alert alert-danger text-center mt-2">
+                <span th:text="${error}"></span>
+            </div>
 
-            <div class="input-group">
+            <form th:action="@{/register}" method="post">
 
-                <input type="password"
-                       class="form-control"
-                       name="password"
-                       id="password"
-                       placeholder="Enter password"
-                       required>
+                <label>Email</label>
+                <input type="email" class="form-control" name="email" placeholder="Enter email" required>
 
+                <label>Username</label>
+                <input type="text" class="form-control" name="username" placeholder="Enter username" required>
 
-                <span class="input-group-text eye"
-                      onclick="togglePassword()">
+                <label>Password</label>
+                <div class="input-group">
+                    <input type="password" class="form-control" name="password" id="password" placeholder="Enter password" required>
+                    <span class="input-group-text" onclick="togglePassword()">
+                        <i class="fa fa-eye"></i>
+                    </span>
+                </div>
 
-<i class="fa fa-eye"></i>
+                <label>User Type</label>
 
-</span>
+                <div class="user-type">
 
+                    <label>
+                        <input type="radio" name="userType" value="USER" required>
+                        Personal
+                    </label>
 
+                    <label>
+                        <input type="radio" name="userType" value="CREATOR">
+                        Creator
+                    </label>
+
+                    <label>
+                        <input type="radio" name="userType" value="BUSINESS">
+                        Business
+                    </label>
+
+                </div>
+
+                <label>Security Question</label>
+                <select class="form-select" name="securityQuestion" required>
+                    <option value="">Select Question</option>
+                    <option>What is your pet name?</option>
+                    <option>What is your school name?</option>
+                    <option>What is your favorite color?</option>
+                    <option>What is your best friend name?</option>
+                </select>
+
+                <label>Security Answer</label>
+                <input type="text" class="form-control" name="securityAnswer" placeholder="Enter answer" required>
+
+                <button class="btn btn-primary w-100 mt-3">
+                    Create Account
+                </button>
+
+            </form>
+
+            <div class="bottom-text mt-3">
+                Already have account?
+                <a th:href="@{/login}">Login</a>
             </div>
 
         </div>
 
-
-
-        <!-- USER TYPE -->
-
-        <div class="mb-3">
-
-            <label>User Type</label>
-
-            <select class="form-control" name="userType" required>
-
-                <option value="">Select User Type</option>
-
-                <option value="USER">Personal User</option>
-
-                <option value="CREATOR">Creator</option>
-
-                <option value="BUSINESS">Business</option>
-
-            </select>
-
-        </div>
-
-
-
-        <!-- SECURITY QUESTION -->
-
-        <div class="mb-3">
-
-            <label>Security Question</label>
-
-            <select class="form-control" name="securityQuestion" required>
-
-                <option value="">Select Question</option>
-
-                <option>What is your pet name?</option>
-
-                <option>What is your school name?</option>
-
-                <option>What is your favorite color?</option>
-
-                <option>What is your best friend name?</option>
-
-            </select>
-
-        </div>
-
-
-
-        <!-- SECURITY ANSWER -->
-
-        <div class="mb-3">
-
-            <label>Security Answer</label>
-
-            <input type="text"
-                   class="form-control"
-                   name="securityAnswer"
-                   placeholder="Enter answer"
-                   required>
-
-        </div>
-
-
-
-        <button class="btn btn-primary w-100">
-
-            Create Account
-
-        </button>
-
-
-    </form>
-
-
-    <hr>
-
-
-    <div class="text-center">
-
-        Already have account?
-
-        <a th:href="@{/login}">
-
-            Login
-
-        </a>
-
     </div>
-
 
 </div>
 
-
-
 <script>
-
     function togglePassword(){
-
-    var x=document.getElementById("password");
-
-    x.type=x.type==="password"?"text":"password";
-
+        var x=document.getElementById("password");
+        x.type=x.type==="password"?"text":"password";
     }
-
 </script>
 
-
-
 </body>
-
 </html>

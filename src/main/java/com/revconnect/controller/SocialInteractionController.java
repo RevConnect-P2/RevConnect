@@ -84,4 +84,14 @@ public class SocialInteractionController {
                 shareService.getUsersWhoShared(postId)
         );
     }
+
+
+    @DeleteMapping("/comments/{commentId}")
+    public ResponseEntity<?> deleteComment(@PathVariable Long commentId,
+                                           Principal principal) {
+
+        commentService.deleteComment(commentId, principal.getName());
+
+        return ResponseEntity.ok("Comment deleted successfully");
+    }
 }

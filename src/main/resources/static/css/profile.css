@@ -1,0 +1,83 @@
+body{
+background:#070707;
+color:white;
+font-family:'Segoe UI',sans-serif;
+}
+
+/* container */
+
+.profile-container{
+max-width:900px;
+}
+
+/* cards */
+
+.profile-card{
+background:#0f0f0f;
+border:none;
+border-radius:16px;
+box-shadow:0 0 25px rgba(0,0,0,0.6);
+}
+
+/* cover */
+
+.profile-cover{
+height:160px;
+background:linear-gradient(90deg,#ef4444,#991b1b);
+border-radius:16px 16px 0 0;
+}
+
+/* profile image */
+
+.profile-img{
+width:140px;
+height:140px;
+border-radius:50%;
+border:5px solid #070707;
+margin-top:-70px;
+}
+
+/* profile type */
+
+.profile-type{
+color:#9ca3af;
+}
+
+/* icons */
+
+.info-icon{
+width:20px;
+margin-right:8px;
+color:#ef4444;
+}
+
+/* edit button */
+
+.edit-profile-btn{
+background:linear-gradient(90deg,#ef4444,#b91c1c);
+border:none;
+border-radius:25px;
+padding:10px;
+color:white;
+font-weight:500;
+}
+
+.edit-profile-btn:hover{
+background:linear-gradient(90deg,#dc2626,#991b1b);
+}
+
+/* center message */
+
+#centerMessage{
+position:fixed;
+top:20px;
+left:50%;
+transform:translateX(-50%);
+background:#0f0f0f;
+border:1px solid #ef4444;
+color:#ef4444;
+padding:10px 20px;
+border-radius:6px;
+display:none;
+z-index:9999;
+}

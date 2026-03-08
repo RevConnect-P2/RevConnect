@@ -1,0 +1,29 @@
+body{
+background:#070707;
+color:white;
+font-family:'Segoe UI',sans-serif;
+}
+
+/* title */
+
+.page-title{
+font-weight:700;
+}
+
+/* post card */
+
+.feed-card{
+background:#0f0f0f;
+border:none;
+border-radius:16px;
+box-shadow:0 0 25px rgba(0,0,0,0.6);
+margin-bottom:20px;
+padding:15px;
+}
+
+/* hover */
+
+.feed-card:hover{
+transform:translateY(-2px);
+transition:0.2s;
+}

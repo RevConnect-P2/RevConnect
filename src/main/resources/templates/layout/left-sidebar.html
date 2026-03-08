@@ -2,57 +2,40 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 
-<!-- PROFESSIONAL LEFT SIDEBAR -->
-
 <div th:fragment="leftSidebar(user, connectionsCount, followersCount, followingCount)">
-
 
     <!-- PROFILE CARD -->
 
-    <div class="card border-0 shadow-sm rounded-4 mb-3">
+    <div class="card sidebar-card mb-3">
 
         <!-- COVER -->
-        <div style="
-        height:80px;
-        background:linear-gradient(90deg,#0a66c2,#378fe9);
-        border-radius:12px 12px 0 0;">
-        </div>
-
+        <div class="sidebar-cover"></div>
 
         <!-- PROFILE IMAGE -->
         <div class="text-center">
 
             <img src="https://i.pravatar.cc/100?img=12"
-
-                 class="rounded-circle shadow"
-
-                 style="
-             width:75px;
-             margin-top:-40px;
-             border:3px solid white;">
+                 class="profile-img">
 
         </div>
 
-
-
         <!-- USER INFO -->
+
         <div class="card-body text-center">
 
             <h6 class="fw-bold mb-0"
                 th:text="${user.username}">
             </h6>
 
-
-            <p class="text-muted small mb-2"
+            <p class="sidebar-email"
                th:text="${user.email}">
             </p>
 
-
-            <hr class="mb-2">
-
+            <hr>
 
             <!-- STATS -->
-            <div class="row text-center small">
+
+            <div class="row text-center small sidebar-stats">
 
                 <div class="col">
 
@@ -60,12 +43,11 @@
                          th:text="${connectionsCount}">
                     </div>
 
-                    <div class="text-muted">
+                    <div class="stat-label">
                         Connections
                     </div>
 
                 </div>
-
 
                 <div class="col">
 
@@ -73,12 +55,11 @@
                          th:text="${followersCount}">
                     </div>
 
-                    <div class="text-muted">
+                    <div class="stat-label">
                         Followers
                     </div>
 
                 </div>
-
 
                 <div class="col">
 
@@ -86,7 +67,7 @@
                          th:text="${followingCount}">
                     </div>
 
-                    <div class="text-muted">
+                    <div class="stat-label">
                         Following
                     </div>
 
@@ -94,29 +75,21 @@
 
             </div>
 
-
             <hr>
 
-
-            <!-- PROFILE BUTTON -->
-            <a href="/profile"
-               class="btn btn-primary btn-sm w-100 rounded-pill">
+            <a href="/profile" class="btn profile-btn w-100">
 
                 View Profile
 
             </a>
 
-
         </div>
 
     </div>
 
-
-
     <!-- QUICK LINKS -->
 
-    <div class="card border-0 shadow-sm rounded-4">
-
+    <div class="card sidebar-card">
 
         <div class="card-body">
 
@@ -126,90 +99,43 @@
 
             </h6>
 
+            <a href="/posts" class="sidebar-link">
 
-            <a href="/posts"
-               class="sidebar-link">
-
-                <i class="bi bi-file-post me-2"></i>
+                <i class="bi bi-file-post"></i>
 
                 My Posts
 
             </a>
 
+            <a href="/saved" class="sidebar-link">
 
-            <a href="/saved"
-               class="sidebar-link">
-
-                <i class="bi bi-bookmark me-2"></i>
+                <i class="bi bi-bookmark"></i>
 
                 Saved Posts
 
             </a>
 
+            <a href="/network" class="sidebar-link">
 
-            <a href="/network"
-               class="sidebar-link">
-
-                <i class="bi bi-people me-2"></i>
+                <i class="bi bi-people"></i>
 
                 Connections
 
             </a>
 
+            <a href="/profile" class="sidebar-link">
 
-            <a href="/profile"
-               class="sidebar-link">
-
-                <i class="bi bi-person me-2"></i>
+                <i class="bi bi-person"></i>
 
                 Profile
 
             </a>
 
-
         </div>
 
     </div>
 
-
 </div>
-
-
-
-<!-- STYLE -->
-
-<style>
-
-    .sidebar-link{
-
-    display:block;
-
-    padding:8px;
-
-    border-radius:8px;
-
-    text-decoration:none;
-
-    color:#333;
-
-    font-size:14px;
-
-    transition:0.2s;
-
-    }
-
-    .sidebar-link:hover{
-
-    background:#eef3f8;
-
-    color:#0a66c2;
-
-    font-weight:500;
-
-    }
-
-</style>
-
 
 </body>
 </html>

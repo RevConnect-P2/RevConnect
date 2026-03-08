@@ -148,7 +148,7 @@ function formatDate(dateTime) {
 }
 
 function createFeedPostCard(post, options = {}) {
-
+    const cardId = `post-${post.postId}`;
     const card = document.createElement("div");
     card.className = "card feed-card mb-3";
 
@@ -247,11 +247,11 @@ function createFeedPostCard(post, options = {}) {
                </div>
 
                 <!-- COMMENT -->
-                <div class="col post-action"
-                     style="cursor:pointer"
-                     onclick="toggleCommentBox(${post.postId})">
-                     💬 <span>${post.commentCount || 0}</span>
-                </div>
+               <div class="col post-action"
+                    style="cursor:pointer"
+                    onclick="toggleCommentBox('${cardId}', ${post.postId})">
+                    💬 <span>${post.commentCount || 0}</span>
+               </div>
 
                 <!-- SHARE -->
                 <div class="col post-action"
@@ -279,23 +279,24 @@ function createFeedPostCard(post, options = {}) {
             </div>
 
             <!-- COMMENT BOX -->
-            <div id="comment-box-${post.postId}"
+            <div id="comment-box-${cardId}"
                  class="mt-2"
                  style="display:none;">
 
                 <input type="text"
-                       id="comment-input-${post.postId}"
+                       id="comment-input-${cardId}"
                        class="form-control form-control-sm"
                        placeholder="Write a comment...">
 
                 <button class="btn btn-sm btn-primary mt-1"
-                        onclick="submitCommentAction(${post.postId})">
+                        onclick="submitCommentAction('${cardId}', ${post.postId})">
                     Post
                 </button>
             </div>
 
             <!-- COMMENT LIST -->
-            <div id="comment-list-${post.postId}" class="mt-2"></div>
+
+            <div id="comment-list-${cardId}" class="mt-2"></div>
             <!-- LIKE LIST -->
             <div id="like-list-${post.postId}"
                  class="mt-2"
@@ -753,13 +754,13 @@ function sharePostAction(postId, element) {
 
 // ===============================
 // TOGGLE COMMENT BOX
-function toggleCommentBox(postId) {
+function toggleCommentBox(cardId, postId) {
 
     const commentBox =
-        document.getElementById(`comment-box-${postId}`);
+        document.getElementById(`comment-box-${cardId}`);
 
     const commentList =
-        document.getElementById(`comment-list-${postId}`);
+        document.getElementById(`comment-list-${cardId}`);
 
     const likeContainer =
         document.getElementById(`like-list-${postId}`);
@@ -773,7 +774,6 @@ function toggleCommentBox(postId) {
         commentBox.style.display === "none" ||
         commentBox.style.display === "";
 
-    // 🔥 CLOSE LIKE + SHARE FIRST
     if (likeContainer) {
         likeContainer.style.display = "none";
         likeContainer.innerHTML = "";
@@ -787,7 +787,7 @@ function toggleCommentBox(postId) {
     if (isHidden) {
 
         commentBox.style.display = "block";
-        fetchComments(postId);
+        fetchComments(postId, cardId);
 
     } else {
 
@@ -800,9 +800,11 @@ function toggleCommentBox(postId) {
 // ===============================
 // SUBMIT COMMENT
 // ===============================
-function submitCommentAction(postId) {
+function submitCommentAction(cardId, postId) {
 
-    const input = document.getElementById(`comment-input-${postId}`);
+    const input = document.getElementById(`comment-input-${cardId}`);
+    if (!input) return;
+
     const commentText = input.value.trim();
 
     if (!commentText) {
@@ -823,18 +825,22 @@ function submitCommentAction(postId) {
     })
     .then(() => {
 
-        // Clear input
+        // clear input
         input.value = "";
 
-        // Reload comments list 🔥
-        fetchComments(postId);
+        // reload comments for THIS card
+        fetchComments(postId, cardId);
 
-        // Update comment count safely
-        const commentCol = input.closest(".row")
-            .querySelector(".post-action:nth-child(2) span");
+        // update comment count
+        const commentCounter =
+            document.querySelector(
+                `[onclick="toggleCommentBox('${cardId}', ${postId})"] span`
+            );
 
-        let currentCount = parseInt(commentCol.innerText) || 0;
-        commentCol.innerText = currentCount + 1;
+        if (commentCounter) {
+            let currentCount = parseInt(commentCounter.innerText) || 0;
+            commentCounter.innerText = currentCount + 1;
+        }
 
     })
     .catch(err => console.error(err));
@@ -844,7 +850,7 @@ function submitCommentAction(postId) {
 //    fetchFeedPosts();
 //});
 
-function fetchComments(postId) {
+function fetchComments(postId, cardId = postId) {
 
     fetch(`/posts/${postId}/comments`)
     .then(res => {
@@ -853,7 +859,9 @@ function fetchComments(postId) {
     })
     .then(comments => {
 
-        const list = document.getElementById(`comment-list-${postId}`);
+        const list = document.getElementById(`comment-list-${cardId}`);
+        if (!list) return;
+
         list.innerHTML = "";
 
         if (!comments || comments.length === 0) {
@@ -867,11 +875,23 @@ function fetchComments(postId) {
             div.className = "border rounded p-2 mb-2 bg-light";
 
             div.innerHTML = `
-                <strong>${comment.username}</strong>
-                <small class="text-muted ms-2">
-                    ${new Date(comment.createdAt).toLocaleString()}
-                </small>
-                <div>${comment.commentText}</div>
+                <div class="d-flex justify-content-between align-items-start">
+
+                    <div>
+                        <strong>${comment.username}</strong>
+                        <small class="text-muted ms-2">
+                            ${new Date(comment.createdAt).toLocaleString()}
+                        </small>
+
+                        <div class="mt-1">${comment.commentText}</div>
+                    </div>
+
+                    <button class="btn btn-sm btn-link text-danger"
+                            onclick="openDeleteModal(${comment.commentId}, ${postId}, '${cardId}')">
+                        <i class="bi bi-trash"></i>
+                    </button>
+
+                </div>
             `;
 
             list.appendChild(div);
@@ -880,7 +900,6 @@ function fetchComments(postId) {
     })
     .catch(err => console.error(err));
 }
-
 // ===============================
 // FETCH PROFILE POSTS
 // ===============================
@@ -891,7 +910,7 @@ function fetchProfilePosts() {
 
     container.innerHTML = "<p class='text-center text-muted'>Loading posts...</p>";
 
-    fetch(`/posts/my/data?userId=${currentUser.userId}`)
+    fetch(`/posts/my/data?userId=${currentUser.userId}&t=${Date.now()}`)
         .then(res => {
             if (!res.ok) throw new Error("Failed to load profile posts");
             return res.json();
@@ -907,12 +926,25 @@ function fetchProfilePosts() {
             }
 
             posts.forEach(post => {
+
                 const card = createFeedPostCard(post, {
                     showPinned: true,
                     isSaved: false
                 });
 
                 container.appendChild(card);
+
+                const commentBox = card.querySelector('[id^="comment-box-"]');
+                if (!commentBox) return;
+
+                const cardId = commentBox.id.replace("comment-box-", "");
+
+                // show comment section
+                commentBox.style.display = "block";
+
+                // load comments
+                fetchComments(post.postId, cardId);
+
             });
 
         })
@@ -1087,4 +1119,119 @@ function toggleShareList(event, postId) {
         shareContainer.style.display = "none";
         shareContainer.innerHTML = "";
     }
+}
+
+function deleteComment(commentId, postId) {
+
+    if (!confirm("Delete this comment?")) return;
+
+    fetch(`/posts/comments/${commentId}`, {
+        method: "DELETE"
+    })
+    .then(res => {
+        if (!res.ok) throw new Error("Delete failed");
+
+        // reload comments
+        fetchComments(postId);
+    })
+    .catch(err => console.error(err));
+}
+
+let deleteCommentId = null;
+let deletePostId = null;
+let deleteCardId = null;
+
+function openDeleteModal(commentId, postId, cardId) {
+
+    deleteCommentId = commentId;
+    deletePostId = postId;
+    deleteCardId = cardId;
+
+    const modal = new bootstrap.Modal(
+        document.getElementById("deleteCommentModal")
+    );
+
+    modal.show();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const confirmBtn = document.getElementById("confirmDeleteComment");
+
+    if (!confirmBtn) return;
+
+    confirmBtn.addEventListener("click", function () {
+
+        fetch(`/posts/comments/${deleteCommentId}`, {
+            method: "DELETE"
+        })
+        .then(res => {
+
+            if (!res.ok) {
+                throw new Error("Not allowed");
+            }
+
+            return res.text();
+        })
+        .then(() => {
+
+            const modalEl = document.getElementById("deleteCommentModal");
+            const modal = bootstrap.Modal.getInstance(modalEl);
+            modal.hide();
+
+            showCenterMessage("Comment deleted successfully");
+
+            // PROFILE PAGE
+            if (document.getElementById("profilePostsContainer")) {
+
+                // clear container first
+                const container = document.getElementById("profilePostsContainer");
+                container.innerHTML = "<p class='text-muted text-center'>Updating...</p>";
+
+                // reload profile posts
+                fetchProfilePosts();
+
+            } else {
+
+                // DASHBOARD
+                fetchComments(deletePostId, deleteCardId);
+
+                const card = document.getElementById(`comment-box-${deleteCardId}`)?.closest(".card");
+
+                if (card) {
+                    const counter = card.querySelector(".post-action:nth-child(2) span");
+
+                    if (counter) {
+                        let count = parseInt(counter.innerText) || 0;
+                        if (count > 0) counter.innerText = count - 1;
+                    }
+                }
+            }
+        })
+        .catch(() => {
+
+            showCenterMessage("You cannot delete this comment");
+
+        });
+
+    });
+
+});
+
+
+function showCenterMessage(message) {
+
+    const box = document.getElementById("centerMessage");
+
+    if (!box) {
+        console.log(message);
+        return;
+    }
+
+    box.innerText = message;
+    box.style.display = "block";
+
+    setTimeout(() => {
+        box.style.display = "none";
+    }, 2000);
 }

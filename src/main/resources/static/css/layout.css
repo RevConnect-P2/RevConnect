@@ -1,0 +1,160 @@
+/* ========================= */
+/* GLOBAL BACKGROUND */
+/* ========================= */
+
+body{
+background:#070707;
+color:#f1f5f9;
+font-family:'Segoe UI',sans-serif;
+}
+
+
+/* ========================= */
+/* GLOBAL TEXT */
+/* ========================= */
+
+h1,h2,h3,h4,h5,h6{
+color:white;
+}
+
+p{
+color:#e5e7eb;
+}
+
+strong{
+color:white;
+}
+
+
+/* override bootstrap muted */
+.text-muted{
+color:#9ca3af !important;
+}
+
+
+/* ========================= */
+/* CARDS */
+/* ========================= */
+
+.card{
+background:#0f0f0f;
+border:none;
+border-radius:16px;
+color:#e5e7eb;
+box-shadow:0 0 25px rgba(0,0,0,0.6);
+}
+
+
+/* ========================= */
+/* NAVBAR */
+/* ========================= */
+
+.navbar{
+background:#0f0f0f !important;
+border-bottom:1px solid #1f1f1f;
+}
+
+.navbar .nav-link{
+color:#d1d5db !important;
+}
+
+.navbar .nav-link:hover{
+color:#ef4444 !important;
+}
+
+/* navbar icons */
+.navbar i{
+color:#d1d5db;
+}
+
+.navbar i:hover{
+color:#ef4444;
+}
+
+
+/* ========================= */
+/* SIDEBAR CARDS */
+/* ========================= */
+
+.sidebar-card{
+background:#0f0f0f;
+border:none;
+border-radius:16px;
+box-shadow:0 0 25px rgba(0,0,0,0.6);
+}
+
+
+/* ========================= */
+/* QUICK LINKS */
+/* ========================= */
+
+.sidebar-link{
+display:block;
+padding:8px;
+border-radius:8px;
+text-decoration:none;
+color:#d1d5db;
+font-size:14px;
+transition:0.2s;
+}
+
+.sidebar-link:hover{
+background:#1a1a1a;
+color:#ef4444;
+}
+
+
+/* ========================= */
+/* FEED POSTS */
+/* ========================= */
+
+.feed-card{
+background:#0f0f0f;
+border:none;
+border-radius:16px;
+box-shadow:0 0 25px rgba(0,0,0,0.6);
+margin-bottom:20px;
+padding:10px;
+}
+
+/* username */
+.feed-card strong{
+color:white;
+}
+
+/* post content */
+.feed-card p{
+color:#e5e7eb;
+}
+
+/* post icons */
+.feed-card i{
+color:#d1d5db;
+}
+
+
+/* ========================= */
+/* ACTION BUTTONS */
+/* ========================= */
+
+.post-action{
+color:#d1d5db;
+cursor:pointer;
+}
+
+.post-action:hover{
+color:#ef4444;
+}
+
+
+/* ========================= */
+/* BADGES */
+/* ========================= */
+
+.badge{
+background:#1a1a1a;
+color:#ef4444;
+}
+
+/* NAVBAR */
+

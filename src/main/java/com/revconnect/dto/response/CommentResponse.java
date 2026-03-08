@@ -11,7 +11,12 @@ public class CommentResponse {
 
     private Long commentId;
     private String commentText;
-//    private String userEmail;
+
     private LocalDateTime createdAt;
+
     private String username;
+
+    // ADD THESE
+    private Long userId;        // comment owner
+    private Long postOwnerId;   // post owner
 }

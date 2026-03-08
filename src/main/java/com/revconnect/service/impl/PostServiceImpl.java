@@ -2,6 +2,7 @@ package com.revconnect.service.impl;
 
 import com.revconnect.dto.request.PostCreateRequest;
 import com.revconnect.dto.request.TagRequest;
+import com.revconnect.dto.response.CommentResponse;
 import com.revconnect.dto.response.PostResponse;
 import com.revconnect.dto.response.TagResponse;
 import com.revconnect.entity.*;
@@ -295,7 +296,9 @@ public class PostServiceImpl implements PostService {
 
                     response.setShareCount(
                             shareRepository.countByOriginalPost_PostId(post.getPostId())
+
                     );
+                    response.setComments(getCommentsForPost(post));
 
                     responses.add(response);
                 });
@@ -406,6 +409,7 @@ public class PostServiceImpl implements PostService {
         return postMapper.toPostResponse(saved, List.of(), List.of());
     }
     @Override
+
     public List<PostResponse> getGlobalFeed(Long viewerUserId) {
 
         List<PostResponse> responses = new ArrayList<>();
@@ -438,6 +442,9 @@ public class PostServiceImpl implements PostService {
             Long shareCount =
                     shareRepository.countByOriginalPost_PostId(post.getPostId());
             response.setShareCount(shareCount);
+
+            // 🔥 ADD THIS (important)
+            response.setComments(getCommentsForPost(post));
 
             responses.add(response);
         }
@@ -476,6 +483,9 @@ public class PostServiceImpl implements PostService {
             Long shareCount =
                     shareRepository.countByOriginalPost_PostId(originalPost.getPostId());
             response.setShareCount(shareCount);
+
+            // 🔥 ADD THIS
+            response.setComments(getCommentsForPost(originalPost));
 
             responses.add(response);
         }
@@ -518,6 +528,19 @@ public class PostServiceImpl implements PostService {
 
         return postRepository.countByUser(user);
 
+    }
+
+    private List<CommentResponse> getCommentsForPost(Post post) {
+
+        return commentRepository.findByPost_PostId(post.getPostId())
+                .stream()
+                .map(comment -> CommentResponse.builder()
+                        .commentId(comment.getCommentId())
+                        .commentText(comment.getCommentText())
+                        .username(comment.getUser().getUsername())
+                        .createdAt(comment.getCreatedAt())
+                        .build())
+                .toList();
     }
 
 }

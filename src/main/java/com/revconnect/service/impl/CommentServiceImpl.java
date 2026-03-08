@@ -47,8 +47,10 @@ public class CommentServiceImpl implements CommentService {
                 .map(comment -> CommentResponse.builder()
                         .commentId(comment.getCommentId())
                         .commentText(comment.getCommentText())
-                        .username(comment.getUser().getUsername()) // ✅ FIX
+                        .username(comment.getUser().getUsername())
                         .createdAt(comment.getCreatedAt())
+                        .userId(comment.getUser().getUserId())                // NEW
+                        .postOwnerId(comment.getPost().getUser().getUserId()) // NEW
                         .build())
                 .toList();
     }
@@ -56,9 +58,19 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void deleteComment(Long commentId, String email) {
 
-        Comment comment = commentRepository
-                .findByCommentIdAndUser_Email(commentId, email)
-                .orElseThrow(() -> new RuntimeException("Comment not found or not authorized"));
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new RuntimeException("Comment not found"));
+
+        // person who wrote the comment
+        String commentOwnerEmail = comment.getUser().getEmail();
+
+        // owner of the post
+        String postOwnerEmail = comment.getPost().getUser().getEmail();
+
+        // check authorization
+        if (!email.equals(commentOwnerEmail) && !email.equals(postOwnerEmail)) {
+            throw new RuntimeException("You are not allowed to delete this comment");
+        }
 
         commentRepository.delete(comment);
     }

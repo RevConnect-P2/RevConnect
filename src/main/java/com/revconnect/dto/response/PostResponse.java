@@ -46,5 +46,5 @@ public class PostResponse {
     private Boolean isSharedPost;
     private String sharedByUsername;
     private String originalAuthorUsername;
-
+    private List<CommentResponse> comments;
 }

@@ -1,0 +1,46 @@
+body{
+background:#070707;
+color:white;
+font-family:'Segoe UI',sans-serif;
+}
+
+.create-post-container{
+max-width:800px;
+}
+
+.create-post-card{
+background:#0f0f0f;
+border:none;
+border-radius:16px;
+box-shadow:0 0 25px rgba(0,0,0,0.6);
+}
+
+.post-input{
+background:#1a1a1a;
+border:1px solid #2a2a2a;
+color:white;
+border-radius:8px;
+}
+
+.post-input::placeholder{
+color:#9ca3af;
+}
+
+.post-input:focus{
+background:#1a1a1a;
+border-color:#ef4444;
+box-shadow:none;
+color:white;
+}
+
+.post-btn{
+background:linear-gradient(90deg,#ef4444,#b91c1c);
+border:none;
+border-radius:20px;
+padding:6px 18px;
+color:white;
+}
+
+.post-btn:hover{
+background:linear-gradient(90deg,#dc2626,#991b1b);
+}
