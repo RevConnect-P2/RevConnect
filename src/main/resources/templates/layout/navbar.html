@@ -2,8 +2,11 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-
     <style>
+
+        .navbar{
+            overflow: visible !important;
+        }
 
         .notification-link{
             color:black !important;
@@ -11,146 +14,126 @@
         }
 
         .notification-count{
-
             position:absolute;
             top:-6px;
             right:5px;
-
             background:red;
             color:white;
-
             font-size:11px;
             font-weight:bold;
-
             padding:3px 6px;
             border-radius:50%;
         }
 
-    </style>
+        /* SEARCH */
 
+        .search-container{
+            position:relative;
+            width:420px;
+        }
+
+        #userSearch{
+            width:100%;
+        }
+
+        .search-results{
+            position:absolute;
+            top:50px;
+            left:0;
+            width:100%;
+
+            background:white;
+            border:1px solid #ddd;
+            border-radius:10px;
+
+            box-shadow:0 6px 16px rgba(0,0,0,0.2);
+
+            max-height:300px;
+            overflow-y:auto;
+
+            display:none;
+
+            z-index:999999;
+        }
+
+        .search-item{
+            padding:12px 16px;
+            cursor:pointer;
+        }
+
+        .search-item:hover{
+            background:#f3f6f8;
+        }
+
+    </style>
 </head>
 
 <body>
 
-<!-- ========================= -->
-<!-- NAVBAR FRAGMENT -->
-<!-- ========================= -->
-
 <nav th:fragment="navbar(user)"
      class="navbar navbar-expand-lg sticky-top bg-white shadow-sm">
 
-    <div class="container">
+    <div class="container-fluid d-flex align-items-center">
 
-        <!-- LOGO -->
         <a th:href="@{/dashboard}"
            class="navbar-brand fw-bold text-primary"
            style="font-size:22px;">
-
             RevConnect
-
         </a>
 
-        <!-- SEARCH BAR -->
+        <div class="search-container mx-4">
 
-        <form class="d-flex w-50">
-
-            <input class="form-control rounded-pill"
+            <input id="userSearch"
+                   class="form-control rounded-pill"
                    type="search"
-                   placeholder="Search RevConnect">
+                   placeholder="Search RevConnect users...">
 
-        </form>
+            <div id="searchResults" class="search-results"></div>
 
-        <!-- RIGHT SIDE MENU -->
+        </div>
 
         <ul class="navbar-nav ms-auto align-items-center">
 
-            <!-- HOME -->
-
             <li class="nav-item text-center mx-3">
-
-                <a th:href="@{/dashboard}"
-                   class="nav-link text-dark">
-
+                <a th:href="@{/dashboard}" class="nav-link text-dark">
                     <i class="bi bi-house fs-5"></i>
-
-                    <div style="font-size:12px;">
-                        Home
-                    </div>
-
+                    <div style="font-size:12px;">Home</div>
                 </a>
-
             </li>
 
-            <!-- NETWORK -->
-
             <li class="nav-item text-center mx-3">
-
-                <a th:href="@{/network}"
-                   class="nav-link text-dark">
-
+                <a th:href="@{/network}" class="nav-link text-dark">
                     <i class="bi bi-people fs-5"></i>
-
-                    <div style="font-size:12px;">
-                        Network
-                    </div>
-
+                    <div style="font-size:12px;">Network</div>
                 </a>
-
             </li>
 
-            <!-- NOTIFICATIONS -->
-
             <li class="nav-item text-center mx-3">
-
                 <a th:href="@{/notifications}"
                    class="nav-link position-relative notification-link">
-
                     <i class="bi bi-bell fs-5"></i>
-
-                    <!-- Notification Count Badge -->
 
                     <span class="notification-count"
                           th:if="${unreadCount != null and unreadCount > 0}"
                           th:text="${unreadCount}">
-                    </span>
+</span>
 
-                    <div style="font-size:12px;">
-                        Notifications
-                    </div>
-
+                    <div style="font-size:12px;">Notifications</div>
                 </a>
-
             </li>
-
-            <!-- PROFILE -->
 
             <li class="nav-item text-center mx-3">
-
-                <a th:href="@{/profile}"
-                   class="nav-link text-dark">
-
+                <a th:href="@{/profile}" class="nav-link text-dark">
                     <i class="bi bi-person-circle fs-5"></i>
-
-                    <div style="font-size:12px;"
-                         th:text="${user.username}">
-                        Username
-                    </div>
-
+                    <div style="font-size:12px;" th:text="${user.username}"></div>
                 </a>
-
             </li>
 
-            <!-- LOGOUT -->
-
             <li class="nav-item mx-3">
-
                 <a th:href="@{/logout}"
                    class="btn btn-danger btn-sm rounded-pill">
-
                     Logout
-
                 </a>
-
             </li>
 
         </ul>

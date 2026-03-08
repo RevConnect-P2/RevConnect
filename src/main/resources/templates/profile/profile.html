@@ -84,8 +84,7 @@
             <img th:src="${profile.profilePic != null ? profile.profilePic : '/images/default-profile.png'}"
                  class="profile-img">
 
-            <h3 th:text="${profile.username}"></h3>
-
+            <h3 th:text="${username}"></h3>
             <p class="text-muted" th:text="${profile.profileType}"></p>
 
             <div class="row mt-3 mb-3">
@@ -139,7 +138,7 @@
         <!-- ===================== -->
         <!-- BUSINESS SECTION -->
         <!-- ===================== -->
-        <div th:if="${profile.profileType.name() == 'BUSINESS'}">
+        <div th:if="${profile.profileType == 'BUSINESS'}">
 
             <hr>
             <h6 class="text-primary">Business Details</h6>
@@ -169,7 +168,7 @@
         <!-- ===================== -->
         <!-- CREATOR SECTION -->
         <!-- ===================== -->
-        <div th:if="${profile.profileType.name() == 'CREATOR'}">
+        <div th:if="${profile.profileType == 'CREATOR'}">
 
             <hr>
             <h6 class="text-primary">Creator Details</h6>
@@ -212,14 +211,24 @@
     </div>
 
 </div>
+
+<!-- CURRENT USER ID -->
 <script th:inline="javascript">
     window.CURRENT_USER_ID = [[${profile.userId}]];
+    window.PROFILE_USER_ID = [[${profile.userId}]];
 </script>
 
+<!-- LOAD POSTS JS -->
 <script src="/js/posts.js"></script>
 
 <script>
-    document.addEventListener("DOMContentLoaded", fetchProfilePosts);
+    document.addEventListener("DOMContentLoaded", function () {
+
+        if(window.PROFILE_USER_ID){
+            fetchProfilePosts();
+        }
+
+    });
 </script>
 </body>
 </html>
