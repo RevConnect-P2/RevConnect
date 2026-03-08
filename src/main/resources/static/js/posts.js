@@ -629,6 +629,13 @@ function fetchMyPostsPage() {
                 return;
             }
 
+            posts.sort((a, b) => {
+                if (a.pinned === b.pinned) {
+                    return new Date(b.createdAt) - new Date(a.createdAt);
+                }
+                return b.pinned - a.pinned;
+            });
+
             posts.forEach(post => {
                 const card = createMyPostCard(post);
                 container.appendChild(card);
