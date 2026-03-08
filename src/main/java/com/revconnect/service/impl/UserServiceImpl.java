@@ -5,6 +5,9 @@ import com.revconnect.repository.UserRepository;
 import com.revconnect.service.UserService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -14,6 +17,7 @@ public class UserServiceImpl implements UserService {
         this.userRepository = userRepository;
     }
 
+    // existing login logic
     @Override
     public Long getUserIdByUsername(String loginValue) {
 
@@ -28,5 +32,15 @@ public class UserServiceImpl implements UserService {
                 );
 
         return user.getUserId();
+    }
+
+    // 🔍 SEARCH USERNAMES (for navbar search suggestions)
+    @Override
+    public List<String> searchUsernames(String keyword) {
+
+        return userRepository.findByUsernameContainingIgnoreCase(keyword)
+                .stream()
+                .map(User::getUsername)
+                .collect(Collectors.toList());
     }
 }

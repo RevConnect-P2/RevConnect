@@ -923,7 +923,6 @@ function fetchComments(postId) {
     })
     .catch(err => console.error(err));
 }
-
 // ===============================
 // FETCH PROFILE POSTS
 // ===============================
@@ -934,7 +933,15 @@ function fetchProfilePosts() {
 
     container.innerHTML = "<p class='text-center text-muted'>Loading posts...</p>";
 
-    fetch(`/posts/user?userId=${currentUser.userId}`)
+    const profileUserId = window.PROFILE_USER_ID;
+
+    if (!profileUserId) {
+        container.innerHTML =
+            "<p class='text-danger text-center'>User not found</p>";
+        return;
+    }
+
+    fetch(`/posts/user?userId=${profileUserId}`)
         .then(res => {
             if (!res.ok) throw new Error("Failed to load profile posts");
             return res.json();
@@ -950,6 +957,7 @@ function fetchProfilePosts() {
             }
 
             posts.forEach(post => {
+
                 const card = createFeedPostCard(post, {
                     showPinned: true,
                     isSaved: false

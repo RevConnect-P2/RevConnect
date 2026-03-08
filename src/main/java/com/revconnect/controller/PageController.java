@@ -49,9 +49,10 @@ public class PageController {
         Authentication auth =
                 SecurityContextHolder.getContext().getAuthentication();
 
-        Long userId =
-                userService.getUserIdByUsername(auth.getName());
+        String username = auth.getName();
 
+        Long userId =
+                userService.getUserIdByUsername(username);
 
         // Profile
         ProfileResponse profile =
@@ -59,22 +60,21 @@ public class PageController {
 
         model.addAttribute("profile", profile);
 
+        // ✅ Add username for HTML
+        model.addAttribute("username", username);
 
-        // ✅ USER POSTS
+        // POSTS
         List<PostResponse> posts =
                 postService.getPostsByUser(userId);
 
         model.addAttribute("posts", posts);
 
-
-        // ✅ POST COUNT
+        // POST COUNT
         long postCount =
                 postService.countPostsByUser(userId);
 
         model.addAttribute("postCount", postCount);
 
-
-        // Business Hours
         if (profile.getProfileType() == ProfileType.BUSINESS) {
 
             List<BusinessHoursResponse> hours =
@@ -83,11 +83,8 @@ public class PageController {
             model.addAttribute("businessHours", hours);
         }
 
-
         return "profile/profile";
     }
-
-
 
     // ================= EDIT PROFILE =================
 
