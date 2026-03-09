@@ -53,15 +53,29 @@
 
             <div>
 
-                <button class="btn btn-success btn-sm"
-                        th:onclick="'acceptConnection(' + ${conn.connectionId} + ')'">
-                    Accept
-                </button>
+                <!-- ACCEPT BUTTON -->
+                <form th:action="@{/connections/accept/{id}(id=${conn.connectionId})}"
+                      method="post"
+                      style="display:inline;">
 
-                <button class="btn btn-danger btn-sm"
-                        th:onclick="'rejectConnection(' + ${conn.connectionId} + ')'">
-                    Reject
-                </button>
+                    <button type="submit"
+                            class="btn btn-success btn-sm">
+                        Accept
+                    </button>
+
+                </form>
+
+                <!-- REJECT BUTTON -->
+                <form th:action="@{/connections/reject/{id}(id=${conn.connectionId})}"
+                      method="post"
+                      style="display:inline;">
+
+                    <button type="submit"
+                            class="btn btn-danger btn-sm">
+                        Reject
+                    </button>
+
+                </form>
 
             </div>
 
@@ -130,47 +144,6 @@
     </div>
 
 </div>
-
-
-<script>
-
-    function acceptConnection(connectionId){
-
-        fetch('/connections/accept/' + connectionId,{
-            method:'POST'
-        })
-        .then(()=>{
-            alert("Connection accepted");
-            location.reload();
-        });
-
-    }
-
-    function rejectConnection(connectionId){
-
-        fetch('/connections/reject/' + connectionId,{
-            method:'POST'
-        })
-        .then(()=>{
-            alert("Connection rejected");
-            location.reload();
-        });
-
-    }
-
-    function removeConnection(connectionId){
-
-        fetch('/connections/remove/' + connectionId,{
-            method:'POST'
-        })
-        .then(()=>{
-            alert("Connection removed");
-            location.reload();
-        });
-
-    }
-
-</script>
 
 </body>
 </html>
