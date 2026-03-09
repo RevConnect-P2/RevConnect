@@ -13,14 +13,14 @@ import java.util.List;
 
 public interface ConnectionRepository extends JpaRepository<Connection, Long> {
 
-    // =====================================
-    // Check connection both directions
-    // =====================================
-    Optional<Connection> findBySenderAndReceiverOrReceiverAndSender(
-            User sender,
-            User receiver,
-            User receiver2,
-            User sender2
+    @Query("""
+        SELECT c FROM Connection c
+        WHERE (c.sender = :user1 AND c.receiver = :user2)
+        OR (c.sender = :user2 AND c.receiver = :user1)
+         """)
+    Optional<Connection> findConnectionBetweenUsers(
+            @Param("user1") User user1,
+            @Param("user2") User user2
     );
 
     // =====================================

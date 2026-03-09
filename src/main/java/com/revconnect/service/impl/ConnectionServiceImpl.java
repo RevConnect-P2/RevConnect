@@ -23,6 +23,7 @@ public class ConnectionServiceImpl implements ConnectionService {
     private final UserRepository userRepository;
     private final NotificationService notificationService;
 
+
     // =========================
     // SEND CONNECTION REQUEST
     // =========================
@@ -40,12 +41,7 @@ public class ConnectionServiceImpl implements ConnectionService {
                 .orElseThrow(() -> new RuntimeException("Receiver not found"));
 
         Optional<Connection> existing =
-                connectionRepository.findBySenderAndReceiverOrReceiverAndSender(
-                        sender,
-                        receiver,
-                        receiver,
-                        sender
-                );
+                connectionRepository.findConnectionBetweenUsers(sender, receiver);
 
         if (existing.isPresent()) {
 
@@ -94,12 +90,10 @@ public class ConnectionServiceImpl implements ConnectionService {
         );
     }
 
+
     // =========================
     // ACCEPT REQUEST
     // =========================
-    // =========================
-// ACCEPT REQUEST
-// =========================
     @Override
     public void acceptRequest(Long connectionId) {
 
@@ -110,17 +104,15 @@ public class ConnectionServiceImpl implements ConnectionService {
 
         Connection savedConnection = connectionRepository.save(connection);
 
-        // 🔔 Notify the original sender that request was accepted
         notificationService.createNotification(
-                savedConnection.getReceiver().getUserId(),   // user who accepted
-                savedConnection.getSender().getUserId(),     // user who sent request
+                savedConnection.getReceiver().getUserId(),
+                savedConnection.getSender().getUserId(),
                 savedConnection.getConnectionId(),
                 NotificationType.CONNECTION_ACCEPTED,
                 null
         );
-
-
     }
+
 
     // =========================
     // REJECT REQUEST
@@ -135,7 +127,6 @@ public class ConnectionServiceImpl implements ConnectionService {
 
         Connection savedConnection = connectionRepository.save(connection);
 
-        // 🔔 Notify the original sender that request was rejected
         notificationService.createNotification(
                 savedConnection.getReceiver().getUserId(),
                 savedConnection.getSender().getUserId(),
@@ -143,9 +134,9 @@ public class ConnectionServiceImpl implements ConnectionService {
                 NotificationType.CONNECTION_REJECTED,
                 null
         );
-
-
     }
+
+
     // =========================
     // REMOVE CONNECTION
     // =========================
@@ -154,6 +145,7 @@ public class ConnectionServiceImpl implements ConnectionService {
 
         connectionRepository.deleteById(connectionId);
     }
+
 
     // =========================
     // GET RECEIVED REQUESTS
@@ -167,6 +159,7 @@ public class ConnectionServiceImpl implements ConnectionService {
         );
     }
 
+
     // =========================
     // GET SENT REQUESTS
     // =========================
@@ -179,6 +172,7 @@ public class ConnectionServiceImpl implements ConnectionService {
         );
     }
 
+
     // =========================
     // COUNT USER CONNECTIONS
     // =========================
@@ -190,6 +184,7 @@ public class ConnectionServiceImpl implements ConnectionService {
                 ConnectionStatus.ACCEPTED
         );
     }
+
 
     // =========================
     // GET CONNECTION STATUS
@@ -204,16 +199,15 @@ public class ConnectionServiceImpl implements ConnectionService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         Optional<Connection> connection =
-                connectionRepository.findBySenderAndReceiverOrReceiverAndSender(
-                        userA,
-                        userB,
-                        userB,
-                        userA
-                );
+                connectionRepository.findConnectionBetweenUsers(userA, userB);
 
         return connection.map(Connection::getStatus).orElse(null);
     }
 
+
+    // =========================
+    // GET MY CONNECTIONS
+    // =========================
     @Override
     public List<User> getMyConnections(Long userId) {
 
@@ -231,6 +225,4 @@ public class ConnectionServiceImpl implements ConnectionService {
                 .distinct()
                 .toList();
     }
-
-
 }

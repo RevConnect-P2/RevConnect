@@ -136,11 +136,33 @@
                 </button>
 
                 <!-- CONNECT BUTTON -->
-                <button id="connectBtn"
+                <!-- NOT CONNECTED -->
+                <button th:if="${connectionStatus == null}"
+                        id="connectBtn"
                         class="btn btn-outline-primary action-btn">
 
                     <i class="fa fa-handshake"></i>
                     <span id="connectText">Connect</span>
+
+                </button>
+
+                <!-- REQUEST SENT -->
+                <button th:if="${connectionStatus?.name() == 'PENDING'}"
+                        class="btn btn-secondary action-btn"
+                        disabled>
+
+                    <i class="fa fa-clock"></i>
+                    Request Sent
+
+                </button>
+
+                <!-- ALREADY CONNECTED -->
+                <button th:if="${connectionStatus?.name() == 'ACCEPTED'}"
+                        class="btn btn-success action-btn"
+                        disabled>
+
+                    <i class="fa fa-check"></i>
+                    Connected
 
                 </button>
 
