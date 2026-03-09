@@ -12,6 +12,7 @@ import com.revconnect.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -39,10 +40,41 @@ public class ConnectionServiceImpl implements ConnectionService {
                 .orElseThrow(() -> new RuntimeException("Receiver not found"));
 
         Optional<Connection> existing =
-                connectionRepository.findBySenderAndReceiver(sender, receiver);
+                connectionRepository.findBySenderAndReceiverOrReceiverAndSender(
+                        sender, receiver, sender, receiver
+                );
 
         if (existing.isPresent()) {
-            throw new RuntimeException("Connection request already exists");
+
+            Connection connection = existing.get();
+
+            // Already pending
+            if (connection.getStatus() == ConnectionStatus.PENDING) {
+                throw new RuntimeException("Connection request already sent");
+            }
+
+            // Already connected
+            if (connection.getStatus() == ConnectionStatus.ACCEPTED) {
+                throw new RuntimeException("You are already connected");
+            }
+
+            // If rejected → allow resend
+            if (connection.getStatus() == ConnectionStatus.REJECTED) {
+
+                connection.setStatus(ConnectionStatus.PENDING);
+
+                Connection saved = connectionRepository.save(connection);
+
+                notificationService.createNotification(
+                        senderId,
+                        receiverId,
+                        saved.getConnectionId(),
+                        NotificationType.CONNECTION,
+                        "sent you a connection request"
+                );
+
+                return;
+            }
         }
 
         Connection connection = Connection.builder()
@@ -53,16 +85,14 @@ public class ConnectionServiceImpl implements ConnectionService {
 
         Connection saved = connectionRepository.save(connection);
 
-        // 🔔 Send notification
         notificationService.createNotification(
                 senderId,
                 receiverId,
                 saved.getConnectionId(),
                 NotificationType.CONNECTION,
-                null
+                "sent you a connection request"
         );
     }
-
     // =========================
     // ACCEPT REQUEST
     // =========================
@@ -110,12 +140,34 @@ public class ConnectionServiceImpl implements ConnectionService {
     }
 
     // =========================
+    // GET RECEIVED REQUESTS
+    // =========================
+    @Override
+    public List<Connection> getReceivedRequests(Long userId) {
+
+        return connectionRepository.findByReceiver_UserId(userId);
+    }
+
+    // =========================
+    // GET SENT REQUESTS
+    // =========================
+    @Override
+    public List<Connection> getSentRequests(Long userId) {
+
+        return connectionRepository.findBySender_UserId(userId);
+    }
+
+    // =========================
     // COUNT USER CONNECTIONS
     // =========================
     @Override
     public long getConnectionsCount(Long userId) {
 
         return connectionRepository
-                .countBySender_UserIdOrReceiver_UserId(userId, userId);
+                .countBySender_UserIdOrReceiver_UserIdAndStatus(
+                        userId,
+                        userId,
+                        ConnectionStatus.ACCEPTED
+                );
     }
 }
