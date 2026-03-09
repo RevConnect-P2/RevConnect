@@ -16,7 +16,6 @@ import com.revconnect.service.NotificationService;
 import com.revconnect.service.PostService;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -186,17 +185,12 @@ public class PostServiceImpl implements PostService {
 
         List<PostResponse> responses = buildPostResponses(posts);
 
-        // ===============================
-        // LOAD SHARED POSTS
-        // ===============================
         List<Share> shares = shareRepository.findAllByOrderByCreatedAtDesc();
 
         if (shares != null) {
             for (Share share : shares) {
 
-                if (share == null || share.getOriginalPost() == null) {
-                    continue;
-                }
+                if (share == null || share.getOriginalPost() == null) continue;
 
                 Post original = share.getOriginalPost();
 
@@ -206,10 +200,7 @@ public class PostServiceImpl implements PostService {
                         getTagsForPost(original)
                 );
 
-                // 🔁 MARK AS SHARED
                 response.setSharedPost(true);
-
-                // IMPORTANT: Use SHARE TIME
                 response.setCreatedAt(share.getCreatedAt());
 
                 if (share.getSharedBy() != null) {
@@ -228,9 +219,6 @@ public class PostServiceImpl implements PostService {
             }
         }
 
-        // ===============================
-        // SORT FEED
-        // ===============================
         responses.sort(
                 Comparator.comparing(
                         PostResponse::getCreatedAt,
@@ -240,6 +228,7 @@ public class PostServiceImpl implements PostService {
 
         return responses;
     }
+
     // =========================
     // PIN POST
     // =========================
@@ -254,11 +243,6 @@ public class PostServiceImpl implements PostService {
             throw new UnauthorizedException("You cannot pin this post");
         }
 
-        if (post.getScheduledAt() != null &&
-                post.getScheduledAt().isAfter(LocalDateTime.now())) {
-            throw new BadRequestException("Cannot pin a scheduled post");
-        }
-
         postRepository.findByUserAndPinnedTrue(post.getUser())
                 .ifPresent(existing -> {
                     existing.setPinned(false);
@@ -268,9 +252,7 @@ public class PostServiceImpl implements PostService {
         post.setPinned(true);
         Post saved = postRepository.save(post);
 
-        return mapPost(postRepository.save(post),
-                getHashtagsForPost(post),
-                getTagsForPost(post));
+        return mapPost(saved, getHashtagsForPost(saved), getTagsForPost(saved));
     }
 
     // =========================
@@ -286,10 +268,12 @@ public class PostServiceImpl implements PostService {
         post.setPinned(false);
         Post saved = postRepository.save(post);
 
-        return mapPost(postRepository.save(post),
-                getHashtagsForPost(post),
-                getTagsForPost(post));
+        return mapPost(saved, getHashtagsForPost(saved), getTagsForPost(saved));
     }
+
+    // =========================
+    // COUNT POSTS BY USER
+    // =========================
     @Override
     public long countPostsByUser(Long userId) {
 
@@ -304,7 +288,6 @@ public class PostServiceImpl implements PostService {
     // =========================
     @Override
     public List<String> getTrendingHashtags() {
-
         return postRepository.findTrendingHashtags(PageRequest.of(0, 5));
     }
 
@@ -342,14 +325,7 @@ public class PostServiceImpl implements PostService {
 
         List<PostResponse> responses = new ArrayList<>();
 
-        // ================= NORMAL POSTS =================
-        List<Post> posts =
-                postRepository.findByScheduledAtIsNullOrScheduledAtLessThanEqual(
-                        LocalDateTime.now()
-                );
-
         for (Post post : posts) {
-
             responses.add(
                     mapPost(post,
                             getHashtagsForPost(post),
@@ -384,7 +360,6 @@ public class PostServiceImpl implements PostService {
     private List<Hashtag> saveHashtags(Post post, List<String> tags) {
 
         List<Hashtag> hashtags = new ArrayList<>();
-
         if (tags == null) return hashtags;
 
         for (String tag : tags) {
@@ -416,7 +391,6 @@ public class PostServiceImpl implements PostService {
     private List<TagResponse> saveTags(Post post, List<TagRequest> tags) {
 
         List<TagResponse> responses = new ArrayList<>();
-
         if (tags == null) return responses;
 
         for (TagRequest tag : tags) {
@@ -445,7 +419,6 @@ public class PostServiceImpl implements PostService {
         return postHashtagRepository
                 .findByPost(post)
                 .stream()
-                .filter(ph -> ph.getPost().getPostId().equals(post.getPostId()))
                 .map(PostHashtag::getHashtag)
                 .toList();
     }
@@ -462,20 +435,6 @@ public class PostServiceImpl implements PostService {
                 .toList();
     }
 
-    // =========================
-// COUNT POSTS BY USER (FOR PROFILE PAGE)
-// =========================
-    @Override
-    public long countPostsByUser(Long userId) {
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("User not found"));
-
-        return postRepository.countByUser(user);
-
-    }
-
     private List<CommentResponse> getCommentsForPost(Post post) {
 
         return commentRepository.findByPost_PostId(post.getPostId())
@@ -488,5 +447,4 @@ public class PostServiceImpl implements PostService {
                         .build())
                 .toList();
     }
-
 }

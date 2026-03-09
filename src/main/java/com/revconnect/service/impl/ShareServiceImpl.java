@@ -40,11 +40,9 @@ public class ShareServiceImpl implements ShareService {
                         user.getUserId()
                 );
 
-        // If already shared → just return silently
-        if (shareRepository
-                .findByOriginalPost_PostIdAndSharedBy_Email(postId, email)
-                .isPresent()) {
-            throw new RuntimeException("Already Submitted");
+        // If already shared → throw error
+        if (existingShare.isPresent()) {
+            throw new RuntimeException("Already shared");
         }
 
         Share share = Share.builder()
@@ -125,7 +123,6 @@ public class ShareServiceImpl implements ShareService {
     @Override
     public List<String> getUsersWhoShared(Long postId) {
 
-        // optimized query from repository
         return shareRepository.findUsernamesWhoShared(postId);
     }
 
@@ -153,7 +150,6 @@ public class ShareServiceImpl implements ShareService {
         Long senderId = sender.getUserId();
         Long receiverId = post.getUser().getUserId();
 
-        // prevent self notification
         if (!senderId.equals(receiverId)) {
 
             notificationService.createNotification(

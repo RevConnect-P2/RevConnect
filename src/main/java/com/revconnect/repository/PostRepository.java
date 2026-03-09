@@ -83,4 +83,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     """)
     List<Post> findPostsByHashtag(@Param("tag") String tag);
 
+    List<Post> findByScheduledAtIsNullOrScheduledAtLessThanEqual(LocalDateTime now);
 }

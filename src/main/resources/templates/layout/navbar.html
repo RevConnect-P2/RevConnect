@@ -14,11 +14,17 @@
         </a>
 
         <!-- SEARCH -->
-        <form class="d-flex rev-search mx-auto">
-            <input class="form-control search-input w-100"
-                   type="search"
-                   placeholder="Search RevConnect">
-        </form>
+        <div class="rev-search mx-auto position-relative">
+
+            <input
+                    id="userSearch"
+                    class="form-control search-input w-100"
+                    type="search"
+                    placeholder="Search RevConnect">
+
+            <div id="searchResults" class="search-results"></div>
+
+        </div>
 
         <!-- RIGHT MENU -->
         <ul class="navbar-nav ms-auto align-items-center flex-row gap-4">
