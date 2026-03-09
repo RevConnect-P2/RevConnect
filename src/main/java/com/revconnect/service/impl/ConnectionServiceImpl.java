@@ -213,4 +213,24 @@ public class ConnectionServiceImpl implements ConnectionService {
 
         return connection.map(Connection::getStatus).orElse(null);
     }
+
+    @Override
+    public List<User> getMyConnections(Long userId) {
+
+        List<Connection> connections =
+                connectionRepository.findAllAcceptedConnections(userId);
+
+        return connections.stream()
+                .map(connection -> {
+                    if (connection.getSender().getUserId().equals(userId)) {
+                        return connection.getReceiver();
+                    } else {
+                        return connection.getSender();
+                    }
+                })
+                .distinct()
+                .toList();
+    }
+
+
 }

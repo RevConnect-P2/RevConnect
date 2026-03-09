@@ -45,6 +45,17 @@ public interface ConnectionRepository extends JpaRepository<Connection, Long> {
     );
 
     // =====================================
+    // ALL ACCEPTED CONNECTIONS (BOTH SIDES)
+    // =====================================
+    @Query("""
+           SELECT c
+           FROM Connection c
+           WHERE (c.sender.userId = :userId OR c.receiver.userId = :userId)
+           AND c.status = 'ACCEPTED'
+           """)
+    List<Connection> findAllAcceptedConnections(@Param("userId") Long userId);
+
+    // =====================================
     // Correct count query
     // =====================================
     @Query("""

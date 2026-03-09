@@ -1,13 +1,17 @@
 package com.revconnect.controller;
 
 import jakarta.servlet.http.HttpSession;
+
 import com.revconnect.entity.User;
 import com.revconnect.entity.UserProfile;
+import com.revconnect.enums.ConnectionStatus;
 import com.revconnect.repository.UserProfileRepository;
 import com.revconnect.repository.UserRepository;
+import com.revconnect.service.ConnectionService;
 import com.revconnect.service.FollowService;
 
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +23,7 @@ public class ProfilePageController {
     private final UserRepository userRepository;
     private final UserProfileRepository userProfileRepository;
     private final FollowService followService;
+    private final ConnectionService connectionService;
 
 
     // ===============================
@@ -43,9 +48,18 @@ public class ProfilePageController {
         User loggedUser = (User) session.getAttribute("loggedUser");
 
         boolean isFollowing = false;
+        ConnectionStatus connectionStatus = null;
 
         if (loggedUser != null) {
+
+            // follow status
             isFollowing = followService.isFollowing(
+                    loggedUser.getUserId(),
+                    user.getUserId()
+            );
+
+            // connection status
+            connectionStatus = connectionService.getConnectionStatus(
                     loggedUser.getUserId(),
                     user.getUserId()
             );
@@ -56,12 +70,15 @@ public class ProfilePageController {
         model.addAttribute("followers", followers);
         model.addAttribute("following", following);
         model.addAttribute("isFollowing", isFollowing);
+        model.addAttribute("connectionStatus", connectionStatus);
 
         return "profile/public-profile";
     }
+
+
     // ===============================
-// FOLLOWERS PAGE
-// ===============================
+    // FOLLOWERS PAGE
+    // ===============================
     @GetMapping("/profile/{username}/followers")
     public String viewFollowers(@PathVariable String username, Model model){
 
@@ -78,8 +95,8 @@ public class ProfilePageController {
 
 
     // ===============================
-// FOLLOWING PAGE
-// ===============================
+    // FOLLOWING PAGE
+    // ===============================
     @GetMapping("/profile/{username}/following")
     public String viewFollowing(@PathVariable String username, Model model){
 

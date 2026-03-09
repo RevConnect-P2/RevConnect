@@ -235,7 +235,7 @@
 
 <!-- CURRENT USER ID -->
 <script th:inline="javascript">
-    window.CURRENT_USER_ID = [[${profile.userId}]];
+    window.CURRENT_USER_ID = [[${session.loggedUser.userId}]];
     window.PROFILE_USER_ID = [[${profile.userId}]];
 </script>
 

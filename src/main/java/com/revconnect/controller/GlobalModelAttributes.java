@@ -1,6 +1,5 @@
 package com.revconnect.controller;
 
-import com.revconnect.entity.User;
 import com.revconnect.repository.UserRepository;
 import com.revconnect.service.NotificationService;
 
@@ -22,17 +21,13 @@ public class GlobalModelAttributes {
     public long unreadCount(Principal principal) {
 
         if (principal == null) {
-            return 0;
+            return 0L;
         }
 
-        User user = userRepository
-                .findByEmail(principal.getName())
-                .orElse(null);
+        String email = principal.getName();
 
-        if (user == null) {
-            return 0;
-        }
-
-        return notificationService.getUnreadCount(user.getUserId());
+        return userRepository.findByEmail(email)
+                .map(user -> notificationService.getUnreadCount(user.getUserId()))
+                .orElse(0L);
     }
 }
