@@ -7,9 +7,7 @@ import com.revconnect.entity.User;
 import com.revconnect.exception.BadRequestException;
 import com.revconnect.exception.ResourceNotFoundException;
 import com.revconnect.mapper.PostMapper;
-import com.revconnect.repository.PostRepository;
-import com.revconnect.repository.SavedPostRepository;
-import com.revconnect.repository.UserRepository;
+import com.revconnect.repository.*;
 import com.revconnect.service.SavedPostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,6 +24,9 @@ public class SavedPostServiceImpl implements SavedPostService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final PostMapper postMapper;
+    private final PostLikeRepository postLikeRepository;
+    private final CommentRepository commentRepository;
+    private final ShareRepository shareRepository;
 
     @Override
     @Transactional
@@ -72,13 +73,31 @@ public class SavedPostServiceImpl implements SavedPostService {
 
         return savedPostRepository.findByUser(user)
                 .stream()
-                .map(savedPost ->
-                        postMapper.toPostResponse(
-                                savedPost.getPost(),
-                                List.of(),
-                                List.of()
-                        )
-                )
+                .map(savedPost -> {
+
+                    Post post = savedPost.getPost();
+
+                    PostResponse response = postMapper.toPostResponse(
+                            post,
+                            List.of(),
+                            List.of()
+                    );
+
+                    response.setLikeCount(
+                            postLikeRepository.countByPost_PostId(post.getPostId())
+                    );
+
+                    response.setCommentCount(
+                            commentRepository.countByPost_PostId(post.getPostId())
+                    );
+
+                    response.setShareCount(
+                            shareRepository.countByOriginalPost_PostId(post.getPostId())
+                    );
+
+                    return response;
+
+                })
                 .toList();
     }
 }

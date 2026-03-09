@@ -14,6 +14,8 @@ box-shadow:0 10px 30px rgba(0,0,0,0.6);
 color:#e5e7eb;
 margin-bottom:20px;
 transition:all 0.2s ease;
+position:relative;
+z-index:1;
 }
 
 .feed-card:hover{
@@ -344,4 +346,137 @@ color:#9ca3af !important;
 font-size:13px;
 font-weight:500;
 opacity:0.85;
+}
+
+.feed-card{
+background:#0f0f0f;
+border:none;
+border-radius:16px;
+box-shadow:0 0 25px rgba(0,0,0,0.6);
+margin-bottom:20px;
+}
+
+/* ========================= */
+/* LIKE / SHARE POPUP */
+/* ========================= */
+
+/* ========================= */
+/* LIKE / SHARE POPUP */
+/* ========================= */
+
+.like-popup,
+.share-popup{
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+width:230px;
+background:#111;
+border:1px solid #2a2a2a;
+border-radius:12px;
+padding:12px;
+z-index:9999;
+box-shadow:0 12px 30px rgba(0,0,0,0.8);
+}
+
+.like-popup-header,
+.share-popup-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+font-weight:600;
+margin-bottom:10px;
+}
+
+.like-user,
+.share-user{
+display:flex;
+align-items:center;
+gap:10px;
+padding:6px 0;
+}
+
+.like-avatar,
+.share-avatar{
+width:28px;
+height:28px;
+border-radius:50%;
+background:#ef4444;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:12px;
+color:white;
+}
+
+/* ========================= */
+/* POPUP CLOSE BUTTON */
+/* ========================= */
+
+.like-popup-header button,
+.share-popup-header button{
+background:transparent;
+border:none;
+color:#ef4444;
+font-size:16px;
+font-weight:700;
+cursor:pointer;
+padding:2px 6px;
+border-radius:4px;
+}
+
+.like-popup-header button:hover,
+.share-popup-header button:hover{
+background:#2a0f0f;
+color:#ef4444;
+}
+
+
+/* ========================= */
+/* SHARE ALERT POPUP */
+/* ========================= */
+
+.feed-card{
+position:relative;
+}
+
+.share-alert{
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%, -50%);
+background:#0f0f0f;
+border:1px solid #2a2a2a;
+border-radius:12px;
+padding:14px 20px;
+color:white;
+display:flex;
+align-items:center;
+gap:10px;
+box-shadow:0 12px 30px rgba(0,0,0,0.8);
+z-index:2000;
+animation:fadeInShare 0.2s ease;
+}
+
+.share-alert-icon{
+width:26px;
+height:26px;
+border-radius:50%;
+background:#ef4444;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:14px;
+color:white;
+}
+
+@keyframes fadeInShare{
+from{
+opacity:0;
+transform:translate(-50%, -60%);
+}
+to{
+opacity:1;
+transform:translate(-50%, -50%);
+}
 }

@@ -4,13 +4,17 @@ color:white;
 font-family:'Segoe UI',sans-serif;
 }
 
-/* title */
+/* ========================= */
+/* PAGE TITLE */
+/* ========================= */
 
 .page-title{
 font-weight:700;
 }
 
-/* post card */
+/* ========================= */
+/* POST CARD */
+/* ========================= */
 
 .feed-card{
 background:#0f0f0f;
@@ -19,11 +23,241 @@ border-radius:16px;
 box-shadow:0 0 25px rgba(0,0,0,0.6);
 margin-bottom:20px;
 padding:15px;
+position:relative;
+transition:0.2s;
 }
-
-/* hover */
 
 .feed-card:hover{
 transform:translateY(-2px);
-transition:0.2s;
+}
+
+/* ========================= */
+/* POST HEADER */
+/* ========================= */
+
+.post-header{
+display:flex;
+align-items:center;
+gap:10px;
+margin-bottom:8px;
+}
+
+.post-avatar{
+width:36px;
+height:36px;
+border-radius:50%;
+background:#ef4444;
+display:flex;
+align-items:center;
+justify-content:center;
+font-weight:600;
+color:white;
+font-size:14px;
+}
+
+.feed-card strong{
+color:#ffffff;
+font-weight:600;
+font-size:15px;
+}
+
+/* ========================= */
+/* POST TEXT */
+/* ========================= */
+
+.feed-card .post-text{
+color:#ffffff !important;
+font-size:15px;
+}
+
+/* ========================= */
+/* POST ACTIONS */
+/* ========================= */
+
+.post-action{
+color:#e5e7eb;
+font-size:14px;
+cursor:pointer;
+}
+
+.post-action span{
+color:#e5e7eb;
+font-weight:500;
+}
+
+.post-action:hover{
+color:#ef4444;
+}
+
+/* ========================= */
+/* DROPDOWN MENU */
+/* ========================= */
+
+.dropdown-menu{
+background:#0f0f0f;
+border:1px solid #2a2a2a;
+border-radius:10px;
+box-shadow:0 10px 25px rgba(0,0,0,0.7);
+}
+
+.dropdown-item{
+color:#e5e7eb;
+font-size:14px;
+padding:8px 14px;
+}
+
+.dropdown-item:hover{
+background:#1a1a1a;
+color:white;
+}
+
+.dropdown-item.text-danger{
+color:#ef4444 !important;
+}
+
+.dropdown-item.text-danger:hover{
+background:#2a0f0f;
+}
+
+.dropdown-divider{
+border-color:#2a2a2a;
+}
+
+/* ========================= */
+/* THREE DOT BUTTON */
+/* ========================= */
+
+.dropdown-toggle,
+.btn-light{
+background:#1a1a1a !important;
+border:1px solid #2a2a2a !important;
+color:white !important;
+border-radius:6px;
+}
+
+.dropdown-toggle:hover,
+.btn-light:hover{
+background:#ef4444 !important;
+border-color:#ef4444 !important;
+}
+
+/* ========================= */
+/* LIKE POPUP */
+/* ========================= */
+
+.like-popup{
+position:absolute;
+top:120px;
+right:15px;
+width:220px;
+background:#111;
+border:1px solid #2a2a2a;
+border-radius:10px;
+padding:10px;
+z-index:1000;
+box-shadow:0 10px 25px rgba(0,0,0,0.7);
+}
+
+.like-popup-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+font-weight:600;
+margin-bottom:8px;
+}
+
+.like-user{
+display:flex;
+align-items:center;
+gap:8px;
+padding:6px 0;
+}
+
+.like-avatar{
+width:26px;
+height:26px;
+border-radius:50%;
+background:#ef4444;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:12px;
+}
+
+/* ========================= */
+/* SHARE POPUP */
+/* ========================= */
+
+.share-popup{
+position:absolute;
+top:120px;
+right:15px;
+width:220px;
+background:#111;
+border:1px solid #2a2a2a;
+border-radius:10px;
+padding:10px;
+z-index:1000;
+box-shadow:0 10px 25px rgba(0,0,0,0.7);
+}
+
+.share-popup-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+font-weight:600;
+margin-bottom:8px;
+}
+
+.share-user{
+display:flex;
+align-items:center;
+gap:8px;
+padding:6px 0;
+}
+
+.share-avatar{
+width:26px;
+height:26px;
+border-radius:50%;
+background:#ef4444;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:12px;
+}
+
+/* ========================= */
+/* SHARE ALERT (CENTER POPUP) */
+/* ========================= */
+
+.share-alert{
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%, -50%);
+background:#0f0f0f;
+border:1px solid #2a2a2a;
+border-radius:12px;
+padding:14px 22px;
+display:flex;
+align-items:center;
+gap:10px;
+color:white;
+font-weight:500;
+font-size:14px;
+box-shadow:0 12px 30px rgba(0,0,0,0.8);
+z-index:2000;
+}
+
+.share-alert-icon{
+width:26px;
+height:26px;
+border-radius:50%;
+background:#ef4444;
+display:flex;
+align-items:center;
+justify-content:center;
+color:white;
+font-size:14px;
 }

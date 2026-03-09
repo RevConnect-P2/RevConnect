@@ -4,13 +4,17 @@ color:white;
 font-family:'Segoe UI',sans-serif;
 }
 
-/* container */
+/* ========================= */
+/* CONTAINER */
+/* ========================= */
 
 .profile-container{
 max-width:900px;
 }
 
-/* cards */
+/* ========================= */
+/* PROFILE CARD */
+/* ========================= */
 
 .profile-card{
 background:#0f0f0f;
@@ -18,9 +22,10 @@ border:none;
 border-radius:16px;
 box-shadow:0 0 25px rgba(0,0,0,0.6);
 color:#e5e7eb;
+position:relative;
 }
 
-/* make sure text stays white */
+/* force white text */
 
 .profile-card h3,
 .profile-card h5,
@@ -30,7 +35,9 @@ color:#e5e7eb;
 color:white;
 }
 
-/* cover */
+/* ========================= */
+/* COVER */
+/* ========================= */
 
 .profile-cover{
 height:160px;
@@ -38,7 +45,9 @@ background:linear-gradient(90deg,#ef4444,#991b1b);
 border-radius:16px 16px 0 0;
 }
 
-/* profile image */
+/* ========================= */
+/* PROFILE IMAGE */
+/* ========================= */
 
 .profile-img{
 width:140px;
@@ -48,14 +57,18 @@ border:5px solid #070707;
 margin-top:-70px;
 }
 
-/* profile type */
+/* ========================= */
+/* PROFILE TYPE */
+/* ========================= */
 
 .profile-type{
 color:#9ca3af;
 font-size:14px;
 }
 
-/* icons */
+/* ========================= */
+/* INFO ICON */
+/* ========================= */
 
 .info-icon{
 width:20px;
@@ -63,7 +76,9 @@ margin-right:8px;
 color:#ef4444;
 }
 
-/* edit button */
+/* ========================= */
+/* EDIT PROFILE BUTTON */
+/* ========================= */
 
 .edit-profile-btn{
 background:linear-gradient(90deg,#ef4444,#b91c1c);
@@ -82,8 +97,6 @@ background:linear-gradient(90deg,#dc2626,#991b1b);
 /* PROFILE POSTS */
 /* ========================= */
 
-
-
 #profilePostsContainer strong{
 color:white;
 }
@@ -96,167 +109,9 @@ color:#e5e7eb;
 color:#d1d5db;
 }
 
-/* comment input */
-
-#profilePostsContainer input{
-background:#1a1a1a;
-border:1px solid #2a2a2a;
-color:white;
-border-radius:6px;
-padding:6px 10px;
-}
-
-#profilePostsContainer button{
-background:#ef4444;
-border:none;
-color:white;
-padding:6px 12px;
-border-radius:6px;
-}
-
-/* center message */
-
-#centerMessage{
-position:fixed;
-top:20px;
-left:50%;
-transform:translateX(-50%);
-background:#0f0f0f;
-border:1px solid #ef4444;
-color:#ef4444;
-padding:10px 20px;
-border-radius:6px;
-display:none;
-z-index:9999;
-}
-
-/* Fix followers / following text visibility */
-
-.profile-card .text-muted{
-color:#9ca3af !important;
-font-size:14px;
-}
-
-.profile-card .row .col{
-text-align:center;
-}
-
-.profile-card .row h5{
-color:white;
-font-weight:600;
-margin-bottom:2px;
-}
-
-/* POST ACTION ROW */
-
-#profilePostsContainer .d-flex{
-align-items:center;
-justify-content:space-between;
-}
-
-
-/* COMMENT USER AVATAR */
-
-.comment-avatar{
-width:32px;
-height:32px;
-border-radius:50%;
-background:#ef4444;
-display:flex;
-align-items:center;
-justify-content:center;
-font-weight:bold;
-color:white;
-margin-right:8px;
-}
-
-
+/* ========================= */
 /* COMMENT INPUT */
-
-#profilePostsContainer input{
-flex:1;
-background:#1a1a1a;
-border:1px solid #2a2a2a;
-color:white;
-border-radius:8px;
-padding:8px 10px;
-}
-
-/* post divider */
-
-.post-divider{
-border-top:1px solid #1f1f1f;
-margin:12px 0;
-}
-
-/* comment row */
-
-.comment-row{
-display:flex;
-align-items:flex-start;
-gap:10px;
-margin-top:10px;
-}
-
-/* avatar */
-
-.comment-avatar{
-width:32px;
-height:32px;
-border-radius:50%;
-background:#ef4444;
-display:flex;
-align-items:center;
-justify-content:center;
-font-weight:600;
-color:white;
-font-size:14px;
-flex-shrink:0;
-}
-
-/* comment content */
-
-.comment-content{
-flex:1;
-}
-
-.comment-username{
-font-weight:600;
-color:white;
-font-size:14px;
-}
-
-.comment-text{
-color:#e5e7eb;
-font-size:14px;
-margin-top:2px;
-}
-
-/* comment input */
-
-.comment-input-row{
-display:flex;
-gap:10px;
-margin-top:10px;
-}
-
-.comment-input-row input{
-flex:1;
-background:#1a1a1a;
-border:1px solid #2a2a2a;
-color:white;
-border-radius:8px;
-padding:8px 12px;
-}
-
-.comment-input-row button{
-background:#ef4444;
-border:none;
-color:white;
-padding:8px 14px;
-border-radius:8px;
-font-weight:500;
-}
+/* ========================= */
 
 .comment-input-box{
 display:flex;
@@ -282,6 +137,18 @@ padding:8px 14px;
 border-radius:8px;
 }
 
+/* ========================= */
+/* POST DIVIDER */
+/* ========================= */
+
+.post-divider{
+border-top:1px solid #1f1f1f;
+margin:12px 0;
+}
+
+/* ========================= */
+/* COMMENTS */
+/* ========================= */
 
 .comment-row{
 display:flex;
@@ -341,6 +208,107 @@ font-size:14px;
 margin-top:3px;
 }
 
+/* ========================= */
+/* CENTER MESSAGE */
+/* ========================= */
+
+#centerMessage{
+position:fixed;
+top:20px;
+left:50%;
+transform:translateX(-50%);
+background:#0f0f0f;
+border:1px solid #ef4444;
+color:#ef4444;
+padding:10px 20px;
+border-radius:6px;
+display:none;
+z-index:9999;
+}
+
+/* ========================= */
+/* FOLLOWERS / FOLLOWING */
+/* ========================= */
+
+.profile-card .text-muted{
+color:#9ca3af !important;
+font-size:14px;
+}
+
+.profile-card .row .col{
+text-align:center;
+}
+
+.profile-card .row h5{
+color:white;
+font-weight:600;
+margin-bottom:2px;
+}
+
+/* ========================= */
+/* POSTS TITLE */
+/* ========================= */
+
+.profile-container h4{
+color:white !important;
+font-weight:600;
+}
+
+/* ========================= */
+/* LIKE / SHARE POPUP */
+/* ========================= */
+
+.like-popup,
+.share-popup{
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+width:230px;
+background:#111;
+border:1px solid #2a2a2a;
+border-radius:12px;
+padding:12px;
+z-index:10000;
+box-shadow:0 12px 30px rgba(0,0,0,0.8);
+color:white
+}
+
+.like-popup-header,
+.share-popup-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+font-weight:600;
+margin-bottom:10px;
+}
+
+.like-user,
+.share-user{
+display:flex;
+align-items:center;
+gap:10px;
+padding:6px 0;
+}
+
+.like-avatar,
+.share-avatar{
+width:28px;
+height:28px;
+border-radius:50%;
+background:#ef4444;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:12px;
+color:white;
+}
+
+/* ensure popup stays above post */
+
+#profilePostsContainer .profile-card{
+z-index:1;
+}
 
 /* ========================= */
 /* EDIT PROFILE PAGE */
@@ -352,8 +320,6 @@ color:white;
 font-family:'Segoe UI',sans-serif;
 }
 
-/* card */
-
 .edit-profile-page .card{
 background:#0f0f0f;
 border:none;
@@ -362,21 +328,15 @@ box-shadow:0 0 25px rgba(0,0,0,0.6);
 color:white;
 }
 
-/* title */
-
 .edit-profile-page h4{
 color:white;
 font-weight:600;
 }
 
-/* labels */
-
 .edit-profile-page .form-label{
 color:#d1d5db;
 font-weight:500;
 }
-
-/* inputs */
 
 .edit-profile-page .form-control,
 .edit-profile-page .form-select{
@@ -395,13 +355,9 @@ border-color:#ef4444;
 box-shadow:none;
 }
 
-/* textarea */
-
 .edit-profile-page textarea{
 resize:none;
 }
-
-/* cancel button */
 
 .edit-profile-page .btn-secondary{
 background:#1f2937;
@@ -414,8 +370,6 @@ padding:8px 16px;
 background:#374151;
 }
 
-/* save button */
-
 .edit-profile-page .btn-primary{
 background:linear-gradient(90deg,#ef4444,#b91c1c);
 border:none;
@@ -426,4 +380,159 @@ font-weight:500;
 
 .edit-profile-page .btn-primary:hover{
 background:linear-gradient(90deg,#dc2626,#991b1b);
+}
+
+
+.like-user span,
+.share-user span{
+color:#e5e7eb;
+font-weight:500;
+}
+
+.like-popup-header span,
+.share-popup-header span{
+color:white;
+font-weight:600;
+}
+
+
+.like-user span,
+.share-user span{
+color:#e5e7eb;
+font-weight:500;
+}
+
+.like-popup-header span,
+.share-popup-header span{
+color:white;
+font-weight:600;
+}
+
+
+/* ========================= */
+/* PROFILE POSTS TITLE */
+/* ========================= */
+
+#profilePostsContainer h4{
+color:#ffffff !important;
+font-weight:600;
+}
+
+/* ========================= */
+/* LIKE COMMENT SHARE COUNTS */
+/* ========================= */
+
+#profilePostsContainer .post-action span{
+color:#ffffff !important;
+font-weight:600;
+}
+
+/* icons slightly lighter */
+
+#profilePostsContainer .post-action{
+color:#e5e7eb;
+}
+
+/* ========================= */
+/* PROFILE POSTS TITLE */
+/* ========================= */
+
+.feed-card h5{
+color:#ffffff !important;
+font-weight:600;
+}
+
+/* ========================= */
+/* DELETE COMMENT MODAL THEME */
+/* ========================= */
+
+.modal-content{
+background:#0f0f0f;
+border:1px solid #2a2a2a;
+color:white;
+border-radius:12px;
+box-shadow:0 0 25px rgba(0,0,0,0.7);
+}
+
+.modal-header{
+border-bottom:1px solid #1f1f1f;
+}
+
+.modal-footer{
+border-top:1px solid #1f1f1f;
+}
+
+.modal-title{
+color:white;
+font-weight:600;
+}
+
+.modal-body{
+color:#e5e7eb;
+}
+
+/* close icon */
+
+.modal-header .btn-close{
+filter:invert(1);
+opacity:0.7;
+}
+
+.modal-header .btn-close:hover{
+opacity:1;
+}
+
+/* cancel button */
+
+.modal-footer .btn-secondary{
+background:#1f2937;
+border:none;
+color:white;
+}
+
+.modal-footer .btn-secondary:hover{
+background:#374151;
+}
+
+/* delete button */
+
+.modal-footer .btn-danger{
+background:#ef4444;
+border:none;
+}
+
+.modal-footer .btn-danger:hover{
+background:#dc2626;
+}
+
+/* ========================= */
+/* POPUP CLOSE BUTTON */
+/* ========================= */
+
+.like-popup-header button,
+.share-popup-header button{
+background:transparent;
+border:none;
+color:#ef4444;
+font-size:16px;
+font-weight:700;
+cursor:pointer;
+padding:2px 6px;
+border-radius:4px;
+}
+
+.like-popup-header button:hover,
+.share-popup-header button:hover{
+background:#2a0f0f;
+color:#ef4444;
+}
+
+/* ========================= */
+/* COMMENT EMPTY TEXT */
+/* ========================= */
+
+.comment-list small,
+#profilePostsContainer small{
+color:#9ca3af !important;
+font-size:13px;
 }

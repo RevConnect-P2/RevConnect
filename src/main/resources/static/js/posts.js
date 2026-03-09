@@ -181,16 +181,28 @@ function createFeedPostCard(post, options = {}) {
             ` : ``}
 
             <!-- Post Header -->
-            <div class="d-flex justify-content-between">
-                <strong>
-                    ${post.isSharedPost
-                        ? post.originalAuthorUsername
-                        : post.username}
-                </strong>
+            <div class="d-flex justify-content-between align-items-center">
 
-                ${options.showPinned && post.pinned
-                    ? `<span class="text-warning">📌 Pinned</span>`
-                    : ""}
+                <div class="post-header">
+
+                    <div class="post-avatar">
+                        ${(post.isSharedPost
+                            ? post.originalAuthorUsername
+                            : post.username).charAt(0).toUpperCase()}
+                    </div>
+
+                    <strong class="post-username">
+                        ${post.isSharedPost
+                            ? post.originalAuthorUsername
+                            : post.username}
+                    </strong>
+
+                    ${options.showPinned && post.pinned
+                        ? `<span class="ms-1 text-warning">📌</span>`
+                        : ""}
+
+                </div>
+
             </div>
 
             <!-- Post Content -->
@@ -251,11 +263,11 @@ function createFeedPostCard(post, options = {}) {
                </div>
 
                 <!-- COMMENT -->
-               <div class="col post-action"
-                    style="cursor:pointer"
-                    onclick="toggleCommentBox('${cardId}', ${post.postId})">
-                    💬 <span>${post.commentCount || 0}</span>
-               </div>
+              <div class="col post-action"
+                   style="cursor:pointer"
+                   onclick="toggleCommentBox('${cardId}', ${post.postId})">
+                  💬 <span class="comment-count">${post.commentCount || 0}</span>
+              </div>
 
                 <!-- SHARE -->
                 <div class="col post-action"
@@ -311,26 +323,27 @@ function createFeedPostCard(post, options = {}) {
             <div id="like-list-${cardId}"
                  class="mt-2"
                  style="display:none;"></div>
+        <div id="share-list-${cardId}"
+             class="mt-2"
+             style="display:none;"></div>
         </div>
-            <div id="share-list-${cardId}"
-                 class="mt-2"
-                 style="display:none;"></div>
-    `;
-const likeDiv = card.querySelector(".like-action");
-const likeCountSpan = card.querySelector(".like-count");
+        `;
 
-if (likeDiv) {
-    likeDiv.addEventListener("click", function () {
-        likePostAction(post.postId, likeDiv);
-    });
-}
-
-if (likeCountSpan) {
-    likeCountSpan.addEventListener("click", function (event) {
-        event.stopPropagation();   // prevents like toggle
-        showLikes(post.postId);
-    });
-}
+//const likeDiv = card.querySelector(".like-action");
+//const likeCountSpan = card.querySelector(".like-count");
+//
+//if (likeDiv) {
+//    likeDiv.addEventListener("click", function () {
+//        likePostAction(post.postId, likeDiv);
+//    });
+//}
+//
+//if (likeCountSpan) {
+//    likeCountSpan.addEventListener("click", function (event) {
+//        event.stopPropagation();   // prevents like toggle
+//        showLikes(post.postId);
+//    });
+//}
 
     return card;
 }
@@ -340,16 +353,30 @@ if (likeCountSpan) {
 // ===============================
 function createMyPostCard(post) {
 
+    const cardId = `mypost-${post.postId}-${Math.random().toString(36).substring(2,9)}`;
+
     const card = document.createElement("div");
     card.className = "card feed-card mb-3";
+    card.setAttribute("data-post-id", post.postId);
 
     card.innerHTML = `
         <div class="card-body">
 
             <div class="d-flex justify-content-between align-items-start">
-                <div>
-                    <strong>${post.username}</strong>
+
+                <!-- USER + AVATAR -->
+                <div class="d-flex align-items-center gap-2">
+
+                    <div class="post-avatar">
+                        ${post.username.charAt(0).toUpperCase()}
+                    </div>
+
+                    <strong class="post-username">
+                        ${post.username}
+                    </strong>
+
                     ${post.pinned ? `<span class="ms-2 text-warning">📌 Pinned</span>` : ""}
+
                 </div>
 
                 <!-- 3 DOT MENU -->
@@ -359,6 +386,7 @@ function createMyPostCard(post) {
                     </button>
 
                     <ul class="dropdown-menu dropdown-menu-end">
+
                         ${
                             post.pinned
                                 ? `<li>
@@ -393,17 +421,85 @@ function createMyPostCard(post) {
                                Delete
                             </a>
                         </li>
+
                     </ul>
                 </div>
+
             </div>
 
+            <!-- POST CONTENT -->
             <p class="post-text mt-2">${post.content}</p>
 
             ${
                 post.postType === "PROMOTIONAL"
-                    ? `<a href="${post.ctaLink}" class="btn btn-sm btn-outline-primary">${post.ctaText}</a>`
+                    ? `<a href="${post.ctaLink}" target="_blank"
+                         class="btn btn-sm btn-outline-primary">
+                         ${post.ctaText}
+                       </a>`
                     : ""
             }
+
+            <hr>
+
+            <!-- ACTION ROW -->
+            <div class="row text-center align-items-center">
+
+                <!-- LIKE -->
+                <div class="col post-action like-action"
+                     style="cursor:pointer"
+                     onclick="likePostAction(${post.postId}, this)">
+                    👍
+                    <span class="like-count"
+                          style="cursor:pointer;font-weight:600"
+                          onclick="toggleLikeList(event, ${post.postId}, '${cardId}')">
+                          ${post.likeCount || 0}
+                    </span>
+                </div>
+
+                <!-- COMMENT -->
+                <div class="col post-action"
+                     style="cursor:pointer"
+                     onclick="toggleCommentBox('${cardId}', ${post.postId})">
+                    💬
+                    <span class="comment-count">
+                        ${post.commentCount || 0}
+                    </span>
+                </div>
+
+                <!-- SHARE -->
+                <div class="col post-action"
+                     style="cursor:pointer"
+                     onclick="sharePostAction(${post.postId}, this, '${cardId}')">
+                    🔗
+                    <span style="cursor:pointer;font-weight:600"
+                          onclick="toggleShareList(event, ${post.postId}, '${cardId}')">
+                        ${post.shareCount || 0}
+                    </span>
+                </div>
+
+            </div>
+
+            <div class="post-divider"></div>
+
+            <!-- COMMENT BOX -->
+            <div id="comment-box-${cardId}"
+                 class="comment-input-box"
+                 style="display:none;">
+
+                <input type="text"
+                       id="comment-input-${cardId}"
+                       class="comment-input-field"
+                       placeholder="Write a comment..."
+                       onkeypress="handleCommentEnter(event,'${cardId}',${post.postId})">
+
+                <button class="comment-post-btn"
+                        onclick="submitCommentAction('${cardId}', ${post.postId})">
+                    Comment
+                </button>
+
+                <div id="comment-list-${cardId}" class="mt-2"></div>
+
+            </div>
 
         </div>
     `;
@@ -553,7 +649,8 @@ function fetchSavedPostsPage() {
 
     container.innerHTML = "<p class='text-center text-muted'>Loading saved posts...</p>";
 
-    fetch(`/posts/saved?userId=${currentUser.userId}`)
+    fetchSavedPosts()
+    .then(() => fetch(`/posts/saved?userId=${currentUser.userId}`))
         .then(res => {
             if (!res.ok) throw new Error("Failed to load saved posts");
             return res.json();
@@ -618,8 +715,14 @@ function fetchMyPostsPage() {
             }
 
             posts.forEach(post => {
-                const card = createMyPostCard(post);
+
+                const card = createFeedPostCard(post, {
+                    showPinned: true,
+                    isSaved: false
+                });
+
                 container.appendChild(card);
+
             });
         })
         .catch(err => {
@@ -892,6 +995,7 @@ function fetchComments(postId, cardId = postId) {
 
                const div = document.createElement("div");
                div.className = "comment-row";
+               div.id = `comment-${comment.commentId}`;
 
                div.innerHTML = `
                    <div class="comment-avatar">
@@ -1199,25 +1303,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
             showCenterMessage("Comment deleted successfully");
 
-            // PROFILE PAGE
-            if (document.getElementById("profilePostsContainer")) {
+            // REMOVE COMMENT FROM UI
+            const commentEl = document.getElementById(`comment-${deleteCommentId}`);
 
-                // clear container first
-                const container = document.getElementById("profilePostsContainer");
-                container.innerHTML = "<p class='text-muted text-center'>Updating...</p>";
+            if (commentEl) {
 
-                // reload profile posts
-                fetchProfilePosts();
+                commentEl.remove();
 
-            } else {
-
-                // DASHBOARD
-                fetchComments(deletePostId, deleteCardId);
-
-                const card = document.getElementById(`comment-box-${deleteCardId}`)?.closest(".card");
+                // update comment count
+                const card = document
+                    .getElementById(`comment-box-${deleteCardId}`)
+                    ?.closest(".card");
 
                 if (card) {
-                    const counter = card.querySelector(".post-action:nth-child(2) span");
+
+                    const counter = card.querySelector(".comment-count");
 
                     if (counter) {
                         let count = parseInt(counter.innerText) || 0;
@@ -1225,6 +1325,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 }
             }
+
         })
         .catch(() => {
 
@@ -1237,18 +1338,11 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-function showCenterMessage(message, element){
+function showCenterMessage(message){
 
-    const card = element.closest(".feed-card");
-    if(!card) return;
+    const box = document.getElementById("centerMessage");
 
-    let box = card.querySelector("#centerMessage");
-
-    if(!box){
-        box = document.createElement("div");
-        box.id = "centerMessage";
-        card.appendChild(box);
-    }
+    if(!box) return;
 
     box.innerText = message;
     box.style.display = "block";
