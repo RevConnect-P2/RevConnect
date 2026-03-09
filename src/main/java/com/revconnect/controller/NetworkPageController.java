@@ -13,7 +13,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -28,6 +27,7 @@ public class NetworkPageController {
     @GetMapping("/network")
     public String networkPage(HttpSession session, Model model) {
 
+        // Get logged-in user
         User loggedUser = (User) session.getAttribute("loggedUser");
 
         if (loggedUser == null) {
@@ -39,21 +39,8 @@ public class NetworkPageController {
         // =========================
         // ACCEPTED CONNECTIONS
         // =========================
-        List<Connection> sentConnections =
-                connectionRepository.findBySender_UserIdAndStatus(
-                        userId,
-                        ConnectionStatus.ACCEPTED
-                );
-
-        List<Connection> receivedConnections =
-                connectionRepository.findByReceiver_UserIdAndStatus(
-                        userId,
-                        ConnectionStatus.ACCEPTED
-                );
-
-        List<Connection> connections = new ArrayList<>();
-        connections.addAll(sentConnections);
-        connections.addAll(receivedConnections);
+        List<Connection> connections =
+                connectionRepository.findAllAcceptedConnections(userId);
 
         // =========================
         // PENDING REQUESTS
@@ -64,6 +51,9 @@ public class NetworkPageController {
                         ConnectionStatus.PENDING
                 );
 
+        // =========================
+        // SEND DATA TO VIEW
+        // =========================
         model.addAttribute("connections", connections);
         model.addAttribute("pendingRequests", pendingRequests);
         model.addAttribute("loggedUser", loggedUser);

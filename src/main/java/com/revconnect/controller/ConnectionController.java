@@ -52,7 +52,7 @@ public class ConnectionController {
     // =========================
     // REMOVE CONNECTION
     // =========================
-    @DeleteMapping("/remove/{connectionId}")
+    @PostMapping("/remove/{connectionId}")
     public String removeConnection(@PathVariable Long connectionId) {
 
         connectionService.removeConnection(connectionId);
@@ -86,5 +86,4 @@ public class ConnectionController {
 
         return status.name();
     }
-
 }

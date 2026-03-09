@@ -396,7 +396,6 @@
 
     }
 
-
     // ======================
     // CHECK CONNECTION STATUS
     // ======================
@@ -413,6 +412,7 @@
     return;
     }
 
+    // REQUEST SENT
     if(status === "PENDING"){
 
     text.innerText = "Request Sent";
@@ -420,8 +420,11 @@
     btn.classList.remove("btn-outline-primary");
     btn.classList.add("btn-secondary");
 
+    btn.disabled = true;
+
     }
 
+    // ALREADY CONNECTED
     else if(status === "ACCEPTED"){
 
     text.innerText = "Connected";
@@ -429,18 +432,25 @@
     btn.classList.remove("btn-outline-primary");
     btn.classList.add("btn-success");
 
+    btn.disabled = true;
+
     }
 
+    // NOT CONNECTED
     else{
 
     text.innerText = "Connect";
+
+    btn.classList.remove("btn-secondary","btn-success");
+    btn.classList.add("btn-outline-primary");
+
+    btn.disabled = false;
 
     }
 
     });
 
     }
-
 
     // ======================
     // PAGE LOAD EVENTS
