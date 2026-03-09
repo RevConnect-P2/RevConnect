@@ -18,5 +18,8 @@ public enum NotificationType {
     // ========================
     // New post created
     // ========================
-    POST
+    POST,
+    CONNECTION_ACCEPTED,
+    CONNECTION_REJECTED
+
 }

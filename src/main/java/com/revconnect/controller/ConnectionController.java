@@ -5,9 +5,10 @@ import com.revconnect.service.ConnectionService;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+@Controller
 @RequestMapping("/connections")
 @RequiredArgsConstructor
 public class ConnectionController {
@@ -31,22 +32,22 @@ public class ConnectionController {
     // ACCEPT CONNECTION REQUEST
     // =========================
     @PostMapping("/accept/{connectionId}")
-    public String acceptRequest(@PathVariable Long connectionId) {
+    public String acceptConnection(@PathVariable Long connectionId) {
 
         connectionService.acceptRequest(connectionId);
 
-        return "Connection accepted";
+        return "redirect:/network";
     }
 
     // =========================
     // REJECT CONNECTION REQUEST
     // =========================
     @PostMapping("/reject/{connectionId}")
-    public String rejectRequest(@PathVariable Long connectionId) {
+    public String rejectConnection(@PathVariable Long connectionId) {
 
         connectionService.rejectRequest(connectionId);
 
-        return "Connection rejected";
+        return "redirect:/network";
     }
 
     // =========================

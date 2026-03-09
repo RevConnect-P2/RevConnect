@@ -73,6 +73,8 @@ public class NotificationServiceImpl implements NotificationService {
             case CONNECTION -> username + " sent you a connection request";
             case SHARE -> username + " shared your post";
             case POST -> username + " created a new post";
+            case CONNECTION_ACCEPTED -> username + " accepted your connection request";
+            case CONNECTION_REJECTED -> username + " rejected your connection request";
             default -> username + " sent a notification";
         };
     }

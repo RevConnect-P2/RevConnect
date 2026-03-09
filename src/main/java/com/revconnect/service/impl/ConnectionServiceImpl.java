@@ -97,6 +97,9 @@ public class ConnectionServiceImpl implements ConnectionService {
     // =========================
     // ACCEPT REQUEST
     // =========================
+    // =========================
+// ACCEPT REQUEST
+// =========================
     @Override
     public void acceptRequest(Long connectionId) {
 
@@ -105,15 +108,18 @@ public class ConnectionServiceImpl implements ConnectionService {
 
         connection.setStatus(ConnectionStatus.ACCEPTED);
 
-        connectionRepository.save(connection);
+        Connection savedConnection = connectionRepository.save(connection);
 
+        // 🔔 Notify the original sender that request was accepted
         notificationService.createNotification(
-                connection.getReceiver().getUserId(),
-                connection.getSender().getUserId(),
-                connectionId,
-                NotificationType.CONNECTION,
-                "accepted your connection request"
+                savedConnection.getReceiver().getUserId(),   // user who accepted
+                savedConnection.getSender().getUserId(),     // user who sent request
+                savedConnection.getConnectionId(),
+                NotificationType.CONNECTION_ACCEPTED,
+                null
         );
+
+
     }
 
     // =========================
@@ -127,9 +133,19 @@ public class ConnectionServiceImpl implements ConnectionService {
 
         connection.setStatus(ConnectionStatus.REJECTED);
 
-        connectionRepository.save(connection);
-    }
+        Connection savedConnection = connectionRepository.save(connection);
 
+        // 🔔 Notify the original sender that request was rejected
+        notificationService.createNotification(
+                savedConnection.getReceiver().getUserId(),
+                savedConnection.getSender().getUserId(),
+                savedConnection.getConnectionId(),
+                NotificationType.CONNECTION_REJECTED,
+                null
+        );
+
+
+    }
     // =========================
     // REMOVE CONNECTION
     // =========================
