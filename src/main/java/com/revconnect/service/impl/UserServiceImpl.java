@@ -43,4 +43,14 @@ public class UserServiceImpl implements UserService {
                 .map(User::getUsername)
                 .collect(Collectors.toList());
     }
+    @Override
+    public String getUsernameByUserId(Long userId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() ->
+                        new RuntimeException("User not found with id: " + userId)
+                );
+
+        return user.getUsername();
+    }
 }

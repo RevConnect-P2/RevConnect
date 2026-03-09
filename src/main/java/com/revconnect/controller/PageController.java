@@ -9,6 +9,7 @@ import com.revconnect.enums.ProfileType;
 import com.revconnect.service.ProfileService;
 import com.revconnect.service.UserService;
 import com.revconnect.service.PostService;
+import com.revconnect.service.FollowService;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,19 +30,21 @@ public class PageController {
     private final ProfileService profileService;
     private final UserService userService;
     private final PostService postService;
+    private final FollowService followService;
 
 
     public PageController(ProfileService profileService,
                           UserService userService,
-                          PostService postService) {
+                          PostService postService,
+                          FollowService followService) {
 
         this.profileService = profileService;
         this.userService = userService;
         this.postService = postService;
+        this.followService = followService;
     }
 
-
-    // ================= PROFILE PAGE =================
+// ================= PROFILE PAGE =================
 
     @GetMapping("/profile")
     public String profilePage(Model model) {
@@ -49,32 +52,49 @@ public class PageController {
         Authentication auth =
                 SecurityContextHolder.getContext().getAuthentication();
 
-        String username = auth.getName();
+        // Spring Security returns email
+        String email = auth.getName();
 
+        // Get userId using email
         Long userId =
-                userService.getUserIdByUsername(username);
+                userService.getUserIdByUsername(email);
 
-        // Profile
+        // Get actual username from database
+        String username =
+                userService.getUsernameByUserId(userId);
+
+        // ================= PROFILE =================
         ProfileResponse profile =
                 profileService.getProfile(userId);
 
         model.addAttribute("profile", profile);
 
-        // ✅ Add username for HTML
+        // Correct username for profile URLs
         model.addAttribute("username", username);
 
-        // POSTS
+        // ================= POSTS =================
         List<PostResponse> posts =
                 postService.getPostsByUser(userId);
 
         model.addAttribute("posts", posts);
 
-        // POST COUNT
+        // ================= POST COUNT =================
         long postCount =
                 postService.countPostsByUser(userId);
 
         model.addAttribute("postCount", postCount);
 
+        // ================= FOLLOW COUNTS =================
+        long followers =
+                followService.getFollowersCount(userId);
+
+        long following =
+                followService.getFollowingCount(userId);
+
+        model.addAttribute("followers", followers);
+        model.addAttribute("following", following);
+
+        // ================= BUSINESS HOURS =================
         if (profile.getProfileType() == ProfileType.BUSINESS) {
 
             List<BusinessHoursResponse> hours =
@@ -156,7 +176,6 @@ public class PageController {
 
         return "profile/business-hours";
     }
-
 
 
 

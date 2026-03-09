@@ -87,19 +87,40 @@
             <h3 th:text="${username}"></h3>
             <p class="text-muted" th:text="${profile.profileType}"></p>
 
-            <div class="row mt-3 mb-3">
+            <div class="row mt-3 mb-3 text-center">
+
+                <!-- POSTS -->
                 <div class="col">
-                    <h5 th:text="${postCount}"></h5>
+                    <h5 th:text="${postCount}">0</h5>
                     <small class="text-muted">Posts</small>
                 </div>
+
+                <!-- FOLLOWERS -->
                 <div class="col">
-                    <h5>0</h5>
-                    <small class="text-muted">Followers</small>
+
+                    <a th:href="@{/profile/{username}/followers(username=${username})}"
+                       class="text-decoration-none text-dark">
+
+                        <h5 th:text="${followers}">0</h5>
+                        <small class="text-muted">Followers</small>
+
+                    </a>
+
                 </div>
+
+                <!-- FOLLOWING -->
                 <div class="col">
-                    <h5>0</h5>
-                    <small class="text-muted">Following</small>
+
+                    <a th:href="@{/profile/{username}/following(username=${username})}"
+                       class="text-decoration-none text-dark">
+
+                        <h5 th:text="${following}">0</h5>
+                        <small class="text-muted">Following</small>
+
+                    </a>
+
                 </div>
+
             </div>
 
         </div>
