@@ -2,7 +2,8 @@ package com.revconnect.controller;
 
 import com.revconnect.enums.ConnectionStatus;
 import com.revconnect.service.ConnectionService;
-
+import com.revconnect.entity.User;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.bind.annotation.*;
@@ -85,5 +86,13 @@ public class ConnectionController {
         }
 
         return status.name();
+    }
+        // =========================
+    // GET MY CONNECTIONS (NO DUPLICATES)
+    // =========================
+    @GetMapping("/my/{userId}")
+    public List<User> getMyConnections(@PathVariable Long userId) {
+
+        return connectionService.getMyConnections(userId);
     }
 }
