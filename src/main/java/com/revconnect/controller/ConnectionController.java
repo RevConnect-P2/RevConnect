@@ -5,6 +5,7 @@ import com.revconnect.service.ConnectionService;
 import com.revconnect.entity.User;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -16,17 +17,15 @@ public class ConnectionController {
 
     private final ConnectionService connectionService;
 
-    // =========================
-    // SEND CONNECTION REQUEST
-    // =========================
     @PostMapping("/request/{senderId}/{receiverId}")
-    public String sendRequest(
+    @ResponseBody
+    public ResponseEntity<String> sendRequest(
             @PathVariable Long senderId,
             @PathVariable Long receiverId) {
 
         connectionService.sendConnectionRequest(senderId, receiverId);
 
-        return "Connection request sent successfully";
+        return ResponseEntity.ok("Request Sent");
     }
 
     // =========================
@@ -59,7 +58,7 @@ public class ConnectionController {
 
         connectionService.removeConnection(connectionId);
 
-        return "Connection removed";
+        return "redirect:/network";
     }
 
     // =========================

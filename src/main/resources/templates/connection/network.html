@@ -132,11 +132,15 @@
                     Connected
                 </button>
 
-                <button class="btn btn-danger btn-sm"
-                        th:onclick="'removeConnection(' + ${conn.connectionId} + ')'">
-                    Remove
-                </button>
+                <form th:action="@{/connections/remove/{id}(id=${conn.connectionId})}"
+                      method="post"
+                      style="display:inline;">
 
+                    <button type="submit" class="btn btn-danger btn-sm">
+                        Remove
+                    </button>
+
+                </form>
             </div>
 
         </div>
