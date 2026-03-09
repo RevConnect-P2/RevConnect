@@ -287,7 +287,6 @@
 
 
     // ======================
-        // ======================
     // FOLLOW / UNFOLLOW USER
     // ======================
     function followUser(){
@@ -300,8 +299,6 @@
 
     let btn = document.getElementById("followBtn");
     let text = document.getElementById("followText");
-
-    // followers count element
     let followersCount = document.getElementById("followersCount");
 
     let count = parseInt(followersCount.innerText);
@@ -346,13 +343,13 @@
     .then(response => response.text())
     .then(message => {
 
+    let btn = document.getElementById("connectBtn");
     let text = document.getElementById("connectText");
 
-    if(text){
     text.innerText = "Request Sent";
-    }
 
-    alert(message);
+    btn.classList.remove("btn-outline-primary");
+    btn.classList.add("btn-secondary");
 
     })
     .catch(error => {
@@ -394,7 +391,6 @@
     .then(()=>{
 
     alert("Connection rejected");
-<!--    location.reload();-->
 
     });
 
@@ -402,13 +398,59 @@
 
 
     // ======================
-    // LOAD PROFILE POSTS
+    // CHECK CONNECTION STATUS
+    // ======================
+    function checkConnectionStatus(){
+
+    fetch(`/connections/status/${CURRENT_USER_ID}/${PROFILE_USER_ID}`)
+    .then(response => response.text())
+    .then(status => {
+
+    let btn = document.getElementById("connectBtn");
+    let text = document.getElementById("connectText");
+
+    if(!btn || !text){
+    return;
+    }
+
+    if(status === "PENDING"){
+
+    text.innerText = "Request Sent";
+
+    btn.classList.remove("btn-outline-primary");
+    btn.classList.add("btn-secondary");
+
+    }
+
+    else if(status === "ACCEPTED"){
+
+    text.innerText = "Connected";
+
+    btn.classList.remove("btn-outline-primary");
+    btn.classList.add("btn-success");
+
+    }
+
+    else{
+
+    text.innerText = "Connect";
+
+    }
+
+    });
+
+    }
+
+
+    // ======================
+    // PAGE LOAD EVENTS
     // ======================
     document.addEventListener("DOMContentLoaded", function(){
 
     if(window.PROFILE_USER_ID){
 
     fetchProfilePosts();
+    checkConnectionStatus();
 
     }
 

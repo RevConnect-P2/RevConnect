@@ -5,6 +5,8 @@ import com.revconnect.entity.User;
 import com.revconnect.enums.ConnectionStatus;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 import java.util.List;
@@ -12,13 +14,7 @@ import java.util.List;
 public interface ConnectionRepository extends JpaRepository<Connection, Long> {
 
     // =====================================
-    // Find connection between two users
-    // =====================================
-    Optional<Connection> findBySenderAndReceiver(User sender, User receiver);
-
-    // =====================================
     // Check connection both directions
-    // (A → B or B → A)
     // =====================================
     Optional<Connection> findBySenderAndReceiverOrReceiverAndSender(
             User sender,
@@ -28,12 +24,20 @@ public interface ConnectionRepository extends JpaRepository<Connection, Long> {
     );
 
     // =====================================
-    // Received connection requests
+    // Sent connection requests
     // =====================================
-    List<Connection> findByReceiver_UserId(Long userId);
+    List<Connection> findBySender_UserId(Long userId);
 
     // =====================================
-    // Received PENDING requests
+    // ACCEPTED connections (sender side)
+    // =====================================
+    List<Connection> findBySender_UserIdAndStatus(
+            Long userId,
+            ConnectionStatus status
+    );
+
+    // =====================================
+    // ACCEPTED connections (receiver side)
     // =====================================
     List<Connection> findByReceiver_UserIdAndStatus(
             Long userId,
@@ -41,34 +45,16 @@ public interface ConnectionRepository extends JpaRepository<Connection, Long> {
     );
 
     // =====================================
-    // Sent connection requests
+    // Correct count query
     // =====================================
-    List<Connection> findBySender_UserId(Long userId);
-
-    // =====================================
-    // All connections of a user
-    // =====================================
-    List<Connection> findBySender_UserIdOrReceiver_UserId(
-            Long senderId,
-            Long receiverId
+    @Query("""
+           SELECT COUNT(c)
+           FROM Connection c
+           WHERE (c.sender.userId = :userId OR c.receiver.userId = :userId)
+           AND c.status = :status
+           """)
+    long countAcceptedConnections(
+            @Param("userId") Long userId,
+            @Param("status") ConnectionStatus status
     );
-
-    // =====================================
-    // Accepted connections only
-    // =====================================
-    List<Connection> findBySender_UserIdOrReceiver_UserIdAndStatus(
-            Long senderId,
-            Long receiverId,
-            ConnectionStatus status
-    );
-
-    // =====================================
-    // Count only ACCEPTED connections
-    // =====================================
-    long countBySender_UserIdOrReceiver_UserIdAndStatus(
-            Long senderId,
-            Long receiverId,
-            ConnectionStatus status
-    );
-
 }

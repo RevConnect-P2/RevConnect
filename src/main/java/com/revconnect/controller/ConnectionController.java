@@ -1,7 +1,10 @@
 package com.revconnect.controller;
 
+import com.revconnect.enums.ConnectionStatus;
 import com.revconnect.service.ConnectionService;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -66,5 +69,22 @@ public class ConnectionController {
         return connectionService.getConnectionsCount(userId);
     }
 
+    // =========================
+    // GET CONNECTION STATUS
+    // =========================
+    @GetMapping("/status/{user1}/{user2}")
+    public String getConnectionStatus(
+            @PathVariable Long user1,
+            @PathVariable Long user2){
+
+        ConnectionStatus status =
+                connectionService.getConnectionStatus(user1, user2);
+
+        if(status == null){
+            return "NONE";
+        }
+
+        return status.name();
+    }
 
 }

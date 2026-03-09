@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -27,10 +28,8 @@ public class NetworkPageController {
     @GetMapping("/network")
     public String networkPage(HttpSession session, Model model) {
 
-        // Get logged-in user from session
         User loggedUser = (User) session.getAttribute("loggedUser");
 
-        // If session expired redirect to login
         if (loggedUser == null) {
             return "redirect:/login";
         }
@@ -40,25 +39,31 @@ public class NetworkPageController {
         // =========================
         // ACCEPTED CONNECTIONS
         // =========================
-        List<Connection> connections =
-                connectionRepository
-                        .findBySender_UserIdOrReceiver_UserIdAndStatus(
-                                userId,
-                                userId,
-                                ConnectionStatus.ACCEPTED
-                        );
+        List<Connection> sentConnections =
+                connectionRepository.findBySender_UserIdAndStatus(
+                        userId,
+                        ConnectionStatus.ACCEPTED
+                );
+
+        List<Connection> receivedConnections =
+                connectionRepository.findByReceiver_UserIdAndStatus(
+                        userId,
+                        ConnectionStatus.ACCEPTED
+                );
+
+        List<Connection> connections = new ArrayList<>();
+        connections.addAll(sentConnections);
+        connections.addAll(receivedConnections);
 
         // =========================
         // PENDING REQUESTS
         // =========================
         List<Connection> pendingRequests =
-                connectionRepository
-                        .findByReceiver_UserIdAndStatus(
-                                userId,
-                                ConnectionStatus.PENDING
-                        );
+                connectionRepository.findByReceiver_UserIdAndStatus(
+                        userId,
+                        ConnectionStatus.PENDING
+                );
 
-        // Send data to Thymeleaf page
         model.addAttribute("connections", connections);
         model.addAttribute("pendingRequests", pendingRequests);
         model.addAttribute("loggedUser", loggedUser);

@@ -1,6 +1,7 @@
 package com.revconnect.service;
 
 import com.revconnect.entity.Connection;
+import com.revconnect.enums.ConnectionStatus;
 
 import java.util.List;
 
@@ -40,5 +41,10 @@ public interface ConnectionService {
     // Count user connections
     // =========================
     long getConnectionsCount(Long userId);
+
+    // =========================
+    // Get connection status
+    // =========================
+    ConnectionStatus getConnectionStatus(Long user1, Long user2);
 
 }

@@ -41,24 +41,24 @@ public class ConnectionServiceImpl implements ConnectionService {
 
         Optional<Connection> existing =
                 connectionRepository.findBySenderAndReceiverOrReceiverAndSender(
-                        sender, receiver, sender, receiver
+                        sender,
+                        receiver,
+                        receiver,
+                        sender
                 );
 
         if (existing.isPresent()) {
 
             Connection connection = existing.get();
 
-            // Already pending
             if (connection.getStatus() == ConnectionStatus.PENDING) {
                 throw new RuntimeException("Connection request already sent");
             }
 
-            // Already connected
             if (connection.getStatus() == ConnectionStatus.ACCEPTED) {
                 throw new RuntimeException("You are already connected");
             }
 
-            // If rejected → allow resend
             if (connection.getStatus() == ConnectionStatus.REJECTED) {
 
                 connection.setStatus(ConnectionStatus.PENDING);
@@ -93,6 +93,7 @@ public class ConnectionServiceImpl implements ConnectionService {
                 "sent you a connection request"
         );
     }
+
     // =========================
     // ACCEPT REQUEST
     // =========================
@@ -106,7 +107,6 @@ public class ConnectionServiceImpl implements ConnectionService {
 
         connectionRepository.save(connection);
 
-        // 🔔 Notify sender
         notificationService.createNotification(
                 connection.getReceiver().getUserId(),
                 connection.getSender().getUserId(),
@@ -145,7 +145,10 @@ public class ConnectionServiceImpl implements ConnectionService {
     @Override
     public List<Connection> getReceivedRequests(Long userId) {
 
-        return connectionRepository.findByReceiver_UserId(userId);
+        return connectionRepository.findByReceiver_UserIdAndStatus(
+                userId,
+                ConnectionStatus.PENDING
+        );
     }
 
     // =========================
@@ -154,7 +157,10 @@ public class ConnectionServiceImpl implements ConnectionService {
     @Override
     public List<Connection> getSentRequests(Long userId) {
 
-        return connectionRepository.findBySender_UserId(userId);
+        return connectionRepository.findBySender_UserIdAndStatus(
+                userId,
+                ConnectionStatus.PENDING
+        );
     }
 
     // =========================
@@ -163,11 +169,32 @@ public class ConnectionServiceImpl implements ConnectionService {
     @Override
     public long getConnectionsCount(Long userId) {
 
-        return connectionRepository
-                .countBySender_UserIdOrReceiver_UserIdAndStatus(
-                        userId,
-                        userId,
-                        ConnectionStatus.ACCEPTED
+        return connectionRepository.countAcceptedConnections(
+                userId,
+                ConnectionStatus.ACCEPTED
+        );
+    }
+
+    // =========================
+    // GET CONNECTION STATUS
+    // =========================
+    @Override
+    public ConnectionStatus getConnectionStatus(Long user1, Long user2) {
+
+        User userA = userRepository.findById(user1)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        User userB = userRepository.findById(user2)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Optional<Connection> connection =
+                connectionRepository.findBySenderAndReceiverOrReceiverAndSender(
+                        userA,
+                        userB,
+                        userB,
+                        userA
                 );
+
+        return connection.map(Connection::getStatus).orElse(null);
     }
 }
