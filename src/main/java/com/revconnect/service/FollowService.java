@@ -40,4 +40,6 @@ public interface FollowService {
     // GET FOLLOWING LIST
     // =========================
     List<Follow> getFollowing(Long userId);
+
+    boolean isFollowing(Long followerId, Long followingId);
 }

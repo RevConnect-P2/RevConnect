@@ -165,4 +165,17 @@ public class FollowServiceImpl implements FollowService {
                 null
         );
     }
+    @Override
+    public boolean isFollowing(Long followerId, Long followingId) {
+
+        User follower = userRepository.findById(followerId)
+                .orElseThrow();
+
+        User following = userRepository.findById(followingId)
+                .orElseThrow();
+
+        return followRepository
+                .findByFollowerAndFollowing(follower, following)
+                .isPresent();
+    }
 }

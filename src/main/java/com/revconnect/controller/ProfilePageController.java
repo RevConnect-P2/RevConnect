@@ -1,5 +1,6 @@
 package com.revconnect.controller;
 
+import jakarta.servlet.http.HttpSession;
 import com.revconnect.entity.User;
 import com.revconnect.entity.UserProfile;
 import com.revconnect.repository.UserProfileRepository;
@@ -24,7 +25,9 @@ public class ProfilePageController {
     // PUBLIC PROFILE
     // ===============================
     @GetMapping("/profile/{username}")
-    public String viewProfile(@PathVariable String username, Model model) {
+    public String viewProfile(@PathVariable String username,
+                              Model model,
+                              HttpSession session) {
 
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -33,16 +36,26 @@ public class ProfilePageController {
                 .findByUser_UserId(user.getUserId())
                 .orElse(null);
 
-        // Followers count
         long followers = followService.getFollowersCount(user.getUserId());
-
-        // Following count
         long following = followService.getFollowingCount(user.getUserId());
+
+        // get logged in user from session
+        User loggedUser = (User) session.getAttribute("loggedUser");
+
+        boolean isFollowing = false;
+
+        if (loggedUser != null) {
+            isFollowing = followService.isFollowing(
+                    loggedUser.getUserId(),
+                    user.getUserId()
+            );
+        }
 
         model.addAttribute("user", user);
         model.addAttribute("profile", profile);
         model.addAttribute("followers", followers);
         model.addAttribute("following", following);
+        model.addAttribute("isFollowing", isFollowing);
 
         return "profile/public-profile";
     }
