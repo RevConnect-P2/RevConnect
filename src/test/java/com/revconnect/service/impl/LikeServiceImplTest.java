@@ -6,16 +6,18 @@ import com.revconnect.entity.User;
 import com.revconnect.repository.PostLikeRepository;
 import com.revconnect.repository.PostRepository;
 import com.revconnect.repository.UserRepository;
+import com.revconnect.service.NotificationService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.*;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 
-@RunWith(org.mockito.junit.MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class LikeServiceImplTest {
 
     @Mock
@@ -26,6 +28,9 @@ public class LikeServiceImplTest {
 
     @Mock
     private PostLikeRepository postLikeRepository;
+
+    @Mock
+    private NotificationService notificationService;
 
     @InjectMocks
     private LikeServiceImpl likeService;
@@ -40,8 +45,12 @@ public class LikeServiceImplTest {
         user.setUserId(1L);
         user.setEmail("test@mail.com");
 
+        User postOwner = new User();
+        postOwner.setUserId(2L);
+
         post = new Post();
         post.setPostId(10L);
+        post.setUser(postOwner);   // ⭐ IMPORTANT FIX
     }
 
     @Test

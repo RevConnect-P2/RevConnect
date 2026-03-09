@@ -1,5 +1,4 @@
 package com.revconnect.mapper;
 
-public class
-UserMapper {
+public class UserMapper {
 }

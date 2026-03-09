@@ -6,6 +6,8 @@ import com.revconnect.entity.User;
 import com.revconnect.repository.PostRepository;
 import com.revconnect.repository.ShareRepository;
 import com.revconnect.repository.UserRepository;
+import com.revconnect.service.NotificationService;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,6 +30,9 @@ public class ShareServiceImplTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private NotificationService notificationService;
+
     @InjectMocks
     private ShareServiceImpl shareService;
 
@@ -43,6 +48,10 @@ public class ShareServiceImplTest {
 
         post = new Post();
         post.setPostId(10L);
+
+        User owner = new User();
+        owner.setUserId(2L);
+        post.setUser(owner);
     }
 
     @Test
@@ -55,7 +64,7 @@ public class ShareServiceImplTest {
                 .thenReturn(Optional.of(post));
 
         when(shareRepository
-                .findByOriginalPost_PostIdAndSharedBy_Email(10L, "test@mail.com"))
+                .findByOriginalPost_PostIdAndSharedBy_UserId(10L, 1L))
                 .thenReturn(Optional.empty());
 
         shareService.sharePost(10L, "test@mail.com");
@@ -64,8 +73,8 @@ public class ShareServiceImplTest {
                 .save(any(Share.class));
     }
 
-    @Test(expected = RuntimeException.class)
-    public void shouldThrowIfDuplicateShare() {
+    @Test
+    public void shouldNotShareIfAlreadyShared() {
 
         when(userRepository.findByEmail("test@mail.com"))
                 .thenReturn(Optional.of(user));
@@ -74,10 +83,13 @@ public class ShareServiceImplTest {
                 .thenReturn(Optional.of(post));
 
         when(shareRepository
-                .findByOriginalPost_PostIdAndSharedBy_Email(10L, "test@mail.com"))
+                .findByOriginalPost_PostIdAndSharedBy_UserId(10L, 1L))
                 .thenReturn(Optional.of(new Share()));
 
         shareService.sharePost(10L, "test@mail.com");
+
+        verify(shareRepository, never())
+                .save(any(Share.class));
     }
 
     @Test(expected = RuntimeException.class)
@@ -115,8 +127,11 @@ public class ShareServiceImplTest {
     @Test(expected = RuntimeException.class)
     public void shouldThrowIfUnshareNotFound() {
 
+        when(userRepository.findByEmail("test@mail.com"))
+                .thenReturn(Optional.of(user));
+
         when(shareRepository
-                .findByOriginalPost_PostIdAndSharedBy_Email(10L, "test@mail.com"))
+                .findByOriginalPost_PostIdAndSharedBy_UserId(10L, 1L))
                 .thenReturn(Optional.empty());
 
         shareService.unsharePost(10L, "test@mail.com");
