@@ -147,3 +147,17 @@ color:white;
 font-weight:600;
 font-size:15px;
 }
+
+.center-message{
+position: fixed;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+background: #111;
+color: white;
+padding: 12px 20px;
+border-radius: 8px;
+z-index: 9999;
+display: none;
+font-size: 14px;
+}

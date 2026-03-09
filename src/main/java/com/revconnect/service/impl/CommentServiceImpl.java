@@ -9,7 +9,9 @@ import com.revconnect.repository.PostRepository;
 import com.revconnect.repository.UserRepository;
 import com.revconnect.service.CommentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -69,7 +71,7 @@ public class CommentServiceImpl implements CommentService {
 
         // check authorization
         if (!email.equals(commentOwnerEmail) && !email.equals(postOwnerEmail)) {
-            throw new RuntimeException("You are not allowed to delete this comment");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You cannot delete this comment");
         }
 
         commentRepository.delete(comment);

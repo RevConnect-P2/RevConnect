@@ -1289,17 +1289,25 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .then(res => {
 
+            // USER NOT ALLOWED
             if (!res.ok) {
-                throw new Error("Not allowed");
+                showCenterMessage("You cannot delete this comment");
+                return null;
             }
 
             return res.text();
         })
-        .then(() => {
+        .then(data => {
+
+            // If deletion was not allowed we already showed popup
+            if (!data) return;
 
             const modalEl = document.getElementById("deleteCommentModal");
             const modal = bootstrap.Modal.getInstance(modalEl);
-            modal.hide();
+
+            if (modal) {
+                modal.hide();
+            }
 
             showCenterMessage("Comment deleted successfully");
 
@@ -1311,9 +1319,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 commentEl.remove();
 
                 // update comment count
-                const card = document
-                    .getElementById(`comment-box-${deleteCardId}`)
-                    ?.closest(".card");
+                const card = document.querySelector(`[data-post-id="${deletePostId}"]`);
 
                 if (card) {
 
@@ -1329,7 +1335,7 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .catch(() => {
 
-            showCenterMessage("You cannot delete this comment");
+            showCenterMessage("Something went wrong");
 
         });
 
