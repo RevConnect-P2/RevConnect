@@ -1,80 +1,98 @@
 package com.revconnect.entity;
 
+import com.revconnect.enums.NotificationType;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "NOTIFICATIONS")
-
+@Table(
+        name = "notifications",
+        indexes = {
+                @Index(name = "idx_notification_receiver", columnList = "receiver_id"),
+                @Index(name = "idx_notification_sender", columnList = "sender_id")
+        }
+)
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-
 public class Notification {
 
+    // ========================
+    // PRIMARY KEY (ORACLE SEQUENCE)
+    // ========================
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "NOTIFICATION_ID")
-    private Long notificationId;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "notification_seq_generator")
+    @SequenceGenerator(
+            name = "notification_seq_generator",
+            sequenceName = "notifications_seq",
+            allocationSize = 1
+    )
+    @Column(name = "notification_id")
+    private Long id;
 
+    // ========================
+    // Sender (who triggered action)
+    // ========================
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sender_id")
+    private User sender;
 
-    // User receiving notification
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "USER_ID", nullable = false)
-    private User user;
+    // ========================
+    // Receiver (who gets notification)
+    // ========================
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "receiver_id")
+    private User receiver;
 
-
-    // LIKE, COMMENT, FOLLOW, CONNECTION, SHARE
-    @Column(name = "TYPE", nullable = false, length = 50)
-    private String type;
-
-
-    // ID of related entity (POST_ID, COMMENT_ID etc)
-    @Column(name = "REFERENCE_ID")
+    // ========================
+    // Reference post / entity
+    // ========================
+    @Column(name = "reference_id")
     private Long referenceId;
 
+    // ========================
+    // Notification type
+    // ========================
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type", nullable = false)
+    private NotificationType type;
 
-    @Column(name = "MESSAGE", length = 500)
+    // ========================
+    // Notification message
+    // ========================
+    @Column(name = "message", length = 500)
     private String message;
 
+    // ========================
+    // Read status
+    // ========================
+    @Column(name = "is_read")
+    private boolean read = false;
 
-    // Oracle stores Boolean as NUMBER(1)
-    @Column(name = "IS_READ")
-    private Boolean isRead = false;
-
-
-    @Column(name = "CREATED_AT", updatable = false)
+    // ========================
+    // Created timestamp
+    // ========================
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-
-    @Column(name = "UPDATED_AT")
+    // ========================
+    // Updated timestamp
+    // ========================
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-
-
-    // Auto set created timestamp
+    // ========================
+    // Auto timestamps
+    // ========================
     @PrePersist
     protected void onCreate() {
-
         createdAt = LocalDateTime.now();
-
-        if (isRead == null) {
-            isRead = false;
-        }
-
     }
 
-
-    // Auto set updated timestamp
     @PreUpdate
     protected void onUpdate() {
-
         updatedAt = LocalDateTime.now();
-
     }
-
 }

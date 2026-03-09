@@ -299,8 +299,6 @@ function createFeedPostCard(post, options = {}) {
                  class="comment-input-box"
                  style="display:none;">
 
-
-
                 <input type="text"
                        id="comment-input-${cardId}"
                        class="comment-input-field"
@@ -517,7 +515,7 @@ function fetchFeedPosts() {
     feedContainer.innerHTML = "<p class='text-center text-muted'>Loading feed...</p>";
 
     fetchSavedPosts()
-        .then(() => fetch(`/posts/feed?viewerId=${currentUser.userId}`))
+        .then(() => fetch(`/posts/feed?viewerUserId=${currentUser.userId}`))
         .then(res => {
             if (!res.ok) throw new Error("Failed to load feed");
             return res.json();
@@ -700,7 +698,7 @@ function fetchMyPostsPage() {
     container.innerHTML =
         "<p class='text-center text-muted'>Loading your posts...</p>";
 
-    fetch(`/posts/my/data?userId=${currentUser.userId}`)
+    fetch(`/posts/user?userId=${currentUser.userId}`)
         .then(res => {
             if (!res.ok) throw new Error("Failed to load my posts");
             return res.json();
@@ -714,13 +712,15 @@ function fetchMyPostsPage() {
                 return;
             }
 
+            posts.sort((a, b) => {
+                if (a.pinned === b.pinned) {
+                    return new Date(b.createdAt) - new Date(a.createdAt);
+                }
+                return b.pinned - a.pinned;
+            });
+
             posts.forEach(post => {
-
-                const card = createFeedPostCard(post, {
-                    showPinned: true,
-                    isSaved: false
-                });
-
+                const card = createMyPostCard(post);
                 container.appendChild(card);
 
             });
@@ -764,11 +764,20 @@ function unpinPostAction(postId) {
 }
 
 function deletePostAction(postId) {
+
     if (!confirm("Delete this post?")) return;
 
-    fetch(`/posts/${postId}?userId=${currentUser.userId}`, { method: "DELETE" })
-        .then(() => location.reload())
-        .catch(() => alert("Failed to delete post"));
+    fetch(`/posts/${postId}?userId=${CURRENT_USER_ID}`, {
+        method: "DELETE"
+    })
+    .then(response => {
+        if (response.ok) {
+            location.reload(); // refresh page
+        } else {
+            alert("Delete failed");
+        }
+    })
+    .catch(() => alert("Failed to delete post"));
 }
 
 function updatePost() {
@@ -821,9 +830,10 @@ function updatePost() {
 // ===============================
 function likePostAction(postId, element) {
 
-    fetch(`/posts/${postId}/like`, {
-        method: "POST"
-    })
+   fetch(`/posts/${postId}/like`, {
+       method: "POST",
+       credentials: "same-origin"
+   })
     .then(res => {
         if (!res.ok) throw new Error("Like failed");
         return res.json();
@@ -847,7 +857,8 @@ function likePostAction(postId, element) {
 function sharePostAction(postId, element, cardId) {
 
     fetch(`/posts/${postId}/share`, {
-        method: "POST"
+        method: "POST",
+        credentials: "same-origin"
     })
     .then(res => {
         if(!res.ok) throw new Error("already_shared");
@@ -932,13 +943,14 @@ function submitCommentAction(cardId, postId) {
         return;
     }
 
-    fetch(`/posts/${postId}/comments`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(commentText)
-    })
+   fetch(`/posts/${postId}/comments`, {
+       method: "POST",
+       credentials: "same-origin",
+       headers: {
+           "Content-Type": "application/json"
+       },
+       body: JSON.stringify(commentText)
+   })
     .then(res => {
         if (!res.ok) throw new Error("Comment failed");
         return res.text();
@@ -1040,7 +1052,15 @@ function fetchProfilePosts() {
 
     container.innerHTML = "<p class='text-center text-muted'>Loading posts...</p>";
 
-    fetch(`/posts/my/data?userId=${currentUser.userId}&t=${Date.now()}`)
+    const profileUserId = window.PROFILE_USER_ID;
+
+    if (!profileUserId) {
+        container.innerHTML =
+            "<p class='text-danger text-center'>User not found</p>";
+        return;
+    }
+
+    fetch(`/posts/user?userId=${profileUserId}`)
         .then(res => {
             if (!res.ok) throw new Error("Failed to load profile posts");
             return res.json();
@@ -1402,3 +1422,73 @@ function handleCommentEnter(event, cardId, postId){
     }
 
 }
+
+
+//////////////////////////////////////////////////////////
+// LOAD POSTS BY HASHTAG (GLOBAL FUNCTION)
+//////////////////////////////////////////////////////////
+
+function loadHashtagPosts(tag) {
+
+    const feedContainer = document.getElementById("feedContainer");
+
+    if (!feedContainer) return;
+
+    feedContainer.innerHTML =
+        `<p class="text-center text-muted">Loading posts for #${tag}...</p>`;
+
+    fetch(`/posts/hashtag/${tag}`)
+        .then(res => {
+            if (!res.ok) throw new Error("Failed to load hashtag posts");
+            return res.json();
+        })
+        .then(posts => {
+
+            feedContainer.innerHTML = "";
+
+            if (!posts || posts.length === 0) {
+
+                feedContainer.innerHTML =
+                    `<div class="card feed-card text-center p-4">
+                        No posts found for #${tag}
+                     </div>`;
+
+                return;
+            }
+
+            posts.forEach(post => {
+
+                const card = createFeedPostCard(post, {
+                    showPinned: false,
+                    isSaved: savedPostIds.has(post.postId)
+                });
+
+                feedContainer.appendChild(card);
+
+            });
+
+        })
+        .catch(err => {
+
+            console.error(err);
+
+            feedContainer.innerHTML =
+                `<p class="text-center text-danger">
+                    Error loading hashtag posts
+                 </p>`;
+
+        });
+}
+// ===============================
+// LOAD FEED WHEN PAGE LOADS
+// ===============================
+document.addEventListener("DOMContentLoaded", function () {
+
+    // refresh userId after page loads
+    currentUser.userId = window.CURRENT_USER_ID;
+
+    if (currentUser.userId) {
+        fetchFeedPosts();
+    }
+
+});

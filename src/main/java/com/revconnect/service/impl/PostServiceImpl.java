@@ -6,19 +6,23 @@ import com.revconnect.dto.response.CommentResponse;
 import com.revconnect.dto.response.PostResponse;
 import com.revconnect.dto.response.TagResponse;
 import com.revconnect.entity.*;
+import com.revconnect.enums.NotificationType;
 import com.revconnect.exception.BadRequestException;
 import com.revconnect.exception.ResourceNotFoundException;
 import com.revconnect.exception.UnauthorizedException;
 import com.revconnect.mapper.PostMapper;
 import com.revconnect.repository.*;
+import com.revconnect.service.NotificationService;
 import com.revconnect.service.PostService;
+
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +37,9 @@ public class PostServiceImpl implements PostService {
     private final PostLikeRepository postLikeRepository;
     private final CommentRepository commentRepository;
     private final ShareRepository shareRepository;
+
+    private final NotificationService notificationService;
+    private final FollowRepository followRepository;
 
     // =========================
     // CREATE POST
@@ -49,6 +56,7 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         String postType = request.getPostType();
+
         if (postType == null ||
                 (!postType.equalsIgnoreCase("NORMAL")
                         && !postType.equalsIgnoreCase("PROMOTIONAL"))) {
@@ -65,7 +73,7 @@ public class PostServiceImpl implements PostService {
                 .user(user)
                 .content(request.getContent())
                 .postType(postType.toUpperCase())
-                .pinned(request.getPinned() != null && request.getPinned())
+                .pinned(Boolean.TRUE.equals(request.getPinned()))
                 .ctaText(request.getCtaText())
                 .ctaLink(request.getCtaLink())
                 .scheduledAt(request.getScheduledAt())
@@ -73,65 +81,12 @@ public class PostServiceImpl implements PostService {
 
         Post savedPost = postRepository.save(post);
 
-        // ---------- HASHTAGS ----------
-        List<Hashtag> hashtags = new ArrayList<>();
-        if (request.getHashtags() != null) {
-            for (String tag : request.getHashtags()) {
-                if (tag == null || tag.trim().isEmpty()) continue;
+        List<Hashtag> hashtags = saveHashtags(savedPost, request.getHashtags());
+        List<TagResponse> tags = saveTags(savedPost, request.getTags());
 
-                String normalized = tag.trim().toLowerCase();
+        notifyFollowers(userId, savedPost.getPostId());
 
-                Hashtag hashtag = hashtagRepository
-                        .findByTagName(normalized)
-                        .orElseGet(() ->
-                                hashtagRepository.save(
-                                        Hashtag.builder().tagName(normalized).build()
-                                )
-                        );
-
-                postHashtagRepository.save(
-                        PostHashtag.builder()
-                                .post(savedPost)
-                                .hashtag(hashtag)
-                                .build()
-                );
-
-                hashtags.add(hashtag);
-            }
-        }
-
-        // ---------- PRODUCT / SERVICE TAGS ----------
-        List<TagResponse> tagResponses = new ArrayList<>();
-
-        if (request.getTags() != null) {
-            for (TagRequest tagReq : request.getTags()) {
-
-                // ✅ STRONG validation (THIS IS THE FIX)
-                if (tagReq == null ||
-                        tagReq.getTagName() == null ||
-                        tagReq.getTagName().trim().isEmpty() ||
-                        tagReq.getTagType() == null) {
-                    continue;
-                }
-
-                PostTag postTag = PostTag.builder()
-                        .post(savedPost)              // or updatedPost in updatePost
-                        .tagName(tagReq.getTagName().trim())
-                        .tagType(tagReq.getTagType())
-                        .build();
-
-                postTagRepository.save(postTag);
-
-                tagResponses.add(
-                        TagResponse.builder()
-                                .tagName(postTag.getTagName())
-                                .tagType(postTag.getTagType())
-                                .build()
-                );
-            }
-        }
-
-        return postMapper.toPostResponse(savedPost, hashtags, tagResponses);
+        return mapPost(savedPost, hashtags, tags);
     }
 
     // =========================
@@ -149,95 +104,25 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
 
         if (!post.getUser().getUserId().equals(userId)) {
-            throw new UnauthorizedException("You are not allowed to update this post");
-        }
-
-        String postType = request.getPostType();
-        if (postType == null ||
-                (!postType.equalsIgnoreCase("NORMAL")
-                        && !postType.equalsIgnoreCase("PROMOTIONAL"))) {
-            throw new BadRequestException("Invalid post type");
-        }
-
-        if (postType.equalsIgnoreCase("PROMOTIONAL")) {
-            if (request.getCtaText() == null || request.getCtaLink() == null) {
-                throw new BadRequestException("CTA text and link are required for promotional posts");
-            }
+            throw new UnauthorizedException("Not allowed");
         }
 
         post.setContent(request.getContent());
-        post.setPostType(postType.toUpperCase());
-        post.setPinned(request.getPinned() != null && request.getPinned());
+        post.setPostType(request.getPostType().toUpperCase());
+        post.setPinned(request.getPinned());
         post.setCtaText(request.getCtaText());
         post.setCtaLink(request.getCtaLink());
         post.setScheduledAt(request.getScheduledAt());
 
         Post updatedPost = postRepository.save(post);
 
-        // ---------- UPDATE HASHTAGS ----------
         postHashtagRepository.deleteByPost(updatedPost);
-
-        List<Hashtag> hashtags = new ArrayList<>();
-        if (request.getHashtags() != null) {
-            for (String tag : request.getHashtags()) {
-                if (tag == null || tag.trim().isEmpty()) continue;
-
-                String normalized = tag.trim().toLowerCase();
-
-                Hashtag hashtag = hashtagRepository
-                        .findByTagName(normalized)
-                        .orElseGet(() ->
-                                hashtagRepository.save(
-                                        Hashtag.builder().tagName(normalized).build()
-                                )
-                        );
-
-                postHashtagRepository.save(
-                        PostHashtag.builder()
-                                .post(updatedPost)
-                                .hashtag(hashtag)
-                                .build()
-                );
-
-                hashtags.add(hashtag);
-            }
-        }
-
-        // ---------- UPDATE PRODUCT / SERVICE TAGS ----------
         postTagRepository.deleteByPost(updatedPost);
 
-        // ---------- PRODUCT / SERVICE TAGS ----------
-        List<TagResponse> tagResponses = new ArrayList<>();
+        List<Hashtag> hashtags = saveHashtags(updatedPost, request.getHashtags());
+        List<TagResponse> tags = saveTags(updatedPost, request.getTags());
 
-        if (request.getTags() != null) {
-            for (TagRequest tagReq : request.getTags()) {
-
-                // ✅ STRONG validation (THIS IS THE FIX)
-                if (tagReq == null ||
-                        tagReq.getTagName() == null ||
-                        tagReq.getTagName().trim().isEmpty() ||
-                        tagReq.getTagType() == null) {
-                    continue;
-                }
-
-                PostTag postTag = PostTag.builder()
-                        .post(updatedPost)              // or updatedPost in updatePost
-                        .tagName(tagReq.getTagName().trim())
-                        .tagType(tagReq.getTagType())
-                        .build();
-
-                postTagRepository.save(postTag);
-
-                tagResponses.add(
-                        TagResponse.builder()
-                                .tagName(postTag.getTagName())
-                                .tagType(postTag.getTagType())
-                                .build()
-                );
-            }
-        }
-
-        return postMapper.toPostResponse(updatedPost, hashtags, tagResponses);
+        return mapPost(updatedPost, hashtags, tags);
     }
 
     // =========================
@@ -251,88 +136,30 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
 
         if (!post.getUser().getUserId().equals(userId)) {
-            throw new UnauthorizedException("You are not allowed to delete this post");
+            throw new UnauthorizedException("Not allowed");
         }
 
+        shareRepository.deleteByOriginalPost(post);
         postTagRepository.deleteByPost(post);
         postHashtagRepository.deleteByPost(post);
+
         postRepository.delete(post);
     }
 
+    // =========================
+    // GET POSTS BY USER
+    // =========================
     @Override
+    @Transactional(readOnly = true)
     public List<PostResponse> getPostsByUser(Long userId) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        List<Post> visiblePosts =
-                postRepository.findVisiblePostsByUser(
-                        user,
-                        LocalDateTime.now()
-                );
+        List<Post> posts =
+                postRepository.findVisiblePostsByUser(user, LocalDateTime.now());
 
-        List<PostResponse> responses = new ArrayList<>();
-
-        // pinned posts first
-        visiblePosts.stream()
-                .filter(Post::getPinned)
-                .forEach(post -> {
-
-                    PostResponse response =
-                            postMapper.toPostResponse(
-                                    post,
-                                    getHashtagsForPost(post),
-                                    getTagsForPost(post)
-                            );
-
-                    // ✅ ADD THESE 3 LINES
-                    response.setLikeCount(
-                            postLikeRepository.countByPost_PostId(post.getPostId())
-                    );
-
-                    response.setCommentCount(
-                            commentRepository.countByPost_PostId(post.getPostId())
-                    );
-
-                    response.setShareCount(
-                            shareRepository.countByOriginalPost_PostId(post.getPostId())
-
-                    );
-                    response.setComments(getCommentsForPost(post));
-
-                    responses.add(response);
-                });
-
-        // remaining posts
-        visiblePosts.stream()
-                .filter(post -> !post.getPinned())
-                .sorted((p1, p2) -> p2.getCreatedAt().compareTo(p1.getCreatedAt()))
-                .forEach(post -> {
-
-                    PostResponse response =
-                            postMapper.toPostResponse(
-                                    post,
-                                    getHashtagsForPost(post),
-                                    getTagsForPost(post)
-                            );
-
-                    // ✅ ADD THESE 3 LINES
-                    response.setLikeCount(
-                            postLikeRepository.countByPost_PostId(post.getPostId())
-                    );
-
-                    response.setCommentCount(
-                            commentRepository.countByPost_PostId(post.getPostId())
-                    );
-
-                    response.setShareCount(
-                            shareRepository.countByOriginalPost_PostId(post.getPostId())
-                    );
-
-                    responses.add(response);
-                });
-
-        return responses;
+        return buildPostResponses(posts);
     }
 
     // =========================
@@ -344,25 +171,77 @@ public class PostServiceImpl implements PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
 
-        List<Hashtag> hashtags = postHashtagRepository.findAll()
-                .stream()
-                .filter(ph -> ph.getPost().getPostId().equals(postId))
-                .map(PostHashtag::getHashtag)
-                .toList();
-
-        List<TagResponse> tags = postTagRepository.findByPost(post)
-                .stream()
-                .map(t -> TagResponse.builder()
-                        .tagName(t.getTagName())
-                        .tagType(t.getTagType())
-                        .build())
-                .toList();
-
-        return postMapper.toPostResponse(post, hashtags, tags);
+        return mapPost(post, getHashtagsForPost(post), getTagsForPost(post));
     }
 
     // =========================
-    // PIN / UNPIN (UNCHANGED)
+    // GLOBAL FEED
+    // =========================
+    @Override
+    @Transactional(readOnly = true)
+    public List<PostResponse> getGlobalFeed(Long viewerUserId) {
+
+        List<Post> posts =
+                postRepository.findGlobalFeedPosts(viewerUserId, LocalDateTime.now());
+
+        List<PostResponse> responses = buildPostResponses(posts);
+
+        // ===============================
+        // LOAD SHARED POSTS
+        // ===============================
+        List<Share> shares = shareRepository.findAllByOrderByCreatedAtDesc();
+
+        if (shares != null) {
+            for (Share share : shares) {
+
+                if (share == null || share.getOriginalPost() == null) {
+                    continue;
+                }
+
+                Post original = share.getOriginalPost();
+
+                PostResponse response = mapPost(
+                        original,
+                        getHashtagsForPost(original),
+                        getTagsForPost(original)
+                );
+
+                // 🔁 MARK AS SHARED
+                response.setSharedPost(true);
+
+                // IMPORTANT: Use SHARE TIME
+                response.setCreatedAt(share.getCreatedAt());
+
+                if (share.getSharedBy() != null) {
+                    response.setSharedByUsername(
+                            share.getSharedBy().getUsername()
+                    );
+                }
+
+                if (original.getUser() != null) {
+                    response.setOriginalAuthorUsername(
+                            original.getUser().getUsername()
+                    );
+                }
+
+                responses.add(response);
+            }
+        }
+
+        // ===============================
+        // SORT FEED
+        // ===============================
+        responses.sort(
+                Comparator.comparing(
+                        PostResponse::getCreatedAt,
+                        Comparator.nullsLast(Comparator.naturalOrder())
+                ).reversed()
+        );
+
+        return responses;
+    }
+    // =========================
+    // PIN POST
     // =========================
     @Override
     @Transactional
@@ -389,9 +268,14 @@ public class PostServiceImpl implements PostService {
         post.setPinned(true);
         Post saved = postRepository.save(post);
 
-        return postMapper.toPostResponse(saved, List.of(), List.of());
+        return mapPost(postRepository.save(post),
+                getHashtagsForPost(post),
+                getTagsForPost(post));
     }
 
+    // =========================
+    // UNPIN POST
+    // =========================
     @Override
     @Transactional
     public PostResponse unpinPost(Long postId, Long userId) {
@@ -399,18 +283,62 @@ public class PostServiceImpl implements PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
 
-        if (!post.getUser().getUserId().equals(userId)) {
-            throw new UnauthorizedException("You cannot unpin this post");
-        }
-
         post.setPinned(false);
         Post saved = postRepository.save(post);
 
-        return postMapper.toPostResponse(saved, List.of(), List.of());
+        return mapPost(postRepository.save(post),
+                getHashtagsForPost(post),
+                getTagsForPost(post));
     }
     @Override
+    public long countPostsByUser(Long userId) {
 
-    public List<PostResponse> getGlobalFeed(Long viewerUserId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        return postRepository.countByUser(user);
+    }
+
+    // =========================
+    // TRENDING HASHTAGS
+    // =========================
+    @Override
+    public List<String> getTrendingHashtags() {
+
+        return postRepository.findTrendingHashtags(PageRequest.of(0, 5));
+    }
+
+    // =========================
+    // POSTS BY HASHTAG
+    // =========================
+    @Override
+    public List<PostResponse> getPostsByHashtag(String hashtag) {
+
+        List<Post> posts = postRepository.findPostsByHashtag(hashtag);
+
+        return buildPostResponses(posts);
+    }
+
+    // =========================
+    // PRIVATE HELPERS
+    // =========================
+
+    private void notifyFollowers(Long userId, Long postId) {
+
+        followRepository.findByFollowing_UserId(userId)
+                .stream()
+                .map(Follow::getFollower)
+                .filter(follower -> !follower.getUserId().equals(userId))
+                .forEach(follower -> notificationService.createNotification(
+                        userId,
+                        follower.getUserId(),
+                        postId,
+                        NotificationType.POST,
+                        null
+                ));
+    }
+
+    private List<PostResponse> buildPostResponses(List<Post> posts) {
 
         List<PostResponse> responses = new ArrayList<>();
 
@@ -422,84 +350,100 @@ public class PostServiceImpl implements PostService {
 
         for (Post post : posts) {
 
-            List<Hashtag> hashtags = getHashtagsForPost(post);
-            List<TagResponse> tags = getTagsForPost(post);
-
-            PostResponse response =
-                    postMapper.toPostResponse(post, hashtags, tags);
-
-            // Like count
-            Long likeCount =
-                    postLikeRepository.countByPost_PostId(post.getPostId());
-            response.setLikeCount(likeCount);
-
-            // Comment count
-            Long commentCount =
-                    commentRepository.countByPost_PostId(post.getPostId());
-            response.setCommentCount(commentCount);
-
-            // Share count
-            Long shareCount =
-                    shareRepository.countByOriginalPost_PostId(post.getPostId());
-            response.setShareCount(shareCount);
-
-            // 🔥 ADD THIS (important)
-            response.setComments(getCommentsForPost(post));
-
-            responses.add(response);
+            responses.add(
+                    mapPost(post,
+                            getHashtagsForPost(post),
+                            getTagsForPost(post))
+            );
         }
 
-        // ================= SHARED POSTS =================
-        List<Share> shares =
-                shareRepository.findAllByOrderByCreatedAtDesc();
+        return responses;
+    }
 
-        for (Share share : shares) {
+    private PostResponse mapPost(Post post,
+                                 List<Hashtag> hashtags,
+                                 List<TagResponse> tags) {
 
-            Post originalPost = share.getOriginalPost();
-            User sharedBy = share.getSharedBy();
+        PostResponse response = postMapper.toPostResponse(post, hashtags, tags);
 
-            List<Hashtag> hashtags = getHashtagsForPost(originalPost);
-            List<TagResponse> tags = getTagsForPost(originalPost);
-
-            PostResponse response =
-                    postMapper.toPostResponse(originalPost, hashtags, tags);
-
-            // 🔥 Show who shared
-            response.setIsSharedPost(true);
-            response.setSharedByUsername(sharedBy.getUsername());
-            response.setOriginalAuthorUsername(originalPost.getUser().getUsername());
-
-            // Like count
-            Long likeCount =
-                    postLikeRepository.countByPost_PostId(originalPost.getPostId());
-            response.setLikeCount(likeCount);
-
-            // Comment count
-            Long commentCount =
-                    commentRepository.countByPost_PostId(originalPost.getPostId());
-            response.setCommentCount(commentCount);
-
-            // Share count
-            Long shareCount =
-                    shareRepository.countByOriginalPost_PostId(originalPost.getPostId());
-            response.setShareCount(shareCount);
-
-            // 🔥 ADD THIS
-            response.setComments(getCommentsForPost(originalPost));
-
-            responses.add(response);
-        }
-
-        // ================= SORT FEED =================
-        responses.sort((r1, r2) ->
-                r2.getCreatedAt().compareTo(r1.getCreatedAt())
+        response.setLikeCount(
+                postLikeRepository.countByPost_PostId(post.getPostId())
         );
+
+        response.setCommentCount(
+                commentRepository.countByPost_PostId(post.getPostId())
+        );
+
+        response.setShareCount(
+                shareRepository.countByOriginalPost_PostId(post.getPostId())
+        );
+
+        return response;
+    }
+
+    private List<Hashtag> saveHashtags(Post post, List<String> tags) {
+
+        List<Hashtag> hashtags = new ArrayList<>();
+
+        if (tags == null) return hashtags;
+
+        for (String tag : tags) {
+
+            String normalized = tag.trim().toLowerCase();
+
+            Hashtag hashtag =
+                    hashtagRepository.findByTagName(normalized)
+                            .orElseGet(() ->
+                                    hashtagRepository.save(
+                                            Hashtag.builder()
+                                                    .tagName(normalized)
+                                                    .build()
+                                    ));
+
+            postHashtagRepository.save(
+                    PostHashtag.builder()
+                            .post(post)
+                            .hashtag(hashtag)
+                            .build()
+            );
+
+            hashtags.add(hashtag);
+        }
+
+        return hashtags;
+    }
+
+    private List<TagResponse> saveTags(Post post, List<TagRequest> tags) {
+
+        List<TagResponse> responses = new ArrayList<>();
+
+        if (tags == null) return responses;
+
+        for (TagRequest tag : tags) {
+
+            PostTag postTag = PostTag.builder()
+                    .post(post)
+                    .tagName(tag.getTagName())
+                    .tagType(tag.getTagType())
+                    .build();
+
+            postTagRepository.save(postTag);
+
+            responses.add(
+                    TagResponse.builder()
+                            .tagName(tag.getTagName())
+                            .tagType(tag.getTagType())
+                            .build()
+            );
+        }
 
         return responses;
     }
 
     private List<Hashtag> getHashtagsForPost(Post post) {
-        return postHashtagRepository.findAll()
+
+        return postHashtagRepository
+                .findByPost(post)
                 .stream()
                 .filter(ph -> ph.getPost().getPostId().equals(post.getPostId()))
                 .map(PostHashtag::getHashtag)
@@ -507,12 +451,14 @@ public class PostServiceImpl implements PostService {
     }
 
     private List<TagResponse> getTagsForPost(Post post) {
+
         return postTagRepository.findByPost(post)
                 .stream()
-                .map(t -> TagResponse.builder()
-                        .tagName(t.getTagName())
-                        .tagType(t.getTagType())
-                        .build())
+                .map(tag ->
+                        TagResponse.builder()
+                                .tagName(tag.getTagName())
+                                .tagType(tag.getTagType())
+                                .build())
                 .toList();
     }
 

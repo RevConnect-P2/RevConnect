@@ -6,6 +6,7 @@ import com.revconnect.entity.User;
 import com.revconnect.repository.CommentRepository;
 import com.revconnect.repository.PostRepository;
 import com.revconnect.repository.UserRepository;
+import com.revconnect.service.NotificationService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,6 +30,9 @@ public class CommentServiceImplTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private NotificationService notificationService;
+
     @InjectMocks
     private CommentServiceImpl commentService;
 
@@ -37,12 +41,17 @@ public class CommentServiceImplTest {
 
     @Before
     public void setup() {
+
         user = new User();
         user.setUserId(1L);
         user.setEmail("test@mail.com");
 
+        User postOwner = new User();
+        postOwner.setUserId(2L);
+
         post = new Post();
         post.setPostId(10L);
+        post.setUser(postOwner);   // ⭐ IMPORTANT FIX
     }
 
     @Test
@@ -95,9 +104,15 @@ public class CommentServiceImplTest {
         when(commentRepository.findByPost_PostId(10L))
                 .thenReturn(List.of(comment));
 
+<<<<<<< HEAD
 //        List<?> result = commentService.getCommentsByPost(10L);
 //
 //        assertEquals(1, result.size());
+=======
+        List<?> result = commentService.getCommentsByPostId(10L);
+
+        assertEquals(1, result.size());
+>>>>>>> develop
     }
 
     @Test(expected = RuntimeException.class)
