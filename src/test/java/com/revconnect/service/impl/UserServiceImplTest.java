@@ -98,4 +98,15 @@ public class UserServiceImplTest {
         assertEquals("john", result.get(0));
         assertEquals("johnny", result.get(1));
     }
+
+    @Test(expected = RuntimeException.class)
+    public void shouldThrowIfUserIdNotFound() {
+
+        when(userRepository.findById(99L))
+                .thenReturn(Optional.empty());
+
+        userService.getUsernameByUserId(99L);
+    }
+
+
 }

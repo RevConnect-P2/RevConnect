@@ -15,6 +15,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
@@ -123,5 +124,110 @@ public class LikeServiceImplTest {
                 .thenReturn(Optional.empty());
 
         likeService.unlikePost(10L, "test@mail.com");
+    }
+
+    @Test
+    public void shouldToggleLikeAndRemoveExistingLike() {
+
+        PostLike like = new PostLike();
+
+        when(userRepository.findByEmail("test@mail.com"))
+                .thenReturn(Optional.of(user));
+
+        when(postRepository.findById(10L))
+                .thenReturn(Optional.of(post));
+
+        when(postLikeRepository
+                .findByPost_PostIdAndUser_Email(10L, "test@mail.com"))
+                .thenReturn(Optional.of(like));
+
+        boolean result = likeService.toggleLike(10L, "test@mail.com");
+
+        verify(postLikeRepository).delete(like);
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void shouldToggleLikeAndAddLike() {
+
+        when(userRepository.findByEmail("test@mail.com"))
+                .thenReturn(Optional.of(user));
+
+        when(postRepository.findById(10L))
+                .thenReturn(Optional.of(post));
+
+        when(postLikeRepository
+                .findByPost_PostIdAndUser_Email(10L, "test@mail.com"))
+                .thenReturn(Optional.empty());
+
+        boolean result = likeService.toggleLike(10L, "test@mail.com");
+
+        verify(postLikeRepository).save(any(PostLike.class));
+
+        assertTrue(result);
+    }
+
+    @Test
+    public void shouldReturnUsersWhoLikedPost() {
+
+        User liker = new User();
+        liker.setUsername("john");
+
+        PostLike like = new PostLike();
+        like.setUser(liker);
+
+        when(postLikeRepository.findByPost_PostId(10L))
+                .thenReturn(java.util.List.of(like));
+
+        java.util.List<String> users =
+                likeService.getUsersWhoLiked(10L);
+
+        assertEquals(1, users.size());
+        assertEquals("john", users.get(0));
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void shouldThrowIfUserNotFound() {
+
+        when(userRepository.findByEmail("test@mail.com"))
+                .thenReturn(Optional.empty());
+
+        likeService.likePost(10L, "test@mail.com");
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void shouldThrowIfPostNotFound() {
+
+        when(userRepository.findByEmail("test@mail.com"))
+                .thenReturn(Optional.of(user));
+
+        when(postRepository.findById(10L))
+                .thenReturn(Optional.empty());
+
+        likeService.likePost(10L, "test@mail.com");
+    }
+
+    @Test
+    public void shouldNotSendNotificationForSelfLike() {
+
+        user.setUserId(1L);
+
+        post.setUser(user); // same user liking own post
+
+        when(userRepository.findByEmail("test@mail.com"))
+                .thenReturn(Optional.of(user));
+
+        when(postRepository.findById(10L))
+                .thenReturn(Optional.of(post));
+
+        when(postLikeRepository
+                .findByPost_PostIdAndUser_Email(10L, "test@mail.com"))
+                .thenReturn(Optional.empty());
+
+        likeService.likePost(10L, "test@mail.com");
+
+        verify(notificationService, never())
+                .createNotification(any(), any(), any(), any(), any());
     }
 }

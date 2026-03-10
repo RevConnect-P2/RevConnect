@@ -236,4 +236,125 @@ public class NotificationServiceImplTest {
 
         assertEquals(3L, count);
     }
+
+    // ---------------- MESSAGE BUILDER BRANCH COVERAGE ----------------
+
+    @Test
+    public void shouldCreateCommentNotification() {
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(sender));
+        when(userRepository.findById(2L)).thenReturn(Optional.of(receiver));
+
+        notificationService.createNotification(
+                1L,
+                2L,
+                10L,
+                NotificationType.COMMENT,
+                "Nice post"
+        );
+
+        verify(notificationRepository).save(any(Notification.class));
+    }
+
+    @Test
+    public void shouldCreateFollowNotification() {
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(sender));
+        when(userRepository.findById(2L)).thenReturn(Optional.of(receiver));
+
+        notificationService.createNotification(
+                1L,
+                2L,
+                10L,
+                NotificationType.FOLLOW,
+                null
+        );
+
+        verify(notificationRepository).save(any(Notification.class));
+    }
+
+    @Test
+    public void shouldCreateConnectionNotification() {
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(sender));
+        when(userRepository.findById(2L)).thenReturn(Optional.of(receiver));
+
+        notificationService.createNotification(
+                1L,
+                2L,
+                10L,
+                NotificationType.CONNECTION,
+                null
+        );
+
+        verify(notificationRepository).save(any(Notification.class));
+    }
+
+    @Test
+    public void shouldCreateShareNotification() {
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(sender));
+        when(userRepository.findById(2L)).thenReturn(Optional.of(receiver));
+
+        notificationService.createNotification(
+                1L,
+                2L,
+                10L,
+                NotificationType.SHARE,
+                null
+        );
+
+        verify(notificationRepository).save(any(Notification.class));
+    }
+
+    @Test
+    public void shouldCreatePostNotification() {
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(sender));
+        when(userRepository.findById(2L)).thenReturn(Optional.of(receiver));
+
+        notificationService.createNotification(
+                1L,
+                2L,
+                10L,
+                NotificationType.POST,
+                null
+        );
+
+        verify(notificationRepository).save(any(Notification.class));
+    }
+
+    @Test
+    public void shouldCreateConnectionAcceptedNotification() {
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(sender));
+        when(userRepository.findById(2L)).thenReturn(Optional.of(receiver));
+
+        notificationService.createNotification(
+                1L,
+                2L,
+                10L,
+                NotificationType.CONNECTION_ACCEPTED,
+                null
+        );
+
+        verify(notificationRepository).save(any(Notification.class));
+    }
+
+    @Test
+    public void shouldCreateConnectionRejectedNotification() {
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(sender));
+        when(userRepository.findById(2L)).thenReturn(Optional.of(receiver));
+
+        notificationService.createNotification(
+                1L,
+                2L,
+                10L,
+                NotificationType.CONNECTION_REJECTED,
+                null
+        );
+
+        verify(notificationRepository).save(any(Notification.class));
+    }
 }

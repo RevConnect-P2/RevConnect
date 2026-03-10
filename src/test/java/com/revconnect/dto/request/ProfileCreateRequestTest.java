@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ProfileCreateRequestTest {
 
     @Test
-    void shouldSetAndGetFieldsCorrectly() {
+    void shouldTestGettersAndSetters() {
 
         ProfileCreateRequest request = new ProfileCreateRequest();
 
@@ -22,7 +22,7 @@ class ProfileCreateRequestTest {
         request.setCategory("Technology");
         request.setExternalLinks("https://github.com/john");
         request.setBusinessAddress("Bangalore");
-        request.setContactInfo("9999999999");
+        request.setContactInfo("9876543210");
 
         assertEquals("John Doe", request.getFullName());
         assertEquals("Software Developer", request.getBio());
@@ -34,6 +34,30 @@ class ProfileCreateRequestTest {
         assertEquals("Technology", request.getCategory());
         assertEquals("https://github.com/john", request.getExternalLinks());
         assertEquals("Bangalore", request.getBusinessAddress());
-        assertEquals("9999999999", request.getContactInfo());
+        assertEquals("9876543210", request.getContactInfo());
+    }
+
+    @Test
+    void shouldTestEqualsAndHashCode() {
+
+        ProfileCreateRequest r1 = new ProfileCreateRequest();
+        r1.setFullName("Test");
+
+        ProfileCreateRequest r2 = new ProfileCreateRequest();
+        r2.setFullName("Test");
+
+        assertEquals(r1, r2);
+        assertEquals(r1.hashCode(), r2.hashCode());
+    }
+
+    @Test
+    void shouldTestToString() {
+
+        ProfileCreateRequest request = new ProfileCreateRequest();
+        request.setFullName("Tester");
+
+        String result = request.toString();
+
+        assertTrue(result.contains("Tester"));
     }
 }

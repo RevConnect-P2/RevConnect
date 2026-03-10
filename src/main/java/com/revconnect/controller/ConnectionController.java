@@ -65,6 +65,7 @@ public class ConnectionController {
     // COUNT USER CONNECTIONS
     // =========================
     @GetMapping("/count/{userId}")
+    @ResponseBody
     public long getConnectionsCount(@PathVariable Long userId) {
 
         return connectionService.getConnectionsCount(userId);
