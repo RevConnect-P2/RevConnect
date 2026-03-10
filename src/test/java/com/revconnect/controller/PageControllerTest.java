@@ -3,6 +3,7 @@ package com.revconnect.controller;
 import com.revconnect.dto.request.ProfileUpdateRequest;
 import com.revconnect.dto.response.ProfileResponse;
 import com.revconnect.enums.ProfileType;
+import com.revconnect.service.FollowService;
 import com.revconnect.service.ProfileService;
 import com.revconnect.service.UserService;
 import com.revconnect.service.PostService;
@@ -10,7 +11,9 @@ import com.revconnect.service.PostService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import org.mockito.Mockito;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,24 +26,28 @@ import static org.mockito.Mockito.*;
 
 class PageControllerTest {
 
-    private PageController controller;
+    @InjectMocks
+    private PageController pageController;
 
+    @Mock
     private ProfileService profileService;
+
+    @Mock
     private UserService userService;
+
+    @Mock
     private PostService postService;
 
+    @Mock
+    private FollowService followService;
+
+    @Mock
     private Model model;
 
     @BeforeEach
     void setup() {
 
-        profileService = mock(ProfileService.class);
-        userService = mock(UserService.class);
-        postService = mock(PostService.class);
-
-        controller = new PageController(profileService, userService, postService);
-
-        model = mock(Model.class);
+        MockitoAnnotations.openMocks(this);
 
         Authentication auth = mock(Authentication.class);
         when(auth.getName()).thenReturn("john");
@@ -57,11 +64,14 @@ class PageControllerTest {
         profile.setProfileType(ProfileType.PERSONAL);
 
         when(userService.getUserIdByUsername("john")).thenReturn(1L);
+        when(userService.getUsernameByUserId(1L)).thenReturn("john");
         when(profileService.getProfile(1L)).thenReturn(profile);
         when(postService.getPostsByUser(1L)).thenReturn(List.of());
         when(postService.countPostsByUser(1L)).thenReturn(2L);
+        when(followService.getFollowersCount(1L)).thenReturn(5L);
+        when(followService.getFollowingCount(1L)).thenReturn(3L);
 
-        String view = controller.profilePage(model);
+        String view = pageController.profilePage(model);
 
         assertEquals("profile/profile", view);
     }
@@ -73,12 +83,15 @@ class PageControllerTest {
         profile.setProfileType(ProfileType.BUSINESS);
 
         when(userService.getUserIdByUsername("john")).thenReturn(1L);
+        when(userService.getUsernameByUserId(1L)).thenReturn("john");
         when(profileService.getProfile(1L)).thenReturn(profile);
         when(postService.getPostsByUser(1L)).thenReturn(List.of());
         when(postService.countPostsByUser(1L)).thenReturn(3L);
         when(profileService.getBusinessHours(1L)).thenReturn(List.of());
+        when(followService.getFollowersCount(1L)).thenReturn(5L);
+        when(followService.getFollowingCount(1L)).thenReturn(3L);
 
-        String view = controller.profilePage(model);
+        String view = pageController.profilePage(model);
 
         assertEquals("profile/profile", view);
     }
@@ -93,7 +106,7 @@ class PageControllerTest {
         when(userService.getUserIdByUsername("john")).thenReturn(1L);
         when(profileService.getProfile(1L)).thenReturn(profile);
 
-        String view = controller.editProfilePage(model);
+        String view = pageController.editProfilePage(model);
 
         assertEquals("profile/edit-profile", view);
     }
@@ -107,7 +120,7 @@ class PageControllerTest {
 
         when(userService.getUserIdByUsername("john")).thenReturn(1L);
 
-        String view = controller.updateProfile(req);
+        String view = pageController.updateProfile(req);
 
         assertEquals("redirect:/profile", view);
 
@@ -125,7 +138,7 @@ class PageControllerTest {
         when(userService.getUserIdByUsername("john")).thenReturn(1L);
         when(profileService.getProfile(1L)).thenReturn(profile);
 
-        String view = controller.businessHoursPage(model);
+        String view = pageController.businessHoursPage(model);
 
         assertEquals("redirect:/profile", view);
     }
@@ -139,7 +152,7 @@ class PageControllerTest {
         when(userService.getUserIdByUsername("john")).thenReturn(1L);
         when(profileService.getProfile(1L)).thenReturn(profile);
 
-        String view = controller.businessHoursPage(model);
+        String view = pageController.businessHoursPage(model);
 
         assertEquals("profile/business-hours", view);
     }
@@ -151,7 +164,7 @@ class PageControllerTest {
 
         when(userService.getUserIdByUsername("john")).thenReturn(1L);
 
-        String view = controller.saveBusinessHours(
+        String view = pageController.saveBusinessHours(
                 List.of("Monday"),
                 List.of("09:00"),
                 List.of("18:00"),
@@ -167,7 +180,7 @@ class PageControllerTest {
 
         when(userService.getUserIdByUsername("john")).thenReturn(1L);
 
-        String view = controller.saveBusinessHours(
+        String view = pageController.saveBusinessHours(
                 List.of("Monday"),
                 List.of("INVALID"),
                 List.of("18:00"),

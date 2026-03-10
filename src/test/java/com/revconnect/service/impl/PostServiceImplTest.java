@@ -4,6 +4,7 @@ import com.revconnect.dto.request.PostCreateRequest;
 import com.revconnect.dto.response.PostResponse;
 import com.revconnect.entity.Hashtag;
 import com.revconnect.entity.Post;
+import com.revconnect.entity.Share;
 import com.revconnect.entity.User;
 import com.revconnect.exception.BadRequestException;
 import com.revconnect.exception.ResourceNotFoundException;
@@ -291,5 +292,96 @@ public class PostServiceImplTest {
 
         assertNotNull(response);
     }
+
+    @Test
+    public void shouldUpdatePostSuccessfully() {
+
+        when(postRepository.findById(10L)).thenReturn(Optional.of(post));
+        when(postRepository.save(any(Post.class))).thenReturn(post);
+
+        when(postMapper.toPostResponse(any(), any(), any()))
+                .thenReturn(new PostResponse());
+
+        PostResponse response =
+                postService.updatePost(10L, 1L, request);
+
+        assertNotNull(response);
+
+        verify(postRepository).save(post);
+    }
+
+    @Test(expected = com.revconnect.exception.UnauthorizedException.class)
+    public void shouldThrowUnauthorizedOnDelete() {
+
+        User other = new User();
+        other.setUserId(2L);
+
+        post.setUser(other);
+
+        when(postRepository.findById(10L)).thenReturn(Optional.of(post));
+
+        postService.deletePost(10L, 1L);
+    }
+
+    @Test(expected = ResourceNotFoundException.class)
+    public void shouldThrowIfPinPostNotFound() {
+
+        when(postRepository.findById(10L)).thenReturn(Optional.empty());
+
+        postService.pinPost(10L, 1L);
+    }
+
+    @Test(expected = com.revconnect.exception.UnauthorizedException.class)
+    public void shouldThrowIfPinUnauthorized() {
+
+        User other = new User();
+        other.setUserId(2L);
+
+        post.setUser(other);
+
+        when(postRepository.findById(10L)).thenReturn(Optional.of(post));
+
+        postService.pinPost(10L, 1L);
+    }
+
+    @Test
+    public void shouldReturnPostsByUser() {
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+
+        when(postRepository.findVisiblePostsByUser(any(), any()))
+                .thenReturn(List.of(post));
+
+        when(postMapper.toPostResponse(any(), any(), any()))
+                .thenReturn(new PostResponse());
+
+        List<PostResponse> responses =
+                postService.getPostsByUser(1L);
+
+        assertNotNull(responses);
+    }
+
+    @Test
+    public void shouldReturnGlobalFeedWithShares() {
+
+        Share share = new Share();
+        share.setOriginalPost(post);
+        share.setSharedBy(user);
+
+        when(postRepository.findGlobalFeedPosts(anyLong(), any()))
+                .thenReturn(List.of(post));
+
+        when(shareRepository.findAllByOrderByCreatedAtDesc())
+                .thenReturn(List.of(share));
+
+        when(postMapper.toPostResponse(any(), any(), any()))
+                .thenReturn(new PostResponse());
+
+        List<PostResponse> responses = postService.getGlobalFeed(1L);
+
+        assertNotNull(responses);
+    }
+
+
 
 }

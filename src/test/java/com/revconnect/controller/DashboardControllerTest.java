@@ -1,6 +1,8 @@
 package com.revconnect.controller;
 
 import com.revconnect.entity.User;
+import com.revconnect.service.ConnectionService;
+import com.revconnect.service.FollowService;
 import com.revconnect.service.NotificationService;
 import com.revconnect.service.PostService;
 
@@ -29,6 +31,13 @@ class DashboardControllerTest {
     @Mock
     private NotificationService notificationService;
 
+    // ⭐ NEW MOCKS
+    @Mock
+    private FollowService followService;
+
+    @Mock
+    private ConnectionService connectionService;
+
     @Mock
     private Model model;
 
@@ -53,6 +62,8 @@ class DashboardControllerTest {
 
         verifyNoInteractions(postService);
         verifyNoInteractions(notificationService);
+        verifyNoInteractions(followService);
+        verifyNoInteractions(connectionService);
     }
 
     // ================= USER LOGGED IN =================
@@ -69,21 +80,29 @@ class DashboardControllerTest {
         when(postService.getGlobalFeed(1L)).thenReturn(List.of());
         when(postService.getTrendingHashtags()).thenReturn(List.of("#java", "#spring"));
 
+        // ⭐ NEW STUBS
+        when(followService.getFollowersCount(1L)).thenReturn(10L);
+        when(followService.getFollowingCount(1L)).thenReturn(8L);
+        when(connectionService.getConnectionsCount(1L)).thenReturn(3L);
+
         String view = dashboardController.dashboard(session, model);
 
         assertEquals("dashboard/dashboard", view);
 
         verify(model).addAttribute("user", user);
         verify(model).addAttribute("unreadCount", 5L);
+        verify(model).addAttribute("followersCount", 10L);
+        verify(model).addAttribute("followingCount", 8L);
+        verify(model).addAttribute("connectionsCount", 3L);
         verify(model).addAttribute(eq("posts"), any());
         verify(model).addAttribute(eq("trendingTags"), any());
-        verify(model).addAttribute("connectionsCount", 0);
-        verify(model).addAttribute("followersCount", 0);
-        verify(model).addAttribute("followingCount", 0);
         verify(model).addAttribute("message", "Welcome to RevConnect Dashboard");
 
         verify(notificationService).getUnreadCount(1L);
         verify(postService).getGlobalFeed(1L);
         verify(postService).getTrendingHashtags();
+        verify(followService).getFollowersCount(1L);
+        verify(followService).getFollowingCount(1L);
+        verify(connectionService).getConnectionsCount(1L);
     }
 }

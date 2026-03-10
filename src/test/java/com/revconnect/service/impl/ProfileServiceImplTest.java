@@ -284,5 +284,82 @@ public class ProfileServiceImplTest {
         assertEquals(0, profileService.searchProfiles("jo").size());
     }
 
+    @Test
+    public void shouldApplyCreatorRules() {
+
+        user.setUserType("CREATOR");
+
+        ProfileCreateRequest req = new ProfileCreateRequest();
+        req.setCategory("TECH");
+        req.setExternalLinks("youtube");
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userProfileRepository.findByUser_UserId(1L)).thenReturn(Optional.empty());
+        when(userProfileRepository.save(any())).thenReturn(profile);
+
+        profileService.createProfile(1L, req);
+
+        verify(userProfileRepository).save(any(UserProfile.class));
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void shouldThrowIfUpdateHoursNotBusiness() {
+
+        profile.setProfileType(ProfileType.PERSONAL);
+
+        when(userProfileRepository.findByUser_UserId(1L))
+                .thenReturn(Optional.of(profile));
+
+        profileService.updateBusinessHours(1L, "MONDAY", new BusinessHoursRequest());
+    }
+
+    @Test(expected = ResourceNotFoundException.class)
+    public void shouldThrowIfHoursNotFound() {
+
+        profile.setProfileType(ProfileType.BUSINESS);
+
+        when(userProfileRepository.findByUser_UserId(1L))
+                .thenReturn(Optional.of(profile));
+
+        when(businessHoursRepository.findByProfile_ProfileId(profile.getProfileId()))
+                .thenReturn(List.of());
+
+        profileService.updateBusinessHours(1L, "MONDAY", new BusinessHoursRequest());
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void shouldThrowDeleteIfNotBusiness() {
+
+        profile.setProfileType(ProfileType.PERSONAL);
+
+        when(userProfileRepository.findByUser_UserId(1L))
+                .thenReturn(Optional.of(profile));
+
+        profileService.deleteBusinessHours(1L, "MONDAY");
+    }
+
+    @Test(expected = ResourceNotFoundException.class)
+    public void shouldThrowDeleteIfHoursMissing() {
+
+        profile.setProfileType(ProfileType.BUSINESS);
+
+        when(userProfileRepository.findByUser_UserId(1L))
+                .thenReturn(Optional.of(profile));
+
+        when(businessHoursRepository.findByProfile_ProfileId(profile.getProfileId()))
+                .thenReturn(List.of());
+
+        profileService.deleteBusinessHours(1L, "MONDAY");
+    }
+
+    @Test(expected = ResourceNotFoundException.class)
+    public void shouldThrowIfProfileMissingForBusinessHours() {
+
+        when(userProfileRepository.findByUser_UserId(1L))
+                .thenReturn(Optional.empty());
+
+        profileService.getBusinessHours(1L);
+    }
+
 
 }

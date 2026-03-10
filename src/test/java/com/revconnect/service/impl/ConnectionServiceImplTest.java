@@ -8,18 +8,22 @@ import com.revconnect.repository.ConnectionRepository;
 import com.revconnect.repository.UserRepository;
 import com.revconnect.service.NotificationService;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.*;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.Silent.class)
-public class ConnectionServiceImplTest {
+@ExtendWith(MockitoExtension.class)
+class ConnectionServiceImplTest {
 
     @Mock
     private ConnectionRepository connectionRepository;
@@ -37,8 +41,8 @@ public class ConnectionServiceImplTest {
     private User receiver;
     private Connection connection;
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
 
         sender = new User();
         sender.setUserId(1L);
@@ -53,127 +57,282 @@ public class ConnectionServiceImplTest {
         connection.setStatus(ConnectionStatus.PENDING);
     }
 
-    // ---------------- SEND REQUEST ----------------
+    // =========================
+    // SELF CONNECTION
+    // =========================
 
-    @Test(expected = RuntimeException.class)
-    public void shouldThrowIfConnectingYourself() {
-        connectionService.sendConnectionRequest(1L,1L);
+    @Test
+    void shouldThrowIfUserConnectsToSelf() {
+
+        RuntimeException ex = assertThrows(
+                RuntimeException.class,
+                () -> connectionService.sendConnectionRequest(1L, 1L)
+        );
+
+        assertEquals("You cannot connect with yourself", ex.getMessage());
     }
 
-    @Test(expected = RuntimeException.class)
-    public void shouldThrowIfSenderNotFound() {
+    // =========================
+    // SENDER NOT FOUND
+    // =========================
+
+    @Test
+    void shouldThrowIfSenderNotFound() {
 
         when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
-        connectionService.sendConnectionRequest(1L,2L);
+        assertThrows(RuntimeException.class,
+                () -> connectionService.sendConnectionRequest(1L, 2L));
     }
 
-    @Test(expected = RuntimeException.class)
-    public void shouldThrowIfReceiverNotFound() {
+    // =========================
+    // RECEIVER NOT FOUND
+    // =========================
+
+    @Test
+    void shouldThrowIfReceiverNotFound() {
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(sender));
         when(userRepository.findById(2L)).thenReturn(Optional.empty());
 
-        connectionService.sendConnectionRequest(1L,2L);
+        assertThrows(RuntimeException.class,
+                () -> connectionService.sendConnectionRequest(1L, 2L));
     }
 
-    @Test(expected = RuntimeException.class)
-    public void shouldThrowIfConnectionAlreadyExists() {
-
-        when(userRepository.findById(1L)).thenReturn(Optional.of(sender));
-        when(userRepository.findById(2L)).thenReturn(Optional.of(receiver));
-
-        when(connectionRepository.findBySenderAndReceiver(sender,receiver))
-                .thenReturn(Optional.of(connection));
-
-        connectionService.sendConnectionRequest(1L,2L);
-    }
+    // =========================
+    // EXISTING PENDING
+    // =========================
 
     @Test
-    public void shouldSendConnectionRequestSuccessfully() {
+    void shouldThrowIfPendingRequestExists() {
+
+        connection.setStatus(ConnectionStatus.PENDING);
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(sender));
         when(userRepository.findById(2L)).thenReturn(Optional.of(receiver));
 
-        when(connectionRepository.findBySenderAndReceiver(sender,receiver))
-                .thenReturn(Optional.empty());
+        when(connectionRepository.findConnectionBetweenUsers(sender, receiver))
+                .thenReturn(Optional.of(connection));
 
-        when(connectionRepository.save(any(Connection.class)))
-                .thenReturn(connection);
+        assertThrows(RuntimeException.class,
+                () -> connectionService.sendConnectionRequest(1L, 2L));
+    }
 
-        connectionService.sendConnectionRequest(1L,2L);
+    // =========================
+    // EXISTING ACCEPTED
+    // =========================
 
-        verify(connectionRepository).save(any(Connection.class));
+    @Test
+    void shouldThrowIfAlreadyConnected() {
 
+        connection.setStatus(ConnectionStatus.ACCEPTED);
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(sender));
+        when(userRepository.findById(2L)).thenReturn(Optional.of(receiver));
+
+        when(connectionRepository.findConnectionBetweenUsers(sender, receiver))
+                .thenReturn(Optional.of(connection));
+
+        assertThrows(RuntimeException.class,
+                () -> connectionService.sendConnectionRequest(1L, 2L));
+    }
+
+    // =========================
+    // REJECTED → PENDING AGAIN
+    // =========================
+
+    @Test
+    void shouldResendRequestIfPreviouslyRejected() {
+
+        connection.setStatus(ConnectionStatus.REJECTED);
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(sender));
+        when(userRepository.findById(2L)).thenReturn(Optional.of(receiver));
+
+        when(connectionRepository.findConnectionBetweenUsers(sender, receiver))
+                .thenReturn(Optional.of(connection));
+
+        when(connectionRepository.save(connection)).thenReturn(connection);
+
+        connectionService.sendConnectionRequest(1L, 2L);
+
+        verify(connectionRepository).save(connection);
         verify(notificationService).createNotification(
                 1L,
                 2L,
                 10L,
                 NotificationType.CONNECTION,
-                null
+                "sent you a connection request"
         );
     }
 
-    // ---------------- ACCEPT REQUEST ----------------
-
-    @Test(expected = RuntimeException.class)
-    public void shouldThrowIfConnectionNotFoundWhileAccept() {
-
-        when(connectionRepository.findById(10L))
-                .thenReturn(Optional.empty());
-
-        connectionService.acceptRequest(10L);
-    }
+    // =========================
+    // NEW CONNECTION
+    // =========================
 
     @Test
-    public void shouldAcceptConnectionSuccessfully() {
+    void shouldCreateNewConnection() {
 
-        when(connectionRepository.findById(10L))
-                .thenReturn(Optional.of(connection));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(sender));
+        when(userRepository.findById(2L)).thenReturn(Optional.of(receiver));
 
-        connectionService.acceptRequest(10L);
+        when(connectionRepository.findConnectionBetweenUsers(sender, receiver))
+                .thenReturn(Optional.empty());
 
-        verify(connectionRepository).save(connection);
+        when(connectionRepository.save(any(Connection.class)))
+                .thenReturn(connection);
 
+        connectionService.sendConnectionRequest(1L, 2L);
+
+        verify(connectionRepository).save(any(Connection.class));
         verify(notificationService).createNotification(
-                receiver.getUserId(),
-                sender.getUserId(),
+                1L,
+                2L,
                 10L,
                 NotificationType.CONNECTION,
-                "accepted your connection request"
+                "sent you a connection request"
         );
     }
 
-    // ---------------- REJECT REQUEST ----------------
-
-    @Test(expected = RuntimeException.class)
-    public void shouldThrowIfConnectionNotFoundWhileReject() {
-
-        when(connectionRepository.findById(10L))
-                .thenReturn(Optional.empty());
-
-        connectionService.rejectRequest(10L);
-    }
+    // =========================
+    // ACCEPT REQUEST
+    // =========================
 
     @Test
-    public void shouldRejectConnectionSuccessfully() {
+    void shouldAcceptRequest() {
 
         when(connectionRepository.findById(10L))
                 .thenReturn(Optional.of(connection));
 
-        connectionService.rejectRequest(10L);
+        when(connectionRepository.save(connection))
+                .thenReturn(connection);   // IMPORTANT
+
+        connectionService.acceptRequest(10L);
+
+        assertEquals(ConnectionStatus.ACCEPTED, connection.getStatus());
 
         verify(connectionRepository).save(connection);
     }
 
-    // ---------------- REMOVE CONNECTION ----------------
+    // =========================
+    // REJECT REQUEST
+    // =========================
 
     @Test
-    public void shouldRemoveConnectionSuccessfully() {
+    void shouldRejectRequest() {
+
+        when(connectionRepository.findById(10L))
+                .thenReturn(Optional.of(connection));
+
+        when(connectionRepository.save(connection))
+                .thenReturn(connection);   // IMPORTANT
+
+        connectionService.rejectRequest(10L);
+
+        assertEquals(ConnectionStatus.REJECTED, connection.getStatus());
+
+        verify(connectionRepository).save(connection);
+    }
+    // =========================
+    // REMOVE CONNECTION
+    // =========================
+
+    @Test
+    void shouldRemoveConnection() {
 
         connectionService.removeConnection(10L);
 
         verify(connectionRepository).deleteById(10L);
 
     }
+
+    // =========================
+    // GET CONNECTION COUNT
+    // =========================
+
+    @Test
+    void shouldReturnConnectionCount() {
+
+        when(connectionRepository.countAcceptedConnections(1L, ConnectionStatus.ACCEPTED))
+                .thenReturn(5L);
+
+        long count = connectionService.getConnectionsCount(1L);
+
+        assertEquals(5L, count);
+    }
+
+    // =========================
+    // GET MY CONNECTIONS
+    // =========================
+
+    @Test
+    void shouldReturnMyConnections() {
+
+        when(connectionRepository.findAllAcceptedConnections(1L))
+                .thenReturn(List.of(connection));
+
+        List<User> users = connectionService.getMyConnections(1L);
+
+        assertEquals(1, users.size());
+    }
+
+    @Test
+    void shouldReturnConnectionStatus() {
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(sender));
+        when(userRepository.findById(2L)).thenReturn(Optional.of(receiver));
+
+        when(connectionRepository.findConnectionBetweenUsers(sender, receiver))
+                .thenReturn(Optional.of(connection));
+
+        ConnectionStatus status =
+                connectionService.getConnectionStatus(1L, 2L);
+
+        assertEquals(ConnectionStatus.PENDING, status);
+    }
+
+    @Test
+    void shouldReturnNullIfConnectionDoesNotExist() {
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(sender));
+        when(userRepository.findById(2L)).thenReturn(Optional.of(receiver));
+
+        when(connectionRepository.findConnectionBetweenUsers(sender, receiver))
+                .thenReturn(Optional.empty());
+
+        ConnectionStatus status =
+                connectionService.getConnectionStatus(1L, 2L);
+
+        assertNull(status);
+    }
+
+    @Test
+    void shouldReturnReceivedRequests() {
+
+        when(connectionRepository
+                .findByReceiver_UserIdAndStatus(2L, ConnectionStatus.PENDING))
+                .thenReturn(List.of(connection));
+
+        List<Connection> list =
+                connectionService.getReceivedRequests(2L);
+
+        assertEquals(1, list.size());
+    }
+
+    @Test
+    void shouldReturnSentRequests() {
+
+        when(connectionRepository
+                .findBySender_UserIdAndStatus(1L, ConnectionStatus.PENDING))
+                .thenReturn(List.of(connection));
+
+        List<Connection> list =
+                connectionService.getSentRequests(1L);
+
+        assertEquals(1, list.size());
+    }
+
+
+
+
 }
