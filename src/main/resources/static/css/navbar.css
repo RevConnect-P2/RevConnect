@@ -1,0 +1,214 @@
+/* ========================= */
+/* GLOBAL DARK THEME */
+/* ========================= */
+
+body{
+background:#070707;
+color:white;
+}
+
+/* ========================= */
+/* NAVBAR */
+/* ========================= */
+
+.navbar{
+background:#070707 !important;
+border-bottom:1px solid #1f1f1f;
+padding:12px 30px;
+}
+
+.navbar-brand{
+color:white !important;
+font-weight:700;
+}
+
+.nav-link{
+color:#aaa !important;
+}
+
+.nav-link:hover{
+color:white !important;
+}
+
+/* SEARCH */
+
+.navbar input[type="search"]{
+background:#0f0f0f;
+border:1px solid #1f1f1f;
+border-radius:30px;
+padding:10px 18px;
+color:white;
+width:100%;
+}
+
+.navbar input::placeholder{
+color:#777;
+}
+
+
+/* ========================= */
+/* CARDS */
+/* ========================= */
+
+.feed-card,
+.profile-card,
+.sidebar-card,
+.post-card{
+
+background:linear-gradient(
+145deg,
+rgba(18,18,18,0.95),
+rgba(10,10,10,0.95)
+);
+
+border:1px solid rgba(255,255,255,0.05);
+
+border-radius:18px;
+
+box-shadow:
+0 15px 40px rgba(0,0,0,0.8),
+0 0 0 1px rgba(255,255,255,0.02),
+0 0 25px rgba(255,0,0,0.04);
+}
+
+/* ========================= */
+/* PROFILE CARD */
+/* ========================= */
+
+.profile-cover{
+background:linear-gradient(135deg,#ff4d4d,#b91c1c);
+height:90px;
+}
+
+.profile-avatar{
+width:80px;
+border-radius:50%;
+border:3px solid #070707;
+margin-top:-45px;
+}
+
+/* ========================= */
+/* PROFILE BUTTON */
+/* ========================= */
+
+.profile-card .btn{
+background:linear-gradient(135deg,#ff4d4d,#b91c1c);
+border:none;
+border-radius:25px;
+color:white;
+}
+
+.profile-card .btn:hover{
+box-shadow:0 6px 20px rgba(255,0,0,0.35);
+}
+
+/* ========================= */
+/* QUICK LINKS */
+/* ========================= */
+
+.sidebar-link{
+color:#aaa;
+}
+
+.sidebar-link:hover{
+background:#111;
+color:white;
+}
+
+/* ========================= */
+/* CREATE POST */
+/* ========================= */
+
+.post-input{
+background:#0f0f0f;
+border:1px solid #1f1f1f;
+color:#aaa;
+}
+
+.post-input:hover{
+border-color:#ff4d4d;
+}
+
+/* ========================= */
+/* FILTER BUTTONS */
+/* ========================= */
+
+.feed-filter-btn{
+border-radius:20px !important;
+padding:6px 16px !important;
+font-weight:500;
+}
+
+.btn-primary{
+background:linear-gradient(135deg,#ff4d4d,#b91c1c);
+border:none;
+}
+
+.btn-outline-primary{
+border:1px solid #ff4d4d;
+color:#ff4d4d;
+}
+
+.btn-outline-primary:hover{
+background:#ff4d4d;
+color:white;
+}
+
+/* ========================= */
+/* POSTS */
+/* ========================= */
+
+.post-card{
+padding:10px;
+}
+
+.post-time{
+color:#888;
+}
+
+.post-actions{
+border-top:1px solid #1f1f1f;
+}
+
+.post-action{
+color:#aaa;
+}
+
+.post-action:hover{
+background:#111;
+color:white;
+}
+
+/* ========================= */
+/* TRENDING */
+/* ========================= */
+
+.sidebar-title{
+color:white;
+}
+
+.news-item{
+color:#aaa;
+}
+
+.news-item:hover{
+background:#111;
+}
+
+/* ========================= */
+/* HASHTAGS */
+/* ========================= */
+
+.sidebar-card a{
+color:#2f81f7;
+text-decoration:none;
+}
+
+.sidebar-card a:hover{
+text-decoration:underline;
+}
+
+.search-container{
+flex:1;
+max-width:700px;
+}

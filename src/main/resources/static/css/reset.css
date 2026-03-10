@@ -1,0 +1,222 @@
+body{
+margin:0;
+font-family:'Segoe UI',sans-serif;
+background:#070707;
+color:white;
+}
+
+.main-container{
+display:flex;
+height:100vh;
+}
+
+/* LEFT SIDE */
+
+.left-section{
+flex:1;
+padding-left:80px;
+display:flex;
+flex-direction:column;
+justify-content:center;
+position:relative;
+}
+
+.top-logo{
+position:absolute;
+top:35px;
+left:60px;
+font-weight:600;
+}
+
+.dot{
+height:10px;
+width:10px;
+background:#ef4444;
+border-radius:50%;
+display:inline-block;
+margin-right:8px;
+}
+
+.brand-title{
+font-size:55px;
+font-weight:700;
+}
+
+.tagline{
+color:#ef4444;
+font-size:20px;
+margin-top:10px;
+}
+
+.desc{
+color:#9ca3af;
+max-width:420px;
+margin-top:10px;
+}
+
+/* floating icons */
+
+.float-icon{
+position:absolute;
+color:#ef4444;
+opacity:0.6;
+animation:float 6s infinite ease-in-out;
+}
+
+.lock{ top:30%; left:55%; font-size:26px; }
+.key{ top:55%; left:45%; font-size:24px; }
+.shield{ top:70%; left:65%; font-size:28px; }
+.verify{ top:40%; left:70%; font-size:26px; }
+
+@keyframes float{
+0%{transform:translateY(0)}
+50%{transform:translateY(-15px)}
+100%{transform:translateY(0)}
+}
+
+/* RIGHT SIDE */
+
+.right-section{
+flex:1;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+/* CARD */
+
+.reset-card{
+
+width:420px;
+padding:40px;
+
+border-radius:20px;
+
+background:linear-gradient(
+145deg,
+rgba(20,20,20,0.95),
+rgba(10,10,10,0.95)
+);
+
+border:1px solid rgba(255,255,255,0.08);
+
+box-shadow:
+0 20px 50px rgba(0,0,0,0.8),
+0 0 25px rgba(255,0,0,0.05);
+
+}
+
+/* ICON */
+
+.icon-area{
+text-align:center;
+font-size:34px;
+color:#ef4444;
+margin-bottom:10px;
+}
+
+/* TEXT */
+
+.subtitle{
+color:#9ca3af;
+margin-bottom:20px;
+text-align:center;
+}
+
+/* INPUTS */
+
+.form-control{
+background:#111;
+border:1px solid #2a2a2a;
+color:white;
+border-radius:10px;
+margin-bottom:20px;
+}
+
+.form-control::placeholder{
+color:white;
+opacity:0.6;
+}
+
+.form-control:focus{
+background:#111;
+border-color:#ef4444;
+box-shadow:none;
+color:white;
+}
+
+/* BUTTON */
+
+.reset-btn{
+
+background:linear-gradient(135deg,#ff4d4d,#b91c1c);
+border:none;
+border-radius:30px;
+padding:12px;
+font-weight:600;
+color:white;
+
+}
+
+.reset-btn:hover{
+box-shadow:0 6px 20px rgba(255,0,0,0.35);
+}
+
+/* BACK LINK */
+
+.back-login a{
+color:#ef4444;
+text-decoration:none;
+}
+
+.back-login a:hover{
+text-decoration:underline;
+}
+
+/* PASSWORD FIELD ALIGNMENT */
+
+.input-group{
+display:flex;
+align-items:stretch;
+width:100%;
+}
+
+.input-group .form-control{
+height:44px;
+background:#111;
+border:1px solid #2a2a2a;
+border-right:0;
+border-radius:10px 0 0 10px;
+color:white;
+}
+
+.input-group .form-control::placeholder{
+color:white;
+opacity:0.6;
+}
+
+.input-group-text{
+height:44px;
+width:50px;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+background:#111;
+border:1px solid #2a2a2a;
+border-left:0;
+
+border-radius:0 10px 10px 0;
+
+cursor:pointer;
+}
+
+.input-group-text i{
+font-size:14px;
+color:#bbb;
+}
+
+.input-group-text:hover{
+background:#1a1a1a;
+}

@@ -170,16 +170,23 @@ function createFeedPostCard(post, options = {}) {
 
             <!-- 🔁 Shared Banner -->
             ${post.isSharedPost ? `
-                <div class="text-muted small mb-2">
+                <div class="shared-post-text mb-2">
                     🔁 ${post.sharedByUsername} shared
                     ${post.originalAuthorUsername}'s post
                 </div>
             ` : ``}
 
            <!-- Post Header -->
-           <div class="d-flex align-items-center justify-content-between mb-2">
 
-               <div>
+           <div class="d-flex align-items-center mb-2">
+
+               <!-- Avatar -->
+               <div class="post-avatar me-2">
+                   ${(post.username || "U").charAt(0).toUpperCase()}
+               </div>
+
+               <div class="flex-grow-1">
+
                    <div class="post-username">
                        ${post.isSharedPost
                            ? post.originalAuthorUsername
@@ -189,13 +196,16 @@ function createFeedPostCard(post, options = {}) {
                    <div class="post-time">
                        ${formatDate(post.createdAt)}
                    </div>
+
                </div>
 
                ${options.showPinned && post.pinned
-                   ? `<span class="text-warning">📌 Pinned</span>`
+                   ? `<span class="text-warning">📌</span>`
                    : ""}
 
            </div>
+
+
 
             <!-- Post Content -->
             <p class="post-text mt-2">${post.content}</p>
@@ -615,12 +625,14 @@ function fetchMyPostsPage() {
     container.innerHTML =
         "<p class='text-center text-muted'>Loading your posts...</p>";
 
-    fetch(`/posts/user?userId=${currentUser.userId}`)
+    fetchSavedPosts()
+        .then(() => fetch(`/posts/user?userId=${currentUser.userId}`))
         .then(res => {
             if (!res.ok) throw new Error("Failed to load my posts");
             return res.json();
         })
         .then(posts => {
+
             container.innerHTML = "";
 
             if (!posts || posts.length === 0) {
@@ -637,9 +649,16 @@ function fetchMyPostsPage() {
             });
 
             posts.forEach(post => {
-                const card = createMyPostCard(post);
+
+                const card = createFeedPostCard(post, {
+                    showPinned: true,
+                    isSaved: savedPostIds.has(post.postId)
+                });
+
                 container.appendChild(card);
+
             });
+
         })
         .catch(err => {
             console.error(err);

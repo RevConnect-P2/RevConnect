@@ -6,286 +6,127 @@
     <title>Create Account | RevConnect</title>
 
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
-
-    <style>
-
-        body{
-        height:100vh;
-        background: linear-gradient(135deg,#0a66c2,#00a0dc);
-        display:flex;
-        justify-content:center;
-        align-items:center;
-        font-family: 'Segoe UI', sans-serif;
-        }
-
-
-        .register-card{
-
-        width:450px;
-        padding:30px;
-        border-radius:20px;
-        background: rgba(255,255,255,0.95);
-        box-shadow:0 10px 35px rgba(0,0,0,0.25);
-
-        }
-
-
-        .logo{
-
-        font-size:30px;
-        font-weight:bold;
-        color:#0a66c2;
-        text-align:center;
-
-        }
-
-
-        .subtitle{
-
-        text-align:center;
-        color:gray;
-        margin-bottom:20px;
-
-        }
-
-
-        .form-control{
-
-        border-radius:10px;
-        padding:10px;
-
-        }
-
-
-        .btn-primary{
-
-        border-radius:10px;
-        padding:10px;
-        font-weight:bold;
-
-        }
-
-
-        .eye{
-
-        cursor:pointer;
-
-        }
-
-    </style>
+    <link rel="stylesheet" href="/css/register.css">
 
 </head>
-
-
 <body>
 
+<div class="main-container">
 
-
-<div class="register-card">
-
-
-    <div class="logo">
-
+    <!-- TOP LEFT LOGO -->
+    <div class="top-logo">
+        <span class="dot"></span>
         RevConnect
+    </div>
+
+    <!-- LEFT CONTENT -->
+    <div class="left-section">
+
+        <h1 class="brand-title">RevConnect</h1>
+
+        <p class="tagline">Let's Connect</p>
+
+        <p class="description">
+            Connect with friends, collaborate with creators and grow your network.
+        </p>
 
     </div>
 
+    <!-- RIGHT FORM -->
+    <div class="right-section">
 
-    <div class="subtitle">
+        <div class="register-card">
 
-        Create your professional account
+            <h3>Create Account</h3>
+            <p class="form-sub">Create your professional account</p>
+
+            <form th:action="@{/register}" method="post">
+
+                <div class="mb-3">
+                    <label>Email</label>
+                    <input type="email" class="form-control" name="email" placeholder="Enter email">
+                </div>
+
+                <div class="mb-3">
+                    <label>Username</label>
+                    <input type="text" class="form-control" name="username" placeholder="Enter username">
+                </div>
+
+                <div class="mb-3">
+                    <label>Password</label>
+
+                    <div class="input-group">
+
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Enter password">
+
+                        <span class="input-group-text eye" onclick="togglePassword()">
+                            <i class="fa fa-eye"></i>
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <!-- USER TYPE RADIO -->
+
+                <div class="mb-3">
+
+                    <label>User Type</label>
+
+                    <div class="radio-group">
+
+                        <label><input type="radio" name="userType" value="PERSONAL"> Personal</label>
+                        <label><input type="radio" name="userType" value="CREATOR"> Creator</label>
+                        <label><input type="radio" name="userType" value="BUSINESS"> Business</label>
+
+                    </div>
+
+                </div>
+
+                <!-- SECURITY QUESTION -->
+
+                <div class="mb-3">
+
+                    <label>Security Question</label>
+
+                    <select class="form-control" name="securityQuestion">
+
+                        <option>Select Question</option>
+                        <option>What is your pet name?</option>
+                        <option>What is your school name?</option>
+                        <option>What is your favorite color?</option>
+                        <option>What is your best friend name?</option>
+
+                    </select>
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label>Security Answer</label>
+
+                    <input type="text" class="form-control" name="securityAnswer" placeholder="Enter answer">
+
+                </div>
+
+                <button class="btn create-btn w-100">Create Account</button>
+
+            </form>
+
+            <p class="login-text">
+                Already have account? <a th:href="@{/login}">Login</a>
+            </p>
+
+        </div>
 
     </div>
-
-
-
-    <!-- ERROR MESSAGE -->
-
-    <div th:if="${error}" class="alert alert-danger text-center">
-
-        <span th:text="${error}"></span>
-
-    </div>
-
-
-
-    <form th:action="@{/register}" method="post">
-
-
-        <!-- EMAIL -->
-
-        <div class="mb-3">
-
-            <label>Email</label>
-
-            <input type="email"
-                   class="form-control"
-                   name="email"
-                   placeholder="Enter email"
-                   required>
-
-        </div>
-
-
-
-        <!-- USERNAME -->
-
-        <div class="mb-3">
-
-            <label>Username</label>
-
-            <input type="text"
-                   class="form-control"
-                   name="username"
-                   placeholder="Enter username"
-                   required>
-
-        </div>
-
-
-
-        <!-- PASSWORD -->
-
-        <div class="mb-3">
-
-            <label>Password</label>
-
-            <div class="input-group">
-
-                <input type="password"
-                       class="form-control"
-                       name="password"
-                       id="password"
-                       placeholder="Enter password"
-                       required>
-
-
-                <span class="input-group-text eye"
-                      onclick="togglePassword()">
-
-<i class="fa fa-eye"></i>
-
-</span>
-
-
-            </div>
-
-        </div>
-
-
-
-        <!-- USER TYPE -->
-
-        <div class="mb-3">
-
-            <label>User Type</label>
-
-            <select class="form-control" name="userType" required>
-
-                <option value="">Select User Type</option>
-
-                <option value="PERSONAL">Personal User</option>
-
-                <option value="CREATOR">Creator</option>
-
-                <option value="BUSINESS">Business</option>
-
-            </select>
-
-        </div>
-
-
-
-        <!-- SECURITY QUESTION -->
-
-        <div class="mb-3">
-
-            <label>Security Question</label>
-
-            <select class="form-control" name="securityQuestion" required>
-
-                <option value="">Select Question</option>
-
-                <option>What is your pet name?</option>
-
-                <option>What is your school name?</option>
-
-                <option>What is your favorite color?</option>
-
-                <option>What is your best friend name?</option>
-
-            </select>
-
-        </div>
-
-
-
-        <!-- SECURITY ANSWER -->
-
-        <div class="mb-3">
-
-            <label>Security Answer</label>
-
-            <input type="text"
-                   class="form-control"
-                   name="securityAnswer"
-                   placeholder="Enter answer"
-                   required>
-
-        </div>
-
-
-
-        <button class="btn btn-primary w-100">
-
-            Create Account
-
-        </button>
-
-
-    </form>
-
-
-    <hr>
-
-
-    <div class="text-center">
-
-        Already have account?
-
-        <a th:href="@{/login}">
-
-            Login
-
-        </a>
-
-    </div>
-
 
 </div>
-
-
-
-<script>
-
-    function togglePassword(){
-
-    var x=document.getElementById("password");
-
-    x.type=x.type==="password"?"text":"password";
-
-    }
-
-</script>
-
-
 
 </body>
 

@@ -1,32 +1,41 @@
 <div th:fragment="postCard(post)"
-     class="card post-card mb-3">
+     class="card post-card mb-3" xmlns:th="http://www.w3.org/1999/xhtml">
 
     <div class="card-body">
 
         <!-- HEADER -->
-        <div class="d-flex justify-content-between mb-2">
+        <div class="d-flex align-items-center mb-2">
 
-            <strong th:text="${post.username}">
-                Username
-            </strong>
+            <!-- Avatar -->
+            <div class="post-avatar me-2">
+                <span th:text="${#strings.substring(post.username,0,1).toUpperCase()}">U</span>
+            </div>
 
-            <small class="text-muted"
-                   th:text="${#temporals.format(post.createdAt,'dd MMM yyyy hh:mm a')}">
-            </small>
+            <!-- Username + time -->
+            <div>
+                <div class="post-username"
+                     th:text="${post.username}">
+                </div>
+
+                <div class="post-time"
+                     th:text="${#temporals.format(post.createdAt,'dd MMM yyyy hh:mm a')}">
+                </div>
+            </div>
 
         </div>
 
         <!-- CONTENT -->
-        <p th:text="${post.content}">
+        <p class="post-text"
+           th:text="${post.content}">
         </p>
 
         <!-- HASHTAGS -->
         <div th:if="${post.hashtags != null}" class="mb-2">
 
-        <span th:each="tag : ${post.hashtags}"
-              class="badge bg-light text-primary me-1"
-              th:text="'#' + ${tag}">
-        </span>
+            <span th:each="tag : ${post.hashtags}"
+                  class="hashtag"
+                  th:text="'#' + ${tag}">
+            </span>
 
         </div>
 
@@ -34,10 +43,10 @@
         <div th:if="${post.tags != null and !post.tags.isEmpty()}"
              class="mb-2">
 
-        <span th:each="tag : ${post.tags}"
-              class="badge bg-success me-1"
-              th:text="${tag.tagType} + ': ' + ${tag.tagName}">
-        </span>
+            <span th:each="tag : ${post.tags}"
+                  class="badge bg-success me-1"
+                  th:text="${tag.tagType} + ': ' + ${tag.tagName}">
+            </span>
 
         </div>
 
@@ -49,53 +58,39 @@
                target="_blank"
                class="btn btn-primary btn-sm">
 
-            <span th:text="${post.ctaText}">
-                Claim Offer
-            </span>
+                <span th:text="${post.ctaText}">
+                    Claim Offer
+                </span>
 
             </a>
 
         </div>
 
-        <hr>
+    </div>
 
-        <!-- ACTIONS -->
-        <div class="d-flex justify-content-around text-muted">
+    <!-- STATS -->
+    <div class="border-top pt-3 px-3">
 
-            <div class="post-action">
-                👍 Like
-            </div>
+        <div class="d-flex justify-content-between mb-2 small text-muted">
 
-            <div class="post-action">
-                💬 Comment
-            </div>
+            <span>
+                👍 <span th:text="${post.likeCount}">0</span>
+            </span>
 
-            <div class="post-action">
-                🔗 Share
-            </div>
+            <span>
+                💬 <span th:text="${post.commentCount}">0</span> Comments
+            </span>
+
+            <span>
+                🔄 <span th:text="${post.shareCount}">0</span> Shares
+            </span>
 
         </div>
 
     </div>
 
-    <!-- STATS + ACTION BUTTONS -->
-    <div class="border-top pt-3 mt-3">
-
-        <div class="d-flex justify-content-between mb-2 small text-muted">
-
-        <span>
-            👍 <span th:text="${post.likeCount}">0</span>
-        </span>
-
-            <span>
-            💬 <span th:text="${post.commentCount}">0</span> Comments
-        </span>
-
-            <span>
-            🔄 <span th:text="${post.shareCount}">0</span> Shares
-        </span>
-
-        </div>
+    <!-- ACTION BUTTONS -->
+    <div class="border-top py-2">
 
         <div class="d-flex justify-content-around">
 
