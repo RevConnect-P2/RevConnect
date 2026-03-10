@@ -7,77 +7,150 @@
 
 <body>
 
-<nav th:fragment="navbar(user)"
-     class="navbar navbar-expand-lg sticky-top">
+<div th:fragment="navbar(user)">
 
-    <div class="container-fluid d-flex align-items-center">
+    <nav class="navbar navbar-expand-lg sticky-top">
 
-        <a th:href="@{/dashboard}"
-           class="navbar-brand fw-bold text-primary"
-           style="font-size:22px;">
-            RevConnect
-        </a>
+        <div class="container-fluid d-flex align-items-center">
 
-        <div class="search-container mx-4 flex-grow-1">
+            <a th:href="@{/dashboard}"
+               class="navbar-brand fw-bold text-primary"
+               style="font-size:22px;">
+                RevConnect
+            </a>
 
-            <input id="userSearch"
-                   class="form-control rounded-pill"
-                   type="search"
-                   placeholder="Search RevConnect users...">
+            <div class="search-container mx-4 flex-grow-1">
 
-            <div id="searchResults" class="search-results"></div>
+                <input id="userSearch"
+                       class="form-control rounded-pill"
+                       type="search"
+                       placeholder="Search RevConnect users...">
+
+                <div id="searchResults" class="search-results"></div>
+
+            </div>
+
+            <ul class="navbar-nav ms-auto align-items-center">
+
+                <li class="nav-item text-center mx-3">
+                    <a th:href="@{/dashboard}" class="nav-link text-dark">
+                        <i class="bi bi-house fs-5"></i>
+                        <div style="font-size:12px;">Home</div>
+                    </a>
+                </li>
+
+                <li class="nav-item text-center mx-3">
+                    <a th:href="@{/network}" class="nav-link text-dark">
+                        <i class="bi bi-people fs-5"></i>
+                        <div style="font-size:12px;">Network</div>
+                    </a>
+                </li>
+
+                <li class="nav-item text-center mx-3">
+                    <a th:href="@{/notifications}"
+                       class="nav-link position-relative notification-link">
+                        <i class="bi bi-bell fs-5"></i>
+
+                        <span class="notification-count"
+                              th:if="${unreadCount != null and unreadCount > 0}"
+                              th:text="${unreadCount}">
+                        </span>
+
+                        <div style="font-size:12px;">Notifications</div>
+                    </a>
+                </li>
+
+                <li class="nav-item text-center mx-3">
+                    <a th:href="@{/profile}" class="nav-link text-dark">
+                        <i class="bi bi-person-circle fs-5"></i>
+                        <div style="font-size:12px;" th:text="${user.username}"></div>
+                    </a>
+                </li>
+
+                <li class="nav-item mx-3">
+                    <a th:href="@{/logout}"
+                       class="btn btn-danger btn-sm rounded-pill">
+                        Logout
+                    </a>
+                </li>
+
+            </ul>
 
         </div>
 
-        <ul class="navbar-nav ms-auto align-items-center">
+    </nav>
 
-            <li class="nav-item text-center mx-3">
-                <a th:href="@{/dashboard}" class="nav-link text-dark">
-                    <i class="bi bi-house fs-5"></i>
-                    <div style="font-size:12px;">Home</div>
-                </a>
-            </li>
 
-            <li class="nav-item text-center mx-3">
-                <a th:href="@{/network}" class="nav-link text-dark">
-                    <i class="bi bi-people fs-5"></i>
-                    <div style="font-size:12px;">Network</div>
-                </a>
-            </li>
+    <!-- GLOBAL LIKE / SHARE USER POPUP -->
+    <div id="userPopupOverlay" class="user-popup-overlay" style="display:none;">
 
-            <li class="nav-item text-center mx-3">
-                <a th:href="@{/notifications}"
-                   class="nav-link position-relative notification-link">
-                    <i class="bi bi-bell fs-5"></i>
+        <div class="user-popup-card">
 
-                    <span class="notification-count"
-                          th:if="${unreadCount != null and unreadCount > 0}"
-                          th:text="${unreadCount}">
-</span>
+            <div class="user-popup-header">
+                <span id="popupTitle">Users</span>
+                <span onclick="closeUserPopup()" style="cursor:pointer;">✕</span>
+            </div>
 
-                    <div style="font-size:12px;">Notifications</div>
-                </a>
-            </li>
+            <div id="popupUserList"></div>
 
-            <li class="nav-item text-center mx-3">
-                <a th:href="@{/profile}" class="nav-link text-dark">
-                    <i class="bi bi-person-circle fs-5"></i>
-                    <div style="font-size:12px;" th:text="${user.username}"></div>
-                </a>
-            </li>
-
-            <li class="nav-item mx-3">
-                <a th:href="@{/logout}"
-                   class="btn btn-danger btn-sm rounded-pill">
-                    Logout
-                </a>
-            </li>
-
-        </ul>
+        </div>
 
     </div>
 
-</nav>
+    <div id="deleteCommentOverlay" class="delete-popup-overlay" style="display:none;">
+
+        <div class="delete-popup-card">
+
+            <div class="delete-popup-title">
+                Delete Comment
+            </div>
+
+            <div class="delete-popup-text">
+                Do you want to delete this comment?
+            </div>
+
+            <div class="delete-popup-actions">
+
+                <button class="btn btn-secondary btn-sm"
+                        onclick="closeDeletePopup()">
+                    Cancel
+                </button>
+
+                <button class="btn btn-danger btn-sm"
+                        id="confirmDeleteBtn">
+                    Delete
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div id="successPopupOverlay" class="delete-popup-overlay" style="display:none;">
+
+        <div class="delete-popup-card">
+
+            <div class="delete-popup-title">
+                Success
+            </div>
+
+            <div id="successPopupMessage" class="delete-popup-text">
+                Comment deleted
+            </div>
+
+            <div class="delete-popup-actions">
+                <button class="btn btn-danger btn-sm"
+                        onclick="closeSuccessPopup()">
+                    OK
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
 
 </body>
 </html>

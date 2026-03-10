@@ -41,10 +41,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
                         users.forEach(username => {
 
-                            const item = document.createElement("div");
-                            item.className = "search-item";
-                            item.textContent = username;
+                           const item = document.createElement("div");
+                           item.className = "search-item";
 
+                           item.innerHTML = `
+                               <div class="search-avatar">
+                                   ${username.charAt(0).toUpperCase()}
+                               </div>
+                               <div>${username}</div>
+                           `;
                             item.addEventListener("click", function () {
                                 window.location.href = "/profile/" + username;
                             });

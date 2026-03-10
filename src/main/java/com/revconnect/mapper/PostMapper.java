@@ -45,9 +45,9 @@ public class PostMapper {
                 .tags(tags == null ? List.of() : tags)
 
                 // DEFAULT COUNTS (service updates them)
-                .likeCount(0L)
-                .commentCount(0L)
-                .shareCount(0L)
+                .likeCount(post.getLikes() != null ? (long) post.getLikes().size() : 0L)
+                .commentCount(post.getComments() != null ? (long) post.getComments().size() : 0L)
+                .shareCount(post.getShares() != null ? (long) post.getShares().size() : 0L)
 
                 // SHARED POST INFO (default false)
                 .isSharedPost(false)

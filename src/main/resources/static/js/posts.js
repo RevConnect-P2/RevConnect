@@ -151,6 +151,7 @@ function createFeedPostCard(post, options = {}) {
 
     const card = document.createElement("div");
     card.className = "card feed-card mb-3";
+    card.setAttribute("data-post-id", post.postId);
 
     const hashtags = (post.hashtags || [])
         .map(tag => `<span class="text-primary me-2">#${tag}</span>`)
@@ -249,110 +250,102 @@ function createFeedPostCard(post, options = {}) {
             <hr>
 
        <!-- ACTION ROW -->
-       <div class="row text-center align-items-center post-actions">
-
-           <!-- LIKE -->
-           <div class="col post-action like-action"
-                onclick="likePostAction(${post.postId}, this)">
-
-               <i class="bi bi-hand-thumbs-up"></i>
-               <span class="ms-1">Like</span>
-
-               <span class="like-count ms-1"
-                     onclick="toggleLikeList(event, ${post.postId})">
-                     ${post.likeCount || 0}
-               </span>
-
-           </div>
 
 
-           <!-- COMMENT -->
-           <div class="col post-action comment-action"
-                onclick="toggleCommentBox(${post.postId})">
-
-               <i class="bi bi-chat"></i>
-               <span class="ms-1">Comment</span>
-
-               <span class="comment-count ms-1">
-                   ${post.commentCount || 0}
-               </span>
-
-           </div>
+<div class="post-actions d-flex justify-content-between text-center">
 
 
-           <!-- SHARE -->
-           <div class="col post-action share-action"
-                onclick="sharePostAction(${post.postId}, this)">
+   <!-- LIKE -->
+   <!-- LIKE -->
+   <div class="col post-action like-action"
+        onclick="likePostAction(${post.postId})">
 
-               <i class="bi bi-arrow-repeat"></i>
-               <span class="ms-1">Share</span>
+       <i class="bi bi-hand-thumbs-up"></i>
+       <span class="ms-1">Like</span>
 
-               <span class="share-count ms-1"
-                     onclick="toggleShareList(event, ${post.postId})">
-                     ${post.shareCount || 0}
-               </span>
+       <span id="like-count-${post.postId}" class="like-count ms-1"
+             onclick="event.stopPropagation(); toggleLikeList(event, ${post.postId})">
 
-           </div>
+           ${post.likeCount || 0}
+
+       </span>
+
+   </div>
 
 
-           <!-- SAVE -->
-           <div class="col post-action text-end">
+    <!-- COMMENT -->
+    <div class="col post-action comment-action"
+         onclick="toggleCommentBox(${post.postId})">
 
-               <i class="bi ${options.isSaved ? 'bi-bookmark-fill' : 'bi-bookmark'} save-icon"
-                  style="cursor:pointer"
-                  onclick="${
-                      options.isSaved
-                      ? `unsavePost(${post.postId}, this)`
-                      : `savePost(${post.postId}, this)`
-                  }"
-                  title="Save post"></i>
+        <i class="bi bi-chat"></i>
+        <span class="ms-1">Comment</span>
 
-           </div>
+        <span class="comment-count ms-1">
+            ${post.commentCount || 0}
+        </span>
 
-       </div>
+    </div>
+
+
+    <!-- SHARE -->
+    <!-- SHARE -->
+    <div class="col post-action share-action"
+         onclick="sharePostAction(${post.postId})">
+
+        <i class="bi bi-arrow-repeat"></i>
+        <span class="ms-1">Share</span>
+
+        <span id="share-count-${post.postId}" class="share-count ms-1"
+              onclick="event.stopPropagation(); toggleShareList(event, ${post.postId})">
+
+            ${post.shareCount || 0}
+
+        </span>
+
+    </div>
+
+
+    <!-- SAVE -->
+    <div class="col post-action text-end">
+
+        <i class="bi ${options.isSaved ? 'bi-bookmark-fill' : 'bi-bookmark'} save-icon"
+           style="cursor:pointer"
+           onclick="${
+               options.isSaved
+               ? `unsavePost(${post.postId}, this)`
+               : `savePost(${post.postId}, this)`
+           }">
+        </i>
+
+    </div>
+
+</div>
 
             <!-- COMMENT BOX -->
             <div id="comment-box-${post.postId}"
-                 class="mt-2"
+                 class="comment-box"
                  style="display:none;">
 
                 <input type="text"
                        id="comment-input-${post.postId}"
-                       class="form-control form-control-sm"
+                       class="comment-input"
                        placeholder="Write a comment...">
 
-                <button class="btn btn-sm btn-primary mt-1"
+                <button class="comment-btn"
                         onclick="submitCommentAction(${post.postId})">
-                    Post
+                    Comment
                 </button>
+
             </div>
 
             <!-- COMMENT LIST -->
             <div id="comment-list-${post.postId}" class="mt-2"></div>
-            <!-- LIKE LIST -->
-            <div id="like-list-${post.postId}"
-                 class="mt-2"
-                 style="display:none;"></div>
-        </div>
-            <div id="share-list-${post.postId}"
-                 class="mt-2"
-                 style="display:none;"></div>
+
+
     `;
-const likeDiv = card.querySelector(".like-action");
-const likeCountSpan = card.querySelector(".like-count");
 
-if (likeDiv) {
-    likeDiv.addEventListener("click", function () {
-        likePostAction(post.postId, likeDiv);
-    });
-}
 
-if (likeCountSpan) {
-    likeCountSpan.addEventListener("click", function (event) {
-        event.stopPropagation();   // prevents like toggle
-        showLikes(post.postId);
-    });
-}
+
 
     return card;
 }
@@ -762,30 +755,23 @@ function updatePost() {
 // ===============================
 // LIKE POST
 // ===============================
-function likePostAction(postId, element) {
+function likePostAction(postId) {
 
-   fetch(`/posts/${postId}/like`, {
-       method: "POST",
-       credentials: "same-origin"
-   })
+    fetch(`/posts/${postId}/like`, {
+        method: "POST",
+        credentials: "same-origin"
+    })
     .then(res => {
         if (!res.ok) throw new Error("Like failed");
         return res.json();
     })
     .then(data => {
 
-        // update like count
-        const countSpan = element.querySelector(".like-count");
+        const countSpan =
+            document.getElementById(`like-count-${postId}`);
 
-        if (countSpan) {
+        if(countSpan){
             countSpan.innerText = data.likeCount;
-        }
-
-        // update button state
-        if (data.liked) {
-            element.classList.add("liked");
-        } else {
-            element.classList.remove("liked");
         }
 
     })
@@ -794,31 +780,28 @@ function likePostAction(postId, element) {
  // ===============================
  // SHARE POST
  // ===============================
- function sharePostAction(postId, element) {
+function sharePostAction(postId) {
 
     fetch(`/posts/${postId}/share`, {
         method: "POST",
         credentials: "same-origin"
     })
-     .then(res => {
-         if (!res.ok) throw new Error("Share failed");
-         return res.json();
-     })
-     .then(data => {
+    .then(res => {
+        if (!res.ok) throw new Error("Share failed");
+        return res.json();
+    })
+    .then(data => {
 
-         // update share count
-         const countSpan = element.querySelector(".share-count");
+        const countSpan =
+            document.getElementById(`share-count-${postId}`);
 
-         if (countSpan) {
-             countSpan.innerText = data.shareCount;
-         }
+        if(countSpan){
+            countSpan.innerText = data.shareCount;
+        }
 
-         // toggle share highlight
-         element.classList.toggle("shared");
-
-     })
-     .catch(err => console.error("Share error:", err));
- }
+    })
+    .catch(err => console.error("Share error:", err));
+}
 // ===============================
 // TOGGLE COMMENT BOX
 function toggleCommentBox(postId) {
@@ -829,11 +812,7 @@ function toggleCommentBox(postId) {
     const commentList =
         document.getElementById(`comment-list-${postId}`);
 
-    const likeContainer =
-        document.getElementById(`like-list-${postId}`);
 
-    const shareContainer =
-        document.getElementById(`share-list-${postId}`);
 
     if (!commentBox) return;
 
@@ -842,15 +821,9 @@ function toggleCommentBox(postId) {
         commentBox.style.display === "";
 
     // 🔥 CLOSE LIKE + SHARE FIRST
-    if (likeContainer) {
-        likeContainer.style.display = "none";
-        likeContainer.innerHTML = "";
-    }
 
-    if (shareContainer) {
-        shareContainer.style.display = "none";
-        shareContainer.innerHTML = "";
-    }
+
+
 
     if (isHidden) {
 
@@ -913,6 +886,50 @@ function submitCommentAction(postId) {
 //    fetchFeedPosts();
 //});
 
+let deleteCommentId = null;
+let deletePostId = null;
+
+function deleteCommentAction(commentId, postId){
+
+    deleteCommentId = commentId;
+    deletePostId = postId;
+
+    document.getElementById("deleteCommentOverlay").style.display = "flex";
+}
+
+function closeDeletePopup(){
+    document.getElementById("deleteCommentOverlay").style.display = "none";
+}
+
+document.getElementById("confirmDeleteBtn").onclick = function(){
+
+    fetch(`/posts/comments/${deleteCommentId}`, {
+        method: "DELETE",
+        credentials: "same-origin"
+    })
+    .then(res => res.text().then(text => ({ status: res.status, body: text })))
+    .then(data => {
+
+        closeDeletePopup();
+
+        document.getElementById("successPopupMessage").innerText = data.body;
+        document.getElementById("successPopupOverlay").style.display = "flex";
+
+        if(data.status === 200){
+            fetchComments(deletePostId);
+        }
+
+    })
+    .catch(err => console.error(err));
+
+};
+
+function closeSuccessPopup(){
+    document.getElementById("successPopupOverlay").style.display = "none";
+}
+
+
+
 function fetchComments(postId) {
 
     fetch(`/posts/${postId}/comments`)
@@ -933,14 +950,35 @@ function fetchComments(postId) {
         comments.forEach(comment => {
 
             const div = document.createElement("div");
-            div.className = "border rounded p-2 mb-2 bg-light";
+            div.className = "comment-item";
 
             div.innerHTML = `
-                <strong>${comment.username}</strong>
-                <small class="text-muted ms-2">
-                    ${new Date(comment.createdAt).toLocaleString()}
-                </small>
-                <div>${comment.commentText}</div>
+            <div class="comment-avatar">
+                ${comment.username.charAt(0).toUpperCase()}
+            </div>
+
+            <div class="comment-content">
+
+                <div class="comment-header">
+
+                    <span class="comment-user">${comment.username}</span>
+
+                    <span class="comment-time">
+                        ${new Date(comment.createdAt).toLocaleString()}
+                    </span>
+
+                    <span class="comment-delete"
+                    onclick="deleteCommentAction(${comment.commentId}, ${postId})">
+                    <i class="bi bi-trash"></i>
+                    </span>
+
+                </div>
+
+                <div class="comment-text">
+                    ${comment.commentText}
+                </div>
+
+            </div>
             `;
 
             list.appendChild(div);
@@ -1020,152 +1058,94 @@ function fetchProfilePosts() {
 
 function toggleLikeList(event, postId) {
 
-    event.stopPropagation();
+    if(event) event.stopPropagation();
 
-    const likeContainer =
-        document.getElementById(`like-list-${postId}`);
+    const popup = document.getElementById("userPopupOverlay");
+    const list = document.getElementById("popupUserList");
+    const title = document.getElementById("popupTitle");
 
-    const shareContainer =
-        document.getElementById(`share-list-${postId}`);
+    if(!popup || !list || !title) return;
 
-    const commentBox =
-        document.getElementById(`comment-box-${postId}`);
+    title.innerText = "Liked by";
+    list.innerHTML = "";
 
-    const commentList =
-        document.getElementById(`comment-list-${postId}`);
+    fetch(`/posts/${postId}/likes`)
+    .then(res => res.json())
+    .then(users => {
 
-    if (!likeContainer) return;
-
-    const isHidden =
-        likeContainer.style.display === "none" ||
-        likeContainer.style.display === "";
-
-    // 🔥 CLOSE SHARE
-    if (shareContainer) {
-        shareContainer.style.display = "none";
-        shareContainer.innerHTML = "";
-    }
-
-    // 🔥 CLOSE COMMENT
-    if (commentBox) {
-        commentBox.style.display = "none";
-    }
-
-    if (commentList) {
-        commentList.innerHTML = "";
-    }
-
-    if (isHidden) {
-
-        likeContainer.style.display = "block";
-
-        fetch(`/posts/${postId}/likes`)
-        .then(res => res.json())
-        .then(users => {
-
-            likeContainer.innerHTML = "";
-
-            if (!users || users.length === 0) {
-                likeContainer.innerHTML =
-                    "<small class='text-muted'>No likes yet</small>";
-                return;
-            }
+        if(!Array.isArray(users) || users.length === 0){
+            list.innerHTML = "<small>No likes yet</small>";
+        } else {
 
             users.forEach(username => {
 
                 const div = document.createElement("div");
-                div.className =
-                    "border rounded p-2 mb-2 bg-light";
+                div.className = "user-popup-row";
 
-                div.innerHTML =
-                    `<strong>${username}</strong>`;
+                div.innerHTML = `
+                    <div class="user-popup-avatar">
+                        ${username.charAt(0).toUpperCase()}
+                    </div>
+                    <div>${username}</div>
+                `;
 
-                likeContainer.appendChild(div);
+                list.appendChild(div);
             });
+        }
 
-        });
-
-    } else {
-
-        likeContainer.style.display = "none";
-        likeContainer.innerHTML = "";
-    }
+        popup.style.display = "flex";
+    })
+    .catch(err => console.error("Like popup error:", err));
 }
-
 function toggleShareList(event, postId) {
 
-    event.stopPropagation();
+    if(event) event.stopPropagation();
 
-    const shareContainer =
-        document.getElementById(`share-list-${postId}`);
+    const popup = document.getElementById("userPopupOverlay");
+    const list = document.getElementById("popupUserList");
+    const title = document.getElementById("popupTitle");
 
-    const likeContainer =
-        document.getElementById(`like-list-${postId}`);
+    if(!popup || !list || !title) return;
 
-    const commentBox =
-        document.getElementById(`comment-box-${postId}`);
+    title.innerText = "Shared by";
+    list.innerHTML = "";
 
-    const commentList =
-        document.getElementById(`comment-list-${postId}`);
+    fetch(`/posts/${postId}/shares`)
+    .then(res => res.json())
+    .then(users => {
 
-    if (!shareContainer) return;
-
-    const isHidden =
-        shareContainer.style.display === "none" ||
-        shareContainer.style.display === "";
-
-    // 🔥 CLOSE LIKE
-    if (likeContainer) {
-        likeContainer.style.display = "none";
-        likeContainer.innerHTML = "";
-    }
-
-    // 🔥 CLOSE COMMENT
-    if (commentBox) {
-        commentBox.style.display = "none";
-    }
-
-    if (commentList) {
-        commentList.innerHTML = "";
-    }
-
-    if (isHidden) {
-
-        shareContainer.style.display = "block";
-
-        fetch(`/posts/${postId}/shares`)
-        .then(res => res.json())
-        .then(users => {
-
-            shareContainer.innerHTML = "";
-
-            if (!users || users.length === 0) {
-                shareContainer.innerHTML =
-                    "<small class='text-muted'>No shares yet</small>";
-                return;
-            }
+        if(!Array.isArray(users) || users.length === 0){
+            list.innerHTML = "<small>No shares yet</small>";
+        } else {
 
             users.forEach(username => {
 
                 const div = document.createElement("div");
-                div.className =
-                    "border rounded p-2 mb-2 bg-light";
+                div.className = "user-popup-row";
 
-                div.innerHTML =
-                    `<strong>${username}</strong>`;
+                div.innerHTML = `
+                    <div class="user-popup-avatar">
+                        ${username.charAt(0).toUpperCase()}
+                    </div>
+                    <div>${username}</div>
+                `;
 
-                shareContainer.appendChild(div);
+                list.appendChild(div);
             });
+        }
 
-        });
-
-    } else {
-
-        shareContainer.style.display = "none";
-        shareContainer.innerHTML = "";
-    }
+        popup.style.display = "flex";
+    })
+    .catch(err => console.error("Share popup error:", err));
 }
 
+
+
+
+
+function closeUserPopup(){
+    document.getElementById("userPopupOverlay").style.display = "none";
+}
 
 //////////////////////////////////////////////////////////
 // LOAD POSTS BY HASHTAG (GLOBAL FUNCTION)

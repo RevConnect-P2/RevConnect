@@ -127,13 +127,19 @@ border-color:#ff4d4d;
 /* POST ACTION */
 
 .post-action{
-color:#e5e5e5;
-font-size:14px;
-padding:6px;
-cursor:pointer;
-transition:0.2s;
+display:flex;
+align-items:center;
+justify-content:center;
+gap:6px;
+width:100%;
 }
-
+.post-action{
+display:flex;
+align-items:center;
+justify-content:center;
+gap:6px;
+width:100%;
+}
 .post-action:hover{
 color:white;
 }
@@ -567,4 +573,252 @@ color:#9ca3af !important;
 .shared-post-text{
 color:#9ca3af;
 font-size:13px;
+}
+
+/* ========================= */
+/* LIKE / SHARE USER POPUP */
+/* ========================= */
+
+
+#userPopupOverlay{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.6);
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:2000;
+}
+
+.user-popup-card{
+background:#0f0f0f;
+border:1px solid #1f1f1f;
+border-radius:12px;
+width:260px;
+padding:15px;
+box-shadow:0 10px 40px rgba(0,0,0,0.8);
+}
+
+.user-popup-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:10px;
+font-weight:600;
+}
+
+.popup-close{
+cursor:pointer;
+color:#ff4d4d;
+font-size:16px;
+}
+
+.user-popup-row{
+display:flex;
+align-items:center;
+gap:10px;
+padding:8px;
+border-radius:8px;
+margin-bottom:6px;
+background:#151515;
+}
+
+.user-popup-avatar{
+width:30px;
+height:30px;
+border-radius:50%;
+background:#ef4444;
+display:flex;
+align-items:center;
+justify-content:center;
+color:white;
+font-weight:600;
+}
+
+/* COMMENT BOX */
+
+.comment-box{
+display:flex;
+gap:10px;
+margin-top:10px;
+}
+
+.comment-input{
+flex:1;
+background:#0f0f0f;
+border:1px solid #1f1f1f;
+border-radius:8px;
+padding:8px 12px;
+color:white;
+}
+
+.comment-input::placeholder{
+color:#777;
+}
+
+.comment-btn{
+background:#ff4d4d;
+border:none;
+padding:8px 14px;
+border-radius:8px;
+color:white;
+font-size:13px;
+}
+
+/* COMMENT LIST */
+
+.comment-item{
+display:flex;
+gap:10px;
+margin-top:12px;
+}
+
+.comment-avatar{
+width:32px;
+height:32px;
+border-radius:50%;
+background:#ef4444;
+display:flex;
+align-items:center;
+justify-content:center;
+color:white;
+font-weight:600;
+}
+
+.comment-content{
+flex:1;
+}
+
+.comment-header{
+display:flex;
+gap:10px;
+align-items:center;
+font-size:13px;
+}
+
+.comment-user{
+font-weight:600;
+color:white;
+}
+
+.comment-time{
+font-size:12px;
+color:#888;
+}
+
+.comment-text{
+margin-top:4px;
+color:#ddd;
+font-size:14px;
+}
+
+.comment-header{
+display:flex;
+align-items:center;
+gap:10px;
+font-size:13px;
+width:100%;
+}
+
+.comment-delete{
+margin-left:auto;
+cursor:pointer;
+font-size:14px;
+color:#888;
+}
+
+.comment-delete:hover{
+color:#ff4d4d;
+}
+
+
+
+/* DELETE COMMENT POPUP */
+
+.delete-popup-overlay{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.6);
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:3000;
+}
+
+.delete-popup-card{
+background:#0f0f0f;
+border:1px solid #1f1f1f;
+border-radius:12px;
+padding:20px;
+width:300px;
+box-shadow:0 15px 40px rgba(0,0,0,0.8);
+text-align:center;
+}
+
+.delete-popup-title{
+font-weight:600;
+font-size:16px;
+margin-bottom:10px;
+}
+
+.delete-popup-text{
+color:#aaa;
+margin-bottom:20px;
+}
+
+.delete-popup-actions{
+display:flex;
+justify-content:center;
+gap:10px;
+}
+
+/* ========================= */
+/* NETWORK PAGE FIX */
+/* ========================= */
+
+.network-page h4,
+.network-page h5,
+.network-page h6,
+.network-page span,
+.network-page a {
+color: white;
+}
+
+.network-page small,
+.network-page .text-muted {
+color: #9ca3af !important;
+}
+
+/* Improve card contrast */
+
+.network-page .feed-card{
+background: #0f0f0f;
+border: 1px solid #2a2a2a;
+box-shadow: 0 12px 30px rgba(0,0,0,0.7);
+}
+
+.network-page .feed-card:hover{
+border-color: #ff4d4d;
+transform: translateY(-2px);
+transition: 0.2s;
+}
+
+
+/* ========================= */
+/* NETWORK SECTION DIVIDER */
+/* ========================= */
+
+.network-section-title{
+color:white;
+font-weight:600;
+margin-bottom:15px;
+padding-bottom:10px;
+border-bottom:1px solid #3a3a3a;
+box-shadow:0 1px 0 rgba(255,255,255,0.05);
 }
