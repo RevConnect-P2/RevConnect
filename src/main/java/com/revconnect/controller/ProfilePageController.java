@@ -195,4 +195,21 @@ public class ProfilePageController {
         return "redirect:/profile/" + loggedUser.getUsername();
     }
 
+    @PostMapping("/profile/remove-photo")
+    public String removeProfilePhoto(HttpSession session) {
+
+        User loggedUser = (User) session.getAttribute("loggedUser");
+
+        UserProfile profile = userProfileRepository
+                .findByUser_UserId(loggedUser.getUserId())
+                .orElseThrow(() -> new RuntimeException("Profile not found"));
+
+        // Remove profile image
+        profile.setProfilePic(null);
+
+        userProfileRepository.save(profile);
+
+        return "redirect:/profile/" + loggedUser.getUsername();
+    }
+
 }

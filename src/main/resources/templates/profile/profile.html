@@ -26,7 +26,6 @@
 <div th:replace="~{layout/navbar :: navbar(${session.loggedUser})}"></div>
 
 <div class="profile-container mt-4">
-
     <!-- PROFILE HEADER -->
 
     <div class="profile-card text-center mb-4">
@@ -37,37 +36,52 @@
 
             <div class="profile-avatar">
 
-                <!-- SHOW PROFILE IMAGE -->
-                <img th:if="${profile != null and profile.profilePic != null}"
-                     th:src="@{${profile.profilePic}}"
-                     class="img-fluid rounded-circle"
-                     style="width:100%; height:100%; object-fit:cover;" />
+                <!-- CLICKABLE PROFILE IMAGE -->
+                <label for="profileUpload" style="cursor:pointer;">
 
-                <!-- SHOW FIRST LETTER IF NO IMAGE -->
-                <span th:if="${profile == null or profile.profilePic == null}"
-                      th:text="${#strings.substring(username,0,1).toUpperCase()}">
-        </span>
+                    <!-- SHOW PROFILE IMAGE -->
+                    <img th:if="${profile != null and profile.profilePic != null}"
+                         th:src="@{${profile.profilePic}}"
+                         class="img-fluid rounded-circle"
+                         style="width:100%; height:100%; object-fit:cover;" />
+
+                    <!-- SHOW FIRST LETTER IF NO IMAGE -->
+                    <span th:if="${profile == null or profile.profilePic == null}"
+                          th:text="${#strings.substring(username,0,1).toUpperCase()}">
+                </span>
+
+                </label>
 
             </div>
 
         </div>
 
-        <!-- ADD THIS UPLOAD FORM JUST BELOW THE AVATAR -->
+        <!-- HIDDEN UPLOAD FORM -->
 
-        <div class="text-center mt-2">
+        <form th:action="@{/profile/upload-photo}"
+              method="post"
+              enctype="multipart/form-data"
+              id="uploadForm">
 
-            <form th:action="@{/profile/upload-photo}"
-                  method="post"
-                  enctype="multipart/form-data">
+            <input type="file"
+                   id="profileUpload"
+                   name="file"
+                   accept="image/*"
+                   style="display:none"
+                   onchange="document.getElementById('uploadForm').submit()">
 
-                <input type="file"
-                       name="file"
-                       accept="image/*"
-                       class="form-control mb-2">
+        </form>
+
+        <!-- REMOVE PHOTO BUTTON -->
+
+        <div class="text-center mt-2"
+             th:if="${profile != null and profile.profilePic != null}">
+
+            <form th:action="@{/profile/remove-photo}" method="post">
 
                 <button type="submit"
-                        class="btn btn-danger btn-sm">
-                    Change Profile Picture
+                        class="btn btn-outline-danger btn-sm">
+                    Remove Profile Picture
                 </button>
 
             </form>
