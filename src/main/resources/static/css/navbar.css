@@ -306,4 +306,12 @@ box-shadow:0 0 0 2px rgba(255,77,77,0.15);
 background:#111;
 }
 
-/* SIDEBAR STICKY FIX */
+/* Add to your stylesheet */
+.nav-link.active-nav {
+    color: #ff4d4d !important;
+}
+
+/* Optional: Add a subtle indicator line under the active link */
+.nav-link.active-nav {
+    border-bottom: 2px solid #ff4d4d;
+}
