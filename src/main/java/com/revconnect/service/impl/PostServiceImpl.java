@@ -15,7 +15,6 @@ import com.revconnect.service.NotificationService;
 import com.revconnect.service.PostService;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,9 +22,16 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.*;
 
+// LOGGER IMPORTS
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 @Service
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
+
+    private static final Logger logger =
+            LogManager.getLogger(PostServiceImpl.class);
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
@@ -47,23 +53,31 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public PostResponse createPost(Long userId, PostCreateRequest request) {
 
+        logger.info("Creating post for user {}", userId);
+
         if (request.getContent() == null || request.getContent().trim().isEmpty()) {
+            logger.error("Post content is empty for user {}", userId);
             throw new BadRequestException("Post content cannot be empty");
         }
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> {
+                    logger.error("User not found with id {}", userId);
+                    return new ResourceNotFoundException("User not found");
+                });
 
         String postType = request.getPostType();
 
         if (postType == null ||
                 (!postType.equalsIgnoreCase("NORMAL")
                         && !postType.equalsIgnoreCase("PROMOTIONAL"))) {
+            logger.error("Invalid post type {}", postType);
             throw new BadRequestException("Invalid post type");
         }
 
         if (postType.equalsIgnoreCase("PROMOTIONAL")) {
             if (request.getCtaText() == null || request.getCtaLink() == null) {
+                logger.error("Promotional post missing CTA details");
                 throw new BadRequestException("CTA text and link are required");
             }
         }
@@ -80,6 +94,8 @@ public class PostServiceImpl implements PostService {
 
         Post savedPost = postRepository.save(post);
 
+        logger.info("Post created successfully with ID {}", savedPost.getPostId());
+
         List<Hashtag> hashtags = saveHashtags(savedPost, request.getHashtags());
         List<TagResponse> tags = saveTags(savedPost, request.getTags());
 
@@ -95,10 +111,16 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public PostResponse updatePost(Long postId, Long userId, PostCreateRequest request) {
 
+        logger.info("Updating post {} by user {}", postId, userId);
+
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
+                .orElseThrow(() -> {
+                    logger.error("Post not found {}", postId);
+                    return new ResourceNotFoundException("Post not found");
+                });
 
         if (!post.getUser().getUserId().equals(userId)) {
+            logger.warn("Unauthorized update attempt on post {}", postId);
             throw new UnauthorizedException("Not allowed");
         }
 
@@ -110,6 +132,8 @@ public class PostServiceImpl implements PostService {
         post.setScheduledAt(request.getScheduledAt());
 
         Post updatedPost = postRepository.save(post);
+
+        logger.info("Post {} updated successfully", updatedPost.getPostId());
 
         postHashtagRepository.deleteByPost(updatedPost);
         postTagRepository.deleteByPost(updatedPost);
@@ -127,10 +151,16 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public void deletePost(Long postId, Long userId) {
 
+        logger.info("Deleting post {} by user {}", postId, userId);
+
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
+                .orElseThrow(() -> {
+                    logger.error("Post not found {}", postId);
+                    return new ResourceNotFoundException("Post not found");
+                });
 
         if (!post.getUser().getUserId().equals(userId)) {
+            logger.warn("Unauthorized delete attempt on post {}", postId);
             throw new UnauthorizedException("Not allowed");
         }
 
@@ -139,6 +169,8 @@ public class PostServiceImpl implements PostService {
         postHashtagRepository.deleteByPost(post);
 
         postRepository.delete(post);
+
+        logger.info("Post {} deleted successfully", postId);
     }
 
     // =========================
@@ -147,6 +179,8 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional(readOnly = true)
     public List<PostResponse> getPostsByUser(Long userId) {
+
+        logger.info("Fetching posts for user {}", userId);
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
@@ -163,6 +197,8 @@ public class PostServiceImpl implements PostService {
     @Override
     public PostResponse getPostById(Long postId) {
 
+        logger.info("Fetching post {}", postId);
+
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
 
@@ -176,14 +212,13 @@ public class PostServiceImpl implements PostService {
     @Transactional(readOnly = true)
     public List<PostResponse> getGlobalFeed(Long viewerUserId) {
 
+        logger.info("Loading global feed for user {}", viewerUserId);
+
         List<Post> posts =
                 postRepository.findGlobalFeedPosts(viewerUserId, LocalDateTime.now());
 
         List<PostResponse> responses = buildPostResponses(posts);
 
-        // ===============================
-        // LOAD SHARED POSTS
-        // ===============================
         List<Share> shares = shareRepository.findAllByOrderByCreatedAtDesc();
 
         if (shares != null) {
@@ -201,10 +236,7 @@ public class PostServiceImpl implements PostService {
                         getTagsForPost(original)
                 );
 
-                // 🔁 MARK AS SHARED
                 response.setSharedPost(true);
-
-                // IMPORTANT: Use SHARE TIME
                 response.setCreatedAt(share.getCreatedAt());
 
                 if (share.getSharedBy() != null) {
@@ -223,9 +255,6 @@ public class PostServiceImpl implements PostService {
             }
         }
 
-        // ===============================
-        // SORT FEED
-        // ===============================
         responses.sort(
                 Comparator.comparing(
                         PostResponse::getCreatedAt,
@@ -233,8 +262,11 @@ public class PostServiceImpl implements PostService {
                 ).reversed()
         );
 
+        logger.info("Global feed loaded with {} posts", responses.size());
+
         return responses;
     }
+
     // =========================
     // PIN POST
     // =========================
@@ -242,10 +274,13 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public PostResponse pinPost(Long postId, Long userId) {
 
+        logger.info("Pinning post {} for user {}", postId, userId);
+
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
 
         if (!post.getUser().getUserId().equals(userId)) {
+            logger.warn("Unauthorized pin attempt on post {}", postId);
             throw new UnauthorizedException("Cannot pin this post");
         }
 
@@ -269,6 +304,8 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public PostResponse unpinPost(Long postId, Long userId) {
 
+        logger.info("Unpinning post {}", postId);
+
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
 
@@ -285,6 +322,8 @@ public class PostServiceImpl implements PostService {
     @Override
     public long countPostsByUser(Long userId) {
 
+        logger.info("Counting posts for user {}", userId);
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
@@ -297,6 +336,8 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<String> getTrendingHashtags() {
 
+        logger.info("Fetching trending hashtags");
+
         return postRepository.findTrendingHashtags(PageRequest.of(0, 5));
     }
 
@@ -305,6 +346,8 @@ public class PostServiceImpl implements PostService {
     // =========================
     @Override
     public List<PostResponse> getPostsByHashtag(String hashtag) {
+
+        logger.info("Fetching posts for hashtag {}", hashtag);
 
         List<Post> posts = postRepository.findPostsByHashtag(hashtag);
 
@@ -316,6 +359,8 @@ public class PostServiceImpl implements PostService {
     // =========================
 
     private void notifyFollowers(Long userId, Long postId) {
+
+        logger.info("Sending notifications to followers of user {}", userId);
 
         followRepository.findByFollowing_UserId(userId)
                 .stream()
@@ -377,6 +422,8 @@ public class PostServiceImpl implements PostService {
 
             String normalized = tag.trim().toLowerCase();
 
+            logger.debug("Saving hashtag {} for post {}", normalized, post.getPostId());
+
             Hashtag hashtag =
                     hashtagRepository.findByTagName(normalized)
                             .orElseGet(() ->
@@ -406,6 +453,8 @@ public class PostServiceImpl implements PostService {
         if (tags == null) return responses;
 
         for (TagRequest tag : tags) {
+
+            logger.debug("Saving tag {} for post {}", tag.getTagName(), post.getPostId());
 
             PostTag postTag = PostTag.builder()
                     .post(post)

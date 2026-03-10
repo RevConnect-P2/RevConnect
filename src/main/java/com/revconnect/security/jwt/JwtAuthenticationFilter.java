@@ -1,9 +1,11 @@
 package com.revconnect.security.jwt;
 
 import com.revconnect.security.service.CustomUserDetailsService;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,8 +15,15 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+// LOGGER IMPORTS
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+    private static final Logger logger =
+            LogManager.getLogger(JwtAuthenticationFilter.class);
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -28,24 +37,36 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
+        logger.debug("JWT Filter triggered for request: {}", request.getRequestURI());
+
         String header = request.getHeader("Authorization");
 
-        if (header == null || !header.startsWith("Bearer "))
-        {
+        if (header == null || !header.startsWith("Bearer ")) {
+
+            logger.debug("No JWT token found in request header");
+
             filterChain.doFilter(request, response);
             return;
         }
 
         String token = header.substring(7);
 
+        logger.debug("JWT token extracted");
+
         String email = jwtUtil.extractEmail(token);
 
-        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null)
-        {
+        logger.debug("Email extracted from token: {}", email);
+
+        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+
             var userDetails = userDetailsService.loadUserByUsername(email);
 
-            if (jwtUtil.validateToken(token, email))
-            {
+            logger.debug("User details loaded for email: {}", email);
+
+            if (jwtUtil.validateToken(token, email)) {
+
+                logger.info("JWT token validated successfully for user: {}", email);
+
                 UsernamePasswordAuthenticationToken auth =
                         new UsernamePasswordAuthenticationToken(
                                 userDetails,
@@ -53,9 +74,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                 userDetails.getAuthorities()
                         );
 
-                auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                auth.setDetails(
+                        new WebAuthenticationDetailsSource()
+                                .buildDetails(request)
+                );
 
                 SecurityContextHolder.getContext().setAuthentication(auth);
+
+                logger.debug("Authentication set in SecurityContext for user: {}", email);
+            }
+            else {
+
+                logger.warn("Invalid JWT token for user: {}", email);
             }
         }
 

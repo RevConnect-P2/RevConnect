@@ -34,13 +34,17 @@ https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 		<!-- WEB -->
 		<dependency>
-
 			<groupId>org.springframework.boot</groupId>
-
 			<artifactId>spring-boot-starter-web</artifactId>
 
-		</dependency>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-logging</artifactId>
+				</exclusion>
+			</exclusions>
 
+		</dependency>
 
 
 		<!-- JPA -->
@@ -187,6 +191,12 @@ https://maven.apache.org/xsd/maven-4.0.0.xsd">
             <version>5.10.2</version>
             <scope>test</scope>
         </dependency>
+
+		<!---Log4j2 -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-log4j2</artifactId>
+		</dependency>
 
         <!-- Mockito -->
         <dependency>
