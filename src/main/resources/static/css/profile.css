@@ -1,0 +1,88 @@
+/* PROFILE PAGE */
+
+.profile-container{
+max-width:900px;
+margin:auto;
+}
+
+/* COVER */
+
+.profile-cover{
+height:180px;
+background:linear-gradient(90deg,#ff3b3b,#8b0000);
+border-radius:16px 16px 0 0;
+}
+
+/* PROFILE AVATAR */
+
+.profile-avatar{
+width:120px;
+height:120px;
+border-radius:50%;
+background:#1a1a1a;
+border:4px solid #000;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:48px;
+font-weight:bold;
+margin-top:-60px;
+}
+
+/* PROFILE CARD */
+
+.profile-card{
+background:#0b0b0b;
+border-radius:16px;
+border:1px solid #1f1f1f;
+box-shadow:0 10px 30px rgba(0,0,0,0.6);
+overflow:hidden;
+}
+
+/* PROFILE NAME */
+
+.profile-name{
+font-size:26px;
+font-weight:600;
+margin-top:10px;
+}
+
+/* PROFILE STATS */
+
+.profile-stats{
+margin-top:20px;
+}
+
+.profile-stats h5{
+margin:0;
+font-weight:600;
+}
+
+.profile-stats small{
+color:#aaa;
+}
+
+/* ABOUT CARD */
+
+.about-card{
+background:#0b0b0b;
+border-radius:16px;
+border:1px solid #1f1f1f;
+box-shadow:0 10px 30px rgba(0,0,0,0.6);
+}
+
+/* ICONS */
+
+.info-icon{
+color:#ff3b3b;
+margin-right:8px;
+}
+
+/* POSTS CARD */
+
+.profile-posts{
+background:#0b0b0b;
+border-radius:16px;
+border:1px solid #1f1f1f;
+box-shadow:0 10px 30px rgba(0,0,0,0.6);
+}

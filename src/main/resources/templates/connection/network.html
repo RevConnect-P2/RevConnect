@@ -1,151 +1,185 @@
 <!DOCTYPE html>
+
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
+
 
     <title>My Network</title>
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Bootstrap -->
+    <!-- BOOTSTRAP -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- BOOTSTRAP ICONS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- YOUR THEME CSS -->
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+
 
 </head>
 
 <body>
 
-<div class="container mt-4">
+<!-- NAVBAR -->
 
-    <h3>My Network</h3>
-    <hr>
+<div th:replace="~{layout/navbar :: navbar(${session.loggedUser})}"></div>
+
+<div class="container mt-4 network-page">
 
 
-    <!-- ========================= -->
-    <!-- PENDING REQUESTS -->
-    <!-- ========================= -->
+    <div class="row justify-content-center">
 
-    <h5>Pending Requests</h5>
+        <div class="col-md-6">
 
-    <div th:if="${#lists.isEmpty(pendingRequests)}">
+            <h4 class="mb-4 fw-bold text-white">My Network</h4>
 
-        <p class="text-muted">
-            No pending requests.
-        </p>
 
-    </div>
+            <!-- ========================= -->
+            <!-- PENDING REQUESTS -->
+            <!-- ========================= -->
 
-    <div th:each="conn : ${pendingRequests}" class="card p-3 mb-2">
+            <div class="card feed-card mb-4">
 
-        <div class="d-flex justify-content-between align-items-center">
+                <div class="card-body">
 
-            <div>
+                    <h6 class="network-section-title">Pending Requests</h6>
 
-                <a th:href="@{/profile/{username}(username=${conn.sender.username})}">
-                    <span th:text="${conn.sender.username}"></span>
-                </a>
+                    <div th:if="${#lists.isEmpty(pendingRequests)}"
+                         class="text-muted">
+                        No pending requests.
+                    </div>
 
-                <div>
-                    <small class="text-muted">Pending request</small>
+
+                    <div th:each="conn : ${pendingRequests}"
+                         class="d-flex justify-content-between align-items-center mb-3">
+
+                        <div>
+
+                            <a th:href="@{/profile/{username}(username=${conn.sender.username})}"
+                               class="text-decoration-none">
+
+                                <span th:text="${conn.sender.username}"></span>
+
+                            </a>
+
+                            <div>
+                                <small class="text-muted">Pending request</small>
+                            </div>
+
+                        </div>
+
+                        <div>
+
+                            <!-- ACCEPT -->
+                            <form th:action="@{/connections/accept/{id}(id=${conn.connectionId})}"
+                                  method="post"
+                                  style="display:inline;">
+
+                                <button type="submit"
+                                        class="btn btn-success btn-sm">
+                                    Accept
+                                </button>
+
+                            </form>
+
+                            <!-- REJECT -->
+                            <form th:action="@{/connections/reject/{id}(id=${conn.connectionId})}"
+                                  method="post"
+                                  style="display:inline;">
+
+                                <button type="submit"
+                                        class="btn btn-danger btn-sm">
+                                    Reject
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
                 </div>
 
             </div>
 
-            <div>
 
-                <!-- ACCEPT BUTTON -->
-                <form th:action="@{/connections/accept/{id}(id=${conn.connectionId})}"
-                      method="post"
-                      style="display:inline;">
+            <!-- ========================= -->
+            <!-- MY CONNECTIONS -->
+            <!-- ========================= -->
 
-                    <button type="submit"
-                            class="btn btn-success btn-sm">
-                        Accept
-                    </button>
+            <div class="card feed-card">
 
-                </form>
+                <div class="card-body">
 
-                <!-- REJECT BUTTON -->
-                <form th:action="@{/connections/reject/{id}(id=${conn.connectionId})}"
-                      method="post"
-                      style="display:inline;">
+                    <h6 class="network-section-title">My Connections</h6>
 
-                    <button type="submit"
-                            class="btn btn-danger btn-sm">
-                        Reject
-                    </button>
+                    <div th:if="${#lists.isEmpty(connections)}"
+                         class="text-muted">
+                        You have no connections yet.
+                    </div>
 
-                </form>
+
+                    <div th:each="conn : ${connections}"
+                         class="d-flex justify-content-between align-items-center mb-3">
+
+                        <div>
+
+                            <!-- IF CURRENT USER IS SENDER -->
+                            <a th:if="${conn.sender.userId == session.loggedUser.userId}"
+                               th:href="@{/profile/{username}(username=${conn.receiver.username})}"
+                               class="text-decoration-none">
+
+                                <span th:text="${conn.receiver.username}"></span>
+
+                            </a>
+
+                            <!-- IF CURRENT USER IS RECEIVER -->
+                            <a th:if="${conn.receiver.userId == session.loggedUser.userId}"
+                               th:href="@{/profile/{username}(username=${conn.sender.username})}"
+                               class="text-decoration-none">
+
+                                <span th:text="${conn.sender.username}"></span>
+
+                            </a>
+
+                        </div>
+
+
+                        <div>
+
+                            <button class="btn btn-success btn-sm" disabled>
+                                Connected
+                            </button>
+
+                            <form th:action="@{/connections/remove/{id}(id=${conn.connectionId})}"
+                                  method="post"
+                                  style="display:inline;">
+
+                                <button type="submit"
+                                        class="btn btn-danger btn-sm">
+                                    Remove
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                </div>
 
             </div>
+
 
         </div>
 
     </div>
 
-    <hr>
-
-
-    <!-- ========================= -->
-    <!-- ACCEPTED CONNECTIONS -->
-    <!-- ========================= -->
-
-    <h5>My Connections</h5>
-
-    <div th:if="${#lists.isEmpty(connections)}">
-
-        <p class="text-muted">
-            You have no connections yet.
-        </p>
-
-    </div>
-
-    <div th:each="conn : ${connections}" class="card p-3 mb-2">
-
-        <div class="d-flex justify-content-between align-items-center">
-
-            <!-- USERNAME SECTION -->
-            <div>
-
-                <!-- IF CURRENT USER IS SENDER -->
-                <a th:if="${conn.sender.userId == session.loggedUser.userId}"
-                   th:href="@{/profile/{username}(username=${conn.receiver.username})}">
-
-                    <span th:text="${conn.receiver.username}"></span>
-
-                </a>
-
-                <!-- IF CURRENT USER IS RECEIVER -->
-                <a th:if="${conn.receiver.userId == session.loggedUser.userId}"
-                   th:href="@{/profile/{username}(username=${conn.sender.username})}">
-
-                    <span th:text="${conn.sender.username}"></span>
-
-                </a>
-
-            </div>
-
-            <!-- CONNECTION BUTTONS -->
-            <div>
-
-                <button class="btn btn-success btn-sm" disabled>
-                    Connected
-                </button>
-
-                <form th:action="@{/connections/remove/{id}(id=${conn.connectionId})}"
-                      method="post"
-                      style="display:inline;">
-
-                    <button type="submit" class="btn btn-danger btn-sm">
-                        Remove
-                    </button>
-
-                </form>
-            </div>
-
-        </div>
-
-    </div>
 
 </div>
 

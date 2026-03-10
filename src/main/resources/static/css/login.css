@@ -1,0 +1,340 @@
+body{
+margin:0;
+font-family:'Segoe UI',sans-serif;
+background:#070707;
+color:white;
+overflow:hidden;
+}
+
+/* main layout */
+
+.main-container{
+display:flex;
+height:100vh;
+position:relative;
+}
+
+/* LEFT SIDE */
+
+.left-section{
+flex:1;
+padding-left:80px;
+display:flex;
+flex-direction:column;
+justify-content:center;
+position:relative;
+}
+
+/* logo */
+
+.top-logo{
+position:absolute;
+top:35px;
+left:60px;
+font-weight:600;
+font-size:16px;
+}
+
+.dot{
+height:10px;
+width:10px;
+background:#ef4444;
+border-radius:50%;
+display:inline-block;
+margin-right:8px;
+}
+
+/* text */
+
+.brand-title{
+font-size:60px;
+font-weight:700;
+margin:0;
+}
+
+.tagline{
+color:#ef4444;
+font-size:20px;
+margin-top:10px;
+}
+
+.desc{
+color:#9ca3af;
+max-width:420px;
+margin-top:10px;
+line-height:1.6;
+}
+
+/* floating icons */
+
+.float-icon{
+position:absolute;
+color:#ef4444;
+opacity:0.6;
+animation:float 6s infinite ease-in-out;
+}
+
+/* TOP AREA */
+
+.hashtag{
+top:12%;
+left:65%;
+font-size:22px;
+}
+
+.follow{
+top:18%;
+left:50%;
+font-size:26px;
+}
+
+/* UPPER MID */
+
+.share{
+top:30%;
+left:75%;
+font-size:22px;
+}
+
+.heart{
+top:38%;
+left:60%;
+font-size:28px;
+}
+
+/* CENTER AREA */
+
+.message{
+top:50%;
+left:72%;
+font-size:22px;
+}
+
+.comment{
+top:55%;
+left:40%;
+font-size:24px;
+}
+
+/* LOWER MID */
+
+.community{
+top:65%;
+left:55%;
+font-size:28px;
+}
+
+.like{
+top:75%;
+left:70%;
+font-size:26px;
+}
+
+/* BOTTOM AREA */
+
+.network{
+top:80%;
+left:35%;
+font-size:24px;
+}
+
+.send{
+top:70%;
+left:25%;
+font-size:22px;
+}
+
+.users{
+top:88%;
+left:55%;
+font-size:26px;
+}
+
+/* animation */
+
+@keyframes float{
+
+0%{
+transform:translateY(0px);
+}
+
+50%{
+transform:translateY(-18px);
+}
+
+100%{
+transform:translateY(0px);
+}
+
+}
+
+/* RIGHT SIDE */
+
+.right-section{
+flex:1;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+/* LOGIN CARD */
+
+.login-card{
+
+width:420px;
+padding:38px;
+border-radius:20px;
+
+/* glossy dark gradient */
+background:linear-gradient(
+145deg,
+rgba(20,20,20,0.96),
+rgba(10,10,10,0.96)
+);
+
+/* glass effect */
+backdrop-filter:blur(10px);
+
+/* border */
+border:1px solid rgba(255,255,255,0.08);
+
+/* glow */
+box-shadow:
+0 15px 40px rgba(0,0,0,0.85),
+0 0 0 1px rgba(255,255,255,0.03),
+0 0 35px rgba(255,0,0,0.06);
+
+transition:0.3s;
+
+}
+
+/* card hover */
+
+.login-card:hover{
+
+transform:translateY(-3px);
+
+box-shadow:
+0 25px 50px rgba(0,0,0,0.9),
+0 0 35px rgba(255,0,0,0.12);
+
+}
+
+/* INPUTS */
+
+.form-control{
+
+background:#111;
+border:1px solid #2a2a2a;
+color:white;
+border-radius:10px;
+padding:10px;
+
+}
+
+.form-control::placeholder{
+color:white;
+opacity:0.6;
+}
+
+.form-control:focus{
+background:#111;
+border-color:#ef4444;
+box-shadow:0 0 0 1px rgba(255,0,0,0.25);
+color:white;
+}
+
+/* BUTTON */
+
+.login-btn{
+background:linear-gradient(135deg,#ff4d4d,#b91c1c);
+border:none;
+border-radius:30px;
+padding:12px;
+font-weight:600;
+color:white;
+transition:0.25s;
+}
+
+.login-btn:hover{
+box-shadow:0 6px 20px rgba(255,0,0,0.35);
+}
+
+/* LINKS */
+
+.forgot{
+color:#ef4444;
+font-size:14px;
+text-decoration:none;
+}
+
+.forgot:hover{
+text-decoration:underline;
+}
+
+.register-link{
+color:#ef4444;
+font-weight:600;
+text-decoration:none;
+}
+
+.register-link:hover{
+text-decoration:underline;
+}
+
+/* muted text */
+
+.text-muted{
+color:white !important;
+opacity:0.7;
+}
+
+/* ICON BACKGROUND FIX */
+
+.input-group-text{
+background:#111;
+border:1px solid #2a2a2a;
+color:#aaa;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+padding:0 12px;
+}
+
+/* remove double borders */
+
+.input-group .form-control{
+border-left:0;
+border-right:0;
+}
+
+/* left icon border radius */
+
+.input-group-text:first-child{
+border-radius:10px 0 0 10px;
+}
+
+/* right icon border radius */
+
+.input-group-text:last-child{
+border-radius:0 10px 10px 0;
+}
+
+/* hover effect */
+
+.input-group-text:hover{
+background:#1a1a1a;
+}
+
+.follow{animation-delay:1s;}
+.share{animation-delay:2s;}
+.heart{animation-delay:0.5s;}
+.comment{animation-delay:1.5s;}
+.like{animation-delay:2.5s;}
+.community{animation-delay:1.2s;}
+.network{animation-delay:0.8s;}
+.send{animation-delay:1.8s;}
+.users{animation-delay:2.2s;}
+.hashtag{animation-delay:0.6s;}

@@ -9,191 +9,160 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
-    <style>
-
-        body{
-        height:100vh;
-        background: linear-gradient(135deg,#0a66c2,#00a0dc);
-        display:flex;
-        justify-content:center;
-        align-items:center;
-        font-family:'Segoe UI',sans-serif;
-        margin:0;
-        }
-
-        .card{
-        width:400px;
-        border-radius:18px;
-        padding:35px;
-        background:white;
-        box-shadow:0 15px 35px rgba(0,0,0,0.2);
-        transition:0.3s;
-        }
-
-        .card:hover{
-        transform:translateY(-3px);
-        }
-
-        .logo{
-        font-size:34px;
-        font-weight:700;
-        color:#0a66c2;
-        text-align:center;
-        letter-spacing:1px;
-        }
-
-        .subtitle{
-        text-align:center;
-        color:gray;
-        margin-bottom:25px;
-        }
-
-        .form-control{
-        border-radius:10px;
-        padding:12px;
-        border:1px solid #dcdcdc;
-        }
-
-        .form-control:focus{
-        box-shadow:0 0 5px rgba(10,102,194,0.5);
-        border-color:#0a66c2;
-        }
-
-        .btn-primary{
-        border-radius:10px;
-        padding:12px;
-        font-weight:600;
-        background:#0a66c2;
-        border:none;
-        transition:0.3s;
-        }
-
-        .btn-primary:hover{
-        background:#084c9e;
-        }
-
-        .eye{
-        cursor:pointer;
-        }
-
-        a{
-        text-decoration:none;
-        font-weight:500;
-        }
-
-        a:hover{
-        text-decoration:underline;
-        }
-
-    </style>
+    <link rel="stylesheet" href="/css/login.css">
 
 </head>
 
 <body>
 
-<div class="card">
+<div class="main-container">
 
-    <div class="logo">
-        RevConnect
+    <!-- LEFT SIDE -->
+
+    <div class="left-section">
+
+        <div class="top-logo">
+            <span class="dot"></span>
+            RevConnect
+        </div>
+
+        <h1 class="brand-title">
+            RevConnect
+        </h1>
+
+        <p class="tagline">
+            Let's Connect
+        </p>
+
+        <p class="desc">
+            Connect with friends, collaborate with creators and grow your network.
+        </p>
+
+        <!-- floating icons -->
+
+        <i class="fa-solid fa-heart float-icon heart"></i>
+        <i class="fa-solid fa-comment float-icon comment"></i>
+        <i class="fa-solid fa-share-nodes float-icon share"></i>
+        <i class="fa-solid fa-thumbs-up float-icon like"></i>
+        <i class="fa-solid fa-user-plus float-icon follow"></i>
+        <i class="fa-solid fa-network-wired float-icon network"></i>
+        <i class="fa-solid fa-paper-plane float-icon message"></i>
+        <i class="fa-solid fa-users float-icon community"></i>
+        <i class="fa-solid fa-user-plus float-icon connect"></i>
+        <i class="fa-solid fa-share-nodes float-icon share"></i>
+        <i class="fa-solid fa-users float-icon community"></i>
+        <i class="fa-solid fa-comment-dots float-icon message"></i>
+        <i class="fa-solid fa-heart float-icon love"></i>
+        <i class="fa-solid fa-thumbs-up float-icon like"></i>
+<!--        <i class="fa-solid fa-paper-plane float-icon send"></i>-->
+        <i class="fa-solid fa-hashtag float-icon hashtag"></i>
+<!--        <i class="fa-solid fa-user-check float-icon follow"></i>-->
+
     </div>
 
-    <div class="subtitle">
-        Sign in to continue
-    </div>
 
-    <div th:if="${success}" class="alert alert-success text-center">
-        <span th:text="${success}"></span>
-    </div>
+    <!-- RIGHT SIDE LOGIN CARD -->
 
-    <div th:if="${error}" class="alert alert-danger text-center">
-        <span th:text="${error}"></span>
-    </div>
+    <div class="right-section">
 
-    <form th:action="@{/login}" method="post">
+        <div class="login-card">
 
-        <!-- Email -->
+            <h3 class="login-title">RevConnect</h3>
 
-        <div class="mb-3">
+            <p class="login-subtitle">Sign in to continue</p>
 
-            <label>Email</label>
+            <div th:if="${success}" class="alert alert-success text-center">
+                <span th:text="${success}"></span>
+            </div>
 
-            <div class="input-group">
+            <div th:if="${error}" class="alert alert-danger text-center">
+                <span th:text="${error}"></span>
+            </div>
+
+            <form th:action="@{/login}" method="post">
+
+                <div class="mb-3">
+
+                    <label>Email</label>
+
+                    <div class="input-group">
 
 <span class="input-group-text">
 <i class="fa fa-envelope"></i>
 </span>
 
-                <input type="email"
-                       name="email"
-                       class="form-control"
-                       placeholder="Enter your email"
-                       required>
+                        <input type="email"
+                               name="email"
+                               class="form-control"
+                               placeholder="Enter email"
+                               required>
 
-            </div>
+                    </div>
 
-        </div>
+                </div>
 
-        <!-- Password -->
 
-        <div class="mb-3">
+                <div class="mb-3">
 
-            <label>Password</label>
+                    <label>Password</label>
 
-            <div class="input-group">
+                    <div class="input-group">
 
 <span class="input-group-text">
 <i class="fa fa-lock"></i>
 </span>
 
-                <input type="password"
-                       name="password"
-                       id="password"
-                       class="form-control"
-                       placeholder="Enter password"
-                       required>
+                        <input type="password"
+                               name="password"
+                               id="password"
+                               class="form-control"
+                               placeholder="Enter password"
+                               required>
 
-                <span class="input-group-text eye" onclick="togglePassword()">
+                        <span class="input-group-text eye" onclick="togglePassword()">
 <i id="eyeIcon" class="fa fa-eye"></i>
 </span>
 
-            </div>
+                    </div>
 
-            <!-- Forgot Password -->
+                    <div class="text-end mt-2">
 
-            <div class="text-end mt-2">
+                        <a th:href="@{/forgot-password}" class="forgot">
+                            Forgot Password?
+                        </a>
 
-                <a th:href="@{/forgot-password}" class="text-danger small">
-                    Forgot Password?
+                    </div>
+
+                </div>
+
+                <button class="btn login-btn w-100">
+                    Login
+                </button>
+
+            </form>
+
+            <hr>
+
+            <div class="text-center">
+
+<span class="text-muted">
+Don't have an account?
+</span>
+
+                <a th:href="@{/register}" class="register-link">
+                    Create Account
                 </a>
 
             </div>
 
         </div>
 
-        <button class="btn btn-primary w-100 mt-2">
-            Login
-        </button>
-
-    </form>
-
-    <hr>
-
-    <div class="text-center">
-
-<span class="text-muted">
-Don't have an account?
-</span>
-
-        <a th:href="@{/register}" class="fw-bold">
-            Register
-        </a>
-
     </div>
 
 </div>
+
 
 <script>
 
@@ -203,17 +172,13 @@ Don't have an account?
     var icon=document.getElementById("eyeIcon");
 
     if(password.type==="password"){
-
     password.type="text";
     icon.classList.remove("fa-eye");
     icon.classList.add("fa-eye-slash");
-
     }else{
-
     password.type="password";
     icon.classList.remove("fa-eye-slash");
     icon.classList.add("fa-eye");
-
     }
 
     }
@@ -221,5 +186,4 @@ Don't have an account?
 </script>
 
 </body>
-
 </html>

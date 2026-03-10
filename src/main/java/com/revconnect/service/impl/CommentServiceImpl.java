@@ -68,10 +68,21 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void deleteComment(Long commentId, String email) {
 
-        Comment comment = commentRepository
-                .findByCommentIdAndUser_Email(commentId, email)
-                .orElseThrow(() ->
-                        new RuntimeException("Comment not found or not authorized"));
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new RuntimeException("Comment not found"));
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        boolean isCommentOwner =
+                comment.getUser().getUserId().equals(user.getUserId());
+
+        boolean isPostOwner =
+                comment.getPost().getUser().getUserId().equals(user.getUserId());
+
+        if(!isCommentOwner && !isPostOwner){
+            throw new RuntimeException("You cannot delete this comment");
+        }
 
         commentRepository.delete(comment);
     }

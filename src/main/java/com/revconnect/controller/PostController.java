@@ -173,5 +173,4 @@ public class PostController {
         return ResponseEntity.ok(shareService.getUsersWhoShared(postId));
     }
 
-
 }

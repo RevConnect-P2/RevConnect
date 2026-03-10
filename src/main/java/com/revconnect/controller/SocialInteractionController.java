@@ -102,4 +102,26 @@ public class SocialInteractionController {
                 likeService.getUsersWhoLiked(postId)
         );
     }
+
+    // ================= DELETE COMMENT =================
+    @DeleteMapping("/comments/{commentId}")
+    public ResponseEntity<?> deleteComment(@PathVariable Long commentId,
+                                           Principal principal) {
+
+        try {
+
+            if (principal == null) {
+                return ResponseEntity.status(401).body("User not authenticated");
+            }
+
+            commentService.deleteComment(commentId, principal.getName());
+
+            return ResponseEntity.ok("Comment deleted");
+
+        } catch (RuntimeException e) {
+
+            return ResponseEntity.badRequest().body(e.getMessage());
+
+        }
+    }
 }
