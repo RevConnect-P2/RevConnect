@@ -5,7 +5,12 @@
 body{
 background:#070707;
 color:white;
+
 }
+
+/* ========================= */
+/* NAVBAR */
+/* ========================= */
 
 /* ========================= */
 /* NAVBAR */
@@ -15,6 +20,13 @@ color:white;
 background:#070707 !important;
 border-bottom:1px solid #1f1f1f;
 padding:12px 30px;
+
+position:fixed;
+top:0;
+left:0;
+width:100%;
+
+z-index:9999;
 }
 
 .navbar-brand{
@@ -293,3 +305,5 @@ border-color:#ff4d4d;
 box-shadow:0 0 0 2px rgba(255,77,77,0.15);
 background:#111;
 }
+
+/* SIDEBAR STICKY FIX */
