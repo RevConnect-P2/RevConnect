@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
@@ -12,6 +11,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
     <link rel="stylesheet" th:href="@{/css/navbar.css}">
     <link rel="stylesheet" th:href="@{/css/dashboard.css}">
     <link rel="stylesheet" th:href="@{/css/profile.css}">
@@ -21,9 +21,7 @@
 <body>
 
 <!-- NAVBAR -->
-<div class="navbar-custom">
-    <a href="/dashboard" class="btn btn-primary">🏠 Home</a>
-</div>
+
 
 <div th:replace="~{layout/navbar :: navbar(${session.loggedUser})}"></div>
 
@@ -57,19 +55,36 @@
 
             <div class="row profile-stats text-center mt-4">
 
+                <!-- POSTS -->
                 <div class="col">
                     <h5 th:text="${postCount}">0</h5>
                     <small>Posts</small>
                 </div>
 
+                <!-- FOLLOWERS -->
                 <div class="col">
-                    <h5 th:text="${followers}">0</h5>
-                    <small>Followers</small>
+
+                    <a th:href="@{/profile/{username}/followers(username=${username})}"
+                       class="text-decoration-none text-light">
+
+                        <h5 th:text="${followers}">0</h5>
+                        <small>Followers</small>
+
+                    </a>
+
                 </div>
 
+                <!-- FOLLOWING -->
                 <div class="col">
-                    <h5 th:text="${following}">0</h5>
-                    <small>Following</small>
+
+                    <a th:href="@{/profile/{username}/following(username=${username})}"
+                       class="text-decoration-none text-light">
+
+                        <h5 th:text="${following}">0</h5>
+                        <small>Following</small>
+
+                    </a>
+
                 </div>
 
             </div>
@@ -109,9 +124,11 @@
             <span th:text="${profile.bio}"></span>
         </p>
 
+        <!-- ===================== -->
         <!-- BUSINESS SECTION -->
+        <!-- ===================== -->
 
-        <div th:if="${profile.profileType == 'BUSINESS'}">
+        <div th:if="${profile.profileType.name() == 'BUSINESS'}">
 
             <hr>
             <h6 class="text-danger">Business Details</h6>
@@ -136,11 +153,55 @@
                    target="_blank"></a>
             </p>
 
+            <hr>
+            <h6 class="text-danger">Business Hours</h6>
+
+            <div th:if="${businessHours != null}">
+
+                <table class="table table-dark table-sm">
+
+                    <thead>
+                    <tr>
+                        <th>Day</th>
+                        <th>Status</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+
+                    <tr th:each="hour : ${businessHours}">
+
+                        <td th:text="${hour.dayOfWeek}"></td>
+
+                        <td>
+
+<span th:if="${hour.isClosed}">
+Closed
+</span>
+
+                            <span th:if="${!hour.isClosed}">
+<span th:text="${hour.openTime}"></span>
+-
+<span th:text="${hour.closeTime}"></span>
+</span>
+
+                        </td>
+
+                    </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
         </div>
 
+        <!-- ===================== -->
         <!-- CREATOR SECTION -->
+        <!-- ===================== -->
 
-        <div th:if="${profile.profileType == 'CREATOR'}">
+        <div th:if="${profile.profileType.name() == 'CREATOR'}">
 
             <hr>
             <h6 class="text-danger">Creator Details</h6>
@@ -154,21 +215,33 @@
             <p th:if="${profile.externalLinks != null}">
                 <i class="fa fa-link info-icon"></i>
                 <b>External Links:</b>
+
                 <a th:href="${profile.externalLinks}"
                    th:text="${profile.externalLinks}"
                    target="_blank"></a>
+
             </p>
 
         </div>
 
     </div>
 
-    <!-- EDIT BUTTON -->
+    <!-- BUTTONS -->
 
-    <div class="mb-4">
+    <div class="mb-4 d-grid gap-2">
+
         <a href="/profile/edit" class="btn btn-danger w-100">
             Edit Profile
         </a>
+
+        <a th:if="${profile.profileType.name() == 'BUSINESS'}"
+           href="/profile/business-hours"
+           class="btn btn-outline-danger w-100">
+
+            Manage Business Hours
+
+        </a>
+
     </div>
 
     <!-- POSTS -->
@@ -189,13 +262,16 @@
 <!-- CURRENT USER -->
 
 <script th:inline="javascript">
+
     window.CURRENT_USER_ID = [[${session.loggedUser.userId}]];
     window.PROFILE_USER_ID = [[${profile.userId}]];
+
 </script>
 
 <script src="/js/posts.js"></script>
 
 <script>
+
     document.addEventListener("DOMContentLoaded", function () {
 
     if(window.PROFILE_USER_ID){
@@ -203,6 +279,7 @@
     }
 
     });
+
 </script>
 
 </body>

@@ -3,29 +3,26 @@
 <head>
     <title>Edit Profile</title>
 
-    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/edit-profile.css}">
 </head>
 
-<body style="background:#f3f2ef;">
+<body>
+
+<div th:replace="~{layout/navbar :: navbar(${session.loggedUser})}"></div>
 
 <div class="container mt-5" style="max-width:700px;">
 
-    <!-- Card -->
     <div class="card shadow-sm">
-        <div class="card-body">
+        <div class="card-body p-4">
 
             <h4 class="mb-4 text-center">Edit Profile</h4>
 
-            <!-- FORM -->
             <form th:action="@{/profile/update}" method="post">
 
-                <!-- 🔒 REQUIRED FOR BACKEND -->
-                <input type="hidden"
-                       name="profileType"
-                       th:value="${profile.profileType}" />
-
-                <!-- Full Name -->
                 <div class="mb-3">
                     <label class="form-label">Full Name</label>
                     <input type="text"
@@ -35,7 +32,6 @@
                            required>
                 </div>
 
-                <!-- Bio -->
                 <div class="mb-3">
                     <label class="form-label">Bio</label>
                     <textarea name="bio"
@@ -44,7 +40,6 @@
                               th:text="${profile.bio}"></textarea>
                 </div>
 
-                <!-- Location -->
                 <div class="mb-3">
                     <label class="form-label">Location</label>
                     <input type="text"
@@ -53,7 +48,6 @@
                            th:value="${profile.location}">
                 </div>
 
-                <!-- Website -->
                 <div class="mb-3">
                     <label class="form-label">Website</label>
                     <input type="url"
@@ -62,41 +56,31 @@
                            th:value="${profile.website}">
                 </div>
 
-                <!-- CREATOR FIELDS -->
                 <div th:if="${profile.profileType.name() == 'CREATOR'}">
-
-                    <!-- Category -->
                     <div class="mb-3">
                         <label class="form-label">Creator Category</label>
                         <input type="text"
                                name="category"
                                class="form-control"
-                               placeholder="e.g. Photographer, Blogger, Developer"
                                th:value="${profile.category}">
                     </div>
 
-                    <!-- External Links -->
                     <div class="mb-3">
                         <label class="form-label">External Links</label>
                         <textarea name="externalLinks"
                                   class="form-control"
                                   rows="2"
-                                  placeholder="Instagram / YouTube / Portfolio links"
                                   th:text="${profile.externalLinks}"></textarea>
                     </div>
-
                 </div>
 
-                <!-- BUSINESS FIELDS -->
                 <div th:if="${profile.profileType.name() == 'BUSINESS'}">
-
                     <div class="mb-3">
                         <label class="form-label">Business Address</label>
                         <textarea name="businessAddress"
                                   class="form-control"
                                   rows="2"
-                                  th:text="${profile.businessAddress}">
-        </textarea>
+                                  th:text="${profile.businessAddress}"></textarea>
                     </div>
 
                     <div class="mb-3">
@@ -106,63 +90,34 @@
                                class="form-control"
                                th:value="${profile.contactInfo}">
                     </div>
-
                 </div>
 
-                <!-- Profile Visibility -->
                 <div class="mb-4">
                     <label class="form-label">Profile Visibility</label>
                     <select name="profileVisibility" class="form-select">
-                        <option value="PUBLIC"
-                                th:selected="${profile.profileVisibility == 'PUBLIC'}">
-                            Public
-                        </option>
-                        <option value="PRIVATE"
-                                th:selected="${profile.profileVisibility == 'PRIVATE'}">
-                            Private
-                        </option>
+                        <option value="PUBLIC" th:selected="${profile.profileVisibility == 'PUBLIC'}">Public</option>
+                        <option value="PRIVATE" th:selected="${profile.profileVisibility == 'PRIVATE'}">Private</option>
                     </select>
                 </div>
-                <!-- Profile Type (READ-ONLY) -->
+
                 <div class="mb-3">
                     <label class="form-label">Profile Type</label>
-
                     <select class="form-select" disabled>
-
-                        <option value="PERSONAL"
-                                th:selected="${profile.profileType.name() == 'PERSONAL'}">
-                            PERSONAL
-                        </option>
-
-                        <option value="CREATOR"
-                                th:selected="${profile.profileType.name() == 'CREATOR'}">
-                            CREATOR
-                        </option>
-
-                        <option value="BUSINESS"
-                                th:selected="${profile.profileType.name() == 'BUSINESS'}">
-                            BUSINESS
-                        </option>
-
+                        <option th:selected="${profile.profileType.name() == 'PERSONAL'}">PERSONAL</option>
+                        <option th:selected="${profile.profileType.name() == 'CREATOR'}">CREATOR</option>
+                        <option th:selected="${profile.profileType.name() == 'BUSINESS'}">BUSINESS</option>
                     </select>
-
-                    <!-- Hidden input so backend still receives value -->
-                    <input type="hidden"
-                           name="profileType"
-                           th:value="${profile.profileType.name()}" />
-
+                    <input type="hidden" name="profileType" th:value="${profile.profileType.name()}" />
                 </div>
 
-                <div class="d-flex justify-content-between">
+                <div class="d-flex justify-content-between mt-4">
                     <a href="/profile" class="btn btn-secondary">Cancel</a>
                     <button type="submit" class="btn btn-primary">Save Changes</button>
                 </div>
 
             </form>
-
         </div>
     </div>
-
 </div>
 
 </body>

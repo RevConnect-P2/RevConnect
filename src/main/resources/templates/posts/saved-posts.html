@@ -22,7 +22,7 @@
     <div class="row">
 
         <!-- LEFT SIDEBAR -->
-        <div class="col-md-3">
+        <div class="col-md-3 left-sidebar">
             <div th:replace="layout/left-sidebar :: leftSidebar(${user},${connectionsCount},${followersCount},${followingCount})"></div>
         </div>
 
@@ -37,7 +37,7 @@
         </div>
 
         <!-- RIGHT SIDEBAR -->
-        <div class="col-md-3">
+        <div class="col-md-3 right-sidebar">
             <div th:replace="layout/right-sidebar :: rightSidebar"></div>
         </div>
 
