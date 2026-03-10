@@ -826,3 +826,58 @@ box-shadow:0 1px 0 rgba(255,255,255,0.05);
     color: white !important;
     border: 1px solid #1f1f1f !important;
 }
+
+/* 3 DOT BUTTON */
+
+.post-menu-btn{
+background:#111;
+border:1px solid #1f1f1f;
+color:#aaa;
+border-radius:8px;
+}
+
+.post-menu-btn:hover{
+background:#151515;
+color:white;
+border-color:#ff4d4d;
+}
+
+/* DROPDOWN MENU */
+
+.dropdown-menu{
+background:#0f0f0f;
+border:1px solid #1f1f1f;
+border-radius:10px;
+padding:6px 0;
+}
+
+/* DROPDOWN ITEMS */
+
+.dropdown-item{
+color:#ccc;
+font-size:14px;
+}
+
+.dropdown-item:hover{
+background:#151515;
+color:#ff4d4d;
+}
+
+/* DELETE OPTION */
+
+.dropdown-item.text-danger{
+color:#ff4d4d !important;
+}
+
+.dropdown-item.text-danger:hover{
+background:#1a0f0f;
+color:#ff4d4d !important;
+}
+
+/* PIN ICON */
+
+.pin-icon{
+color:#ff4d4d;
+font-size:14px;
+margin-left:6px;
+}
