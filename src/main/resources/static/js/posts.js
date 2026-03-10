@@ -618,8 +618,7 @@ function fetchMyPostsPage() {
     container.innerHTML =
         "<p class='text-center text-muted'>Loading your posts...</p>";
 
-    fetchSavedPosts()
-        .then(() => fetch(`/posts/user?userId=${currentUser.userId}`))
+    fetch(`/posts/user?userId=${currentUser.userId}`)
         .then(res => {
             if (!res.ok) throw new Error("Failed to load my posts");
             return res.json();
@@ -634,6 +633,7 @@ function fetchMyPostsPage() {
                 return;
             }
 
+            // pinned first
             posts.sort((a, b) => {
                 if (a.pinned === b.pinned) {
                     return new Date(b.createdAt) - new Date(a.createdAt);
@@ -643,10 +643,7 @@ function fetchMyPostsPage() {
 
             posts.forEach(post => {
 
-                const card = createFeedPostCard(post, {
-                    showPinned: true,
-                    isSaved: savedPostIds.has(post.postId)
-                });
+                const card = createMyPostCard(post); // ⭐ IMPORTANT
 
                 container.appendChild(card);
 
