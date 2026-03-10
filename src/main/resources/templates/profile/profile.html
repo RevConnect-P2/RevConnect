@@ -159,7 +159,7 @@
         <!-- ===================== -->
         <!-- BUSINESS SECTION -->
         <!-- ===================== -->
-        <div th:if="${profile.profileType == 'BUSINESS'}">
+        <div th:if="${profile.profileType.name() == 'BUSINESS'}">
 
             <hr>
             <h6 class="text-primary">Business Details</h6>
@@ -184,12 +184,44 @@
                    target="_blank"></a>
             </p>
 
+            <hr>
+            <h6 class="text-primary">Business Hours</h6>
+
+            <div th:if="${businessHours != null}">
+                <table class="table table-sm">
+                    <thead>
+                    <tr>
+                        <th>Day</th>
+                        <th>Status</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+
+                    <tr th:each="hour : ${businessHours}">
+                        <td th:text="${hour.dayOfWeek}"></td>
+
+                        <td>
+                            <span th:if="${hour.isClosed}">Closed</span>
+
+                            <span th:if="${!hour.isClosed}">
+                    <span th:text="${hour.openTime}"></span>
+                    -
+                    <span th:text="${hour.closeTime}"></span>
+                </span>
+                        </td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+
         </div>
 
         <!-- ===================== -->
         <!-- CREATOR SECTION -->
         <!-- ===================== -->
-        <div th:if="${profile.profileType == 'CREATOR'}">
+        <div th:if="${profile.profileType.name() == 'CREATOR'}">
 
             <hr>
             <h6 class="text-primary">Creator Details</h6>
@@ -213,10 +245,19 @@
     </div>
 
     <!-- EDIT BUTTON -->
-    <div class="mb-4">
-        <a href="/profile/edit" class="btn btn-primary w-100">
+    <div class="mb-4 d-grid gap-2">
+
+        <a href="/profile/edit" class="btn btn-primary">
             Edit Profile
         </a>
+
+        <a th:if="${profile.profileType.name() == 'BUSINESS'}"
+           href="/profile/business-hours"
+           class="btn btn-outline-primary">
+
+            Manage Business Hours
+        </a>
+
     </div>
 
     <!-- POSTS -->

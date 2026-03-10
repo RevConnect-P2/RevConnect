@@ -244,6 +244,27 @@
             <b>Contact Info:</b>
             <span th:text="${profile.contactInfo}"></span>
         </p>
+        <div th:if="${profile.profileType.name() == 'BUSINESS'}">
+
+            <h6 class="text-primary mt-3">Business Hours</h6>
+
+            <table class="table table-sm" th:if="${businessHours != null}">
+                <tr th:each="hour : ${businessHours}">
+                    <td th:text="${hour.dayOfWeek}"></td>
+
+                    <td>
+                        <span th:if="${hour.isClosed}">Closed</span>
+
+                        <span th:if="${!hour.isClosed}">
+                    <span th:text="${hour.openTime}"></span>
+                    -
+                    <span th:text="${hour.closeTime}"></span>
+                </span>
+                    </td>
+                </tr>
+            </table>
+
+        </div>
 
     </div>
 

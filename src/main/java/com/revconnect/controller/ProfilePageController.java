@@ -1,5 +1,6 @@
 package com.revconnect.controller;
 
+import com.revconnect.enums.ProfileType;
 import jakarta.servlet.http.HttpSession;
 
 import com.revconnect.entity.User;
@@ -10,6 +11,7 @@ import com.revconnect.repository.UserRepository;
 import com.revconnect.service.ConnectionService;
 import com.revconnect.service.FollowService;
 import com.revconnect.service.PostService;
+import com.revconnect.service.ProfileService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,6 +27,7 @@ public class ProfilePageController {
     private final UserProfileRepository userProfileRepository;
     private final FollowService followService;
     private final ConnectionService connectionService;
+    private final ProfileService profileService;
 
 
     // ===============================
@@ -41,6 +44,17 @@ public class ProfilePageController {
         UserProfile profile = userProfileRepository
                 .findByUser_UserId(user.getUserId())
                 .orElse(null);
+
+        // ===============================
+// BUSINESS HOURS (for business profiles)
+// ===============================
+        if (profile != null && profile.getProfileType() == ProfileType.BUSINESS) {
+
+            model.addAttribute(
+                    "businessHours",
+                    profileService.getBusinessHours(user.getUserId())
+            );
+        }
 
         long followers = followService.getFollowersCount(user.getUserId());
         long following = followService.getFollowingCount(user.getUserId());

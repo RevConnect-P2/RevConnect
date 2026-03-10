@@ -165,4 +165,13 @@ public class PostController {
     ) {
         return ResponseEntity.ok(savedPostService.getSavedPosts(userId));
     }
+
+    @GetMapping("/{postId}/shares")
+    public ResponseEntity<List<String>> getUsersWhoShared(
+            @PathVariable Long postId
+    ) {
+        return ResponseEntity.ok(shareService.getUsersWhoShared(postId));
+    }
+
+
 }
