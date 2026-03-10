@@ -9312,3 +9312,437 @@ org.thymeleaf.exceptions.TemplateInputException: Error resolving template [NONE]
 2026-03-10 20:55:55 INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
 2026-03-10 20:55:55 INFO  com.zaxxer.hikari.HikariDataSource - RevConnectPool - Shutdown initiated...
 2026-03-10 20:55:55 INFO  com.zaxxer.hikari.HikariDataSource - RevConnectPool - Shutdown completed.
+2026-03-10 21:44:50 INFO  com.revconnect.RevconnectApplication - Starting RevConnect Application...
+2026-03-10 21:44:50 INFO  com.revconnect.RevconnectApplication - Starting RevConnect Application...
+2026-03-10 21:44:50 INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.1.Final
+2026-03-10 21:44:50 INFO  com.revconnect.RevconnectApplication - Starting RevconnectApplication using Java 21.0.8 with PID 18196 (D:\RevConnect\revconnect\target\classes started by allam sandeep in D:\RevConnect\revconnect)
+2026-03-10 21:44:50 INFO  com.revconnect.RevconnectApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-10 21:44:50 INFO  org.springframework.boot.devtools.restart.ChangeableUrls - The Class-Path manifest attribute in C:\Users\allam sandeep\.m2\repository\com\oracle\database\jdbc\ojdbc11\21.9.0.0\ojdbc11-21.9.0.0.jar referenced one or more files that do not exist: file:/C:/Users/allam%20sandeep/.m2/repository/com/oracle/database/jdbc/ojdbc11/21.9.0.0/oraclepki.jar
+2026-03-10 21:44:50 INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-03-10 21:44:50 INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-03-10 21:44:51 INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-03-10 21:44:51 INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 92 ms. Found 15 JPA repository interfaces.
+2026-03-10 21:44:52 INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-03-10 21:44:52 INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-10 21:44:52 INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-10 21:44:52 INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.20]
+2026-03-10 21:44:52 INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-10 21:44:52 INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1552 ms
+2026-03-10 21:44:52 INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-10 21:44:52 INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2026-03-10 21:44:52 INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-10 21:44:52 INFO  org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-03-10 21:44:52 INFO  com.zaxxer.hikari.HikariDataSource - RevConnectPool - Starting...
+2026-03-10 21:44:53 INFO  com.zaxxer.hikari.pool.HikariPool - RevConnectPool - Added connection oracle.jdbc.driver.T4CConnection@6623734c
+2026-03-10 21:44:53 INFO  com.zaxxer.hikari.HikariDataSource - RevConnectPool - Start completed.
+2026-03-10 21:44:54 INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-10 21:44:55 INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-03-10 21:44:56 INFO  com.revconnect.security.config.SecurityConfig - BCryptPasswordEncoder bean created
+2026-03-10 21:44:56 INFO  org.springframework.data.jpa.repository.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-03-10 21:44:57 INFO  com.revconnect.security.jwt.JwtService - JwtService initialized
+2026-03-10 21:44:57 WARN  org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-10 21:44:57 INFO  com.revconnect.security.config.SecurityConfig - Configuring Spring Security filter chain
+2026-03-10 21:44:57 INFO  com.revconnect.security.config.SecurityConfig - Spring Security configuration completed
+2026-03-10 21:44:57 INFO  org.springframework.security.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@193c2976, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@5c39e1cb, org.springframework.security.web.context.SecurityContextHolderFilter@5bbce98a, org.springframework.security.web.header.HeaderWriterFilter@61840dcd, org.springframework.web.filter.CorsFilter@2b9ef93a, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@41a5469e, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@7ae1de5a, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@19be67b3, org.springframework.security.web.access.ExceptionTranslationFilter@52d2d645, org.springframework.security.web.access.intercept.AuthorizationFilter@255c1381]
+2026-03-10 21:44:58 INFO  org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2026-03-10 21:44:58 INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-10 21:44:58 INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path ''
+2026-03-10 21:44:58 INFO  com.revconnect.RevconnectApplication - Started RevconnectApplication in 7.561 seconds (process running for 8.508)
+2026-03-10 21:44:58 INFO  com.revconnect.RevconnectApplication - RevConnect Application started successfully
+2026-03-10 21:45:54 INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-03-10 21:45:54 INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-03-10 21:45:54 INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2026-03-10 21:45:54 INFO  com.revconnect.controller.AuthController - Login page requested
+2026-03-10 21:46:16 INFO  com.revconnect.controller.AuthController - Register page requested
+2026-03-10 21:46:43 INFO  com.revconnect.controller.AuthController - Register request received for email: sandy@gmail.com
+2026-03-10 21:46:43 INFO  com.revconnect.service.impl.AuthServiceImpl - Register request received for email sandy@gmail.com
+2026-03-10 21:46:43 ERROR com.revconnect.service.impl.AuthServiceImpl - Registration failed - Email already registered: sandy@gmail.com
+2026-03-10 21:46:43 ERROR com.revconnect.controller.AuthController - Registration failed for email: sandy@gmail.com
+java.lang.RuntimeException: Email is already registered
+	at com.revconnect.service.impl.AuthServiceImpl.register(AuthServiceImpl.java:51) ~[classes/:?]
+	at com.revconnect.controller.AuthController.register(AuthController.java:67) ~[classes/:?]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?]
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:255) ~[spring-web-6.1.6.jar:6.1.6]
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:188) ~[spring-web-6.1.6.jar:6.1.6]
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118) ~[spring-webmvc-6.1.6.jar:6.1.6]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:926) ~[spring-webmvc-6.1.6.jar:6.1.6]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:831) ~[spring-webmvc-6.1.6.jar:6.1.6]
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87) ~[spring-webmvc-6.1.6.jar:6.1.6]
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089) ~[spring-webmvc-6.1.6.jar:6.1.6]
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979) ~[spring-webmvc-6.1.6.jar:6.1.6]
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014) ~[spring-webmvc-6.1.6.jar:6.1.6]
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914) ~[spring-webmvc-6.1.6.jar:6.1.6]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590) ~[tomcat-embed-core-10.1.20.jar:6.0]
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885) ~[spring-webmvc-6.1.6.jar:6.1.6]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658) ~[tomcat-embed-core-10.1.20.jar:6.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:206) ~[tomcat-embed-core-10.1.20.jar:10.1.20]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:150) ~[tomcat-embed-core-10.1.20.jar:10.1.20]
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51) ~[tomcat-embed-websocket-10.1.20.jar:10.1.20]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:175) ~[tomcat-embed-core-10.1.20.jar:10.1.20]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:150) ~[tomcat-embed-core-10.1.20.jar:10.1.20]
+	at com.revconnect.security.jwt.JwtAuthenticationFilter.doFilterInternal(JwtAuthenticationFilter.java:48) ~[classes/:?]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.6.jar:6.1.6]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:175) ~[tomcat-embed-core-10.1.20.jar:10.1.20]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:150) ~[tomcat-embed-core-10.1.20.jar:10.1.20]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:108) ~[spring-web-6.1.6.jar:6.1.6]
+	at org.springframework.security.web.FilterChainProxy.lambda$doFilterInternal$3(FilterChainProxy.java:231) ~[spring-security-web-6.2.4.jar:6.2.4]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:365) ~[spring-security-web-6.2.4.jar:6.2.4]
+	at org.springframework.security.web.access.intercept.AuthorizationFilter.doFilter(AuthorizationFilter.java:100) ~[spring-security-web-6.2.4.jar:6.2.4]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.2.4.jar:6.2.4]
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:126) ~[spring-security-web-6.2.4.jar:6.2.4]
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:120) ~[spring-security-web-6.2.4.jar:6.2.4]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.2.4.jar:6.2.4]
+	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:100) ~[spring-security-web-6.2.4.jar:6.2.4]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.2.4.jar:6.2.4]
+	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:179) ~[spring-security-web-6.2.4.jar:6.2.4]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.2.4.jar:6.2.4]
+	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63) ~[spring-security-web-6.2.4.jar:6.2.4]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.2.4.jar:6.2.4]
+	at org.springframework.web.filter.CorsFilter.doFilterInternal(CorsFilter.java:91) ~[spring-web-6.1.6.jar:6.1.6]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.6.jar:6.1.6]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.2.4.jar:6.2.4]
+	at org.springframework.security.web.header.HeaderWriterFilter.doHeadersAfter(HeaderWriterFilter.java:90) ~[spring-security-web-6.2.4.jar:6.2.4]
+	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:75) ~[spring-security-web-6.2.4.jar:6.2.4]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.6.jar:6.1.6]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.2.4.jar:6.2.4]
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:82) ~[spring-security-web-6.2.4.jar:6.2.4]
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:69) ~[spring-security-web-6.2.4.jar:6.2.4]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.2.4.jar:6.2.4]
+	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:62) ~[spring-security-web-6.2.4.jar:6.2.4]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.6.jar:6.1.6]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.2.4.jar:6.2.4]
+	at org.springframework.security.web.session.DisableEncodeUrlFilter.doFilterInternal(DisableEncodeUrlFilter.java:42) ~[spring-security-web-6.2.4.jar:6.2.4]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.6.jar:6.1.6]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.2.4.jar:6.2.4]
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:233) ~[spring-security-web-6.2.4.jar:6.2.4]
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:191) ~[spring-security-web-6.2.4.jar:6.2.4]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113) ~[spring-web-6.1.6.jar:6.1.6]
+	at org.springframework.web.servlet.handler.HandlerMappingIntrospector.lambda$createCacheFilter$3(HandlerMappingIntrospector.java:195) ~[spring-webmvc-6.1.6.jar:6.1.6]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113) ~[spring-web-6.1.6.jar:6.1.6]
+	at org.springframework.web.filter.CompositeFilter.doFilter(CompositeFilter.java:74) ~[spring-web-6.1.6.jar:6.1.6]
+	at org.springframework.security.config.annotation.web.configuration.WebMvcSecurityConfiguration$CompositeFilterChainProxy.doFilter(WebMvcSecurityConfiguration.java:230) ~[spring-security-config-6.2.4.jar:6.2.4]
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:352) ~[spring-web-6.1.6.jar:6.1.6]
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:268) ~[spring-web-6.1.6.jar:6.1.6]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:175) ~[tomcat-embed-core-10.1.20.jar:10.1.20]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:150) ~[tomcat-embed-core-10.1.20.jar:10.1.20]
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) ~[spring-web-6.1.6.jar:6.1.6]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.6.jar:6.1.6]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:175) ~[tomcat-embed-core-10.1.20.jar:10.1.20]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:150) ~[tomcat-embed-core-10.1.20.jar:10.1.20]
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) ~[spring-web-6.1.6.jar:6.1.6]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.6.jar:6.1.6]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:175) ~[tomcat-embed-core-10.1.20.jar:10.1.20]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:150) ~[tomcat-embed-core-10.1.20.jar:10.1.20]
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) ~[spring-web-6.1.6.jar:6.1.6]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.6.jar:6.1.6]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:175) ~[tomcat-embed-core-10.1.20.jar:10.1.20]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:150) ~[tomcat-embed-core-10.1.20.jar:10.1.20]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167) ~[tomcat-embed-core-10.1.20.jar:10.1.20]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90) ~[tomcat-embed-core-10.1.20.jar:10.1.20]
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:482) ~[tomcat-embed-core-10.1.20.jar:10.1.20]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115) ~[tomcat-embed-core-10.1.20.jar:10.1.20]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93) ~[tomcat-embed-core-10.1.20.jar:10.1.20]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74) ~[tomcat-embed-core-10.1.20.jar:10.1.20]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344) ~[tomcat-embed-core-10.1.20.jar:10.1.20]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:391) ~[tomcat-embed-core-10.1.20.jar:10.1.20]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-10.1.20.jar:10.1.20]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:896) ~[tomcat-embed-core-10.1.20.jar:10.1.20]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1736) ~[tomcat-embed-core-10.1.20.jar:10.1.20]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-10.1.20.jar:10.1.20]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191) ~[tomcat-embed-core-10.1.20.jar:10.1.20]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) ~[tomcat-embed-core-10.1.20.jar:10.1.20]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) ~[tomcat-embed-core-10.1.20.jar:10.1.20]
+	at java.base/java.lang.Thread.run(Thread.java:1583) [?:?]
+2026-03-10 21:56:35 INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-03-10 21:56:35 INFO  com.zaxxer.hikari.HikariDataSource - RevConnectPool - Shutdown initiated...
+2026-03-10 21:56:35 INFO  com.zaxxer.hikari.HikariDataSource - RevConnectPool - Shutdown completed.
+2026-03-10 21:57:01 INFO  com.revconnect.RevconnectApplication - Starting RevConnect Application...
+2026-03-10 21:57:01 INFO  com.revconnect.RevconnectApplication - Starting RevConnect Application...
+2026-03-10 21:57:02 INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.1.Final
+2026-03-10 21:57:02 INFO  com.revconnect.RevconnectApplication - Starting RevconnectApplication using Java 21.0.8 with PID 19276 (D:\RevConnect\revconnect\target\classes started by allam sandeep in D:\RevConnect\revconnect)
+2026-03-10 21:57:02 INFO  com.revconnect.RevconnectApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-10 21:57:02 INFO  org.springframework.boot.devtools.restart.ChangeableUrls - The Class-Path manifest attribute in C:\Users\allam sandeep\.m2\repository\com\oracle\database\jdbc\ojdbc11\21.9.0.0\ojdbc11-21.9.0.0.jar referenced one or more files that do not exist: file:/C:/Users/allam%20sandeep/.m2/repository/com/oracle/database/jdbc/ojdbc11/21.9.0.0/oraclepki.jar
+2026-03-10 21:57:02 INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-03-10 21:57:02 INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-03-10 21:57:03 INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-03-10 21:57:03 INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 114 ms. Found 15 JPA repository interfaces.
+2026-03-10 21:57:04 INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-03-10 21:57:04 INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-10 21:57:04 INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-10 21:57:04 INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.20]
+2026-03-10 21:57:04 INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-10 21:57:04 INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2077 ms
+2026-03-10 21:57:04 INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-10 21:57:04 INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2026-03-10 21:57:04 INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-10 21:57:05 INFO  org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-03-10 21:57:05 INFO  com.zaxxer.hikari.HikariDataSource - RevConnectPool - Starting...
+2026-03-10 21:57:05 INFO  com.zaxxer.hikari.pool.HikariPool - RevConnectPool - Added connection oracle.jdbc.driver.T4CConnection@5da389e5
+2026-03-10 21:57:05 INFO  com.zaxxer.hikari.HikariDataSource - RevConnectPool - Start completed.
+2026-03-10 21:57:07 INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-10 21:57:07 INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-03-10 21:57:08 INFO  com.revconnect.security.config.SecurityConfig - BCryptPasswordEncoder bean created
+2026-03-10 21:57:08 INFO  org.springframework.data.jpa.repository.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-03-10 21:57:09 INFO  com.revconnect.security.jwt.JwtService - JwtService initialized
+2026-03-10 21:57:09 WARN  org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-10 21:57:09 INFO  com.revconnect.security.config.SecurityConfig - Configuring Spring Security filter chain
+2026-03-10 21:57:09 INFO  com.revconnect.security.config.SecurityConfig - Spring Security configuration completed
+2026-03-10 21:57:09 INFO  org.springframework.security.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@aca5d30, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@61840dcd, org.springframework.security.web.context.SecurityContextHolderFilter@1fc64028, org.springframework.security.web.header.HeaderWriterFilter@8f7f9e3, org.springframework.web.filter.CorsFilter@47639148, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@15b0117a, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@6885c30e, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@3c7171f, org.springframework.security.web.access.ExceptionTranslationFilter@729f9902, org.springframework.security.web.access.intercept.AuthorizationFilter@50077450]
+2026-03-10 21:57:10 INFO  org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2026-03-10 21:57:10 INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-10 21:57:10 INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path ''
+2026-03-10 21:57:10 INFO  com.revconnect.RevconnectApplication - Started RevconnectApplication in 8.177 seconds (process running for 9.242)
+2026-03-10 21:57:10 INFO  com.revconnect.RevconnectApplication - RevConnect Application started successfully
+2026-03-10 21:57:40 INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-03-10 21:57:40 INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-03-10 21:57:40 INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2026-03-10 21:57:40 INFO  com.revconnect.controller.AuthController - Login page requested
+2026-03-10 21:58:04 INFO  com.revconnect.controller.AuthController - Login attempt for email: sandy@gmail.com
+2026-03-10 21:58:04 INFO  com.revconnect.service.impl.AuthServiceImpl - Login attempt for email sandy@gmail.com
+2026-03-10 21:58:04 INFO  com.revconnect.service.impl.AuthServiceImpl - Login successful for user 5952
+2026-03-10 21:58:04 INFO  com.revconnect.controller.AuthController - Login successful for email: sandy@gmail.com
+2026-03-10 21:58:04 INFO  com.revconnect.controller.DashboardController - Dashboard requested
+2026-03-10 21:58:04 INFO  com.revconnect.controller.DashboardController - Loading dashboard for user 5952
+2026-03-10 21:58:04 INFO  com.revconnect.controller.DashboardController - Unread notifications for user 5952 = 4
+2026-03-10 21:58:04 INFO  com.revconnect.controller.DashboardController - Followers: 1, Following: 0 for user 5952
+2026-03-10 21:58:04 INFO  com.revconnect.service.impl.ConnectionServiceImpl - Counting accepted connections for user 5952
+2026-03-10 21:58:04 INFO  com.revconnect.controller.DashboardController - Connections count for user 5952 = 1
+2026-03-10 21:58:04 INFO  com.revconnect.service.impl.PostServiceImpl - Loading global feed for user 5952
+2026-03-10 21:58:05 INFO  com.revconnect.service.impl.PostServiceImpl - Global feed loaded with 6 posts
+2026-03-10 21:58:05 INFO  com.revconnect.controller.DashboardController - Global feed loaded for user 5952
+2026-03-10 21:58:05 INFO  com.revconnect.service.impl.PostServiceImpl - Fetching trending hashtags
+2026-03-10 21:58:05 INFO  com.revconnect.controller.DashboardController - Trending hashtags loaded
+2026-03-10 21:58:05 INFO  com.revconnect.controller.PostController - Fetching saved posts for user 5952
+2026-03-10 21:58:05 INFO  com.revconnect.service.impl.SavedPostServiceImpl - Fetching saved posts for user 5952
+2026-03-10 21:58:05 INFO  com.revconnect.service.impl.SavedPostServiceImpl - User 5952 has 0 saved posts
+2026-03-10 21:58:05 INFO  com.revconnect.controller.PostController - Fetching saved posts for user 5952
+2026-03-10 21:58:05 INFO  com.revconnect.service.impl.SavedPostServiceImpl - Fetching saved posts for user 5952
+2026-03-10 21:58:05 INFO  com.revconnect.service.impl.SavedPostServiceImpl - User 5952 has 0 saved posts
+2026-03-10 21:58:05 INFO  com.revconnect.controller.PostController - Fetching global feed for user 5952
+2026-03-10 21:58:05 INFO  com.revconnect.service.impl.PostServiceImpl - Loading global feed for user 5952
+2026-03-10 21:58:05 INFO  com.revconnect.service.impl.PostServiceImpl - Global feed loaded with 6 posts
+2026-03-10 21:58:05 INFO  com.revconnect.controller.PostController - Fetching global feed for user 5952
+2026-03-10 21:58:05 INFO  com.revconnect.service.impl.PostServiceImpl - Loading global feed for user 5952
+2026-03-10 21:58:05 INFO  com.revconnect.service.impl.PostServiceImpl - Global feed loaded with 6 posts
+2026-03-10 21:58:09 INFO  com.revconnect.service.impl.ConnectionServiceImpl - Counting accepted connections for user 5952
+2026-03-10 21:58:09 INFO  com.revconnect.service.impl.PostServiceImpl - Fetching trending hashtags
+2026-03-10 21:58:09 WARN  org.thymeleaf.standard.processor.AbstractStandardFragmentInsertionTagProcessor - [THYMELEAF][http-nio-8080-exec-6][posts/my-posts] Deprecated unwrapped fragment expression "layout/left-sidebar :: leftSidebar(${user},${connectionsCount},${followersCount},${followingCount})" found in template posts/my-posts, line 28, col 18. Please use the complete syntax of fragment expressions instead ("~{layout/left-sidebar :: leftSidebar(${user},${connectionsCount},${followersCount},${followingCount})}"). The old, unwrapped syntax for fragment expressions will be removed in future versions of Thymeleaf.
+2026-03-10 21:58:09 WARN  org.thymeleaf.standard.processor.AbstractStandardFragmentInsertionTagProcessor - [THYMELEAF][http-nio-8080-exec-6][posts/my-posts] Deprecated unwrapped fragment expression "layout/right-sidebar :: rightSidebar" found in template posts/my-posts, line 42, col 18. Please use the complete syntax of fragment expressions instead ("~{layout/right-sidebar :: rightSidebar}"). The old, unwrapped syntax for fragment expressions will be removed in future versions of Thymeleaf.
+2026-03-10 21:58:09 INFO  com.revconnect.controller.PostController - Fetching saved posts for user 5952
+2026-03-10 21:58:09 INFO  com.revconnect.service.impl.SavedPostServiceImpl - Fetching saved posts for user 5952
+2026-03-10 21:58:09 INFO  com.revconnect.service.impl.SavedPostServiceImpl - User 5952 has 0 saved posts
+2026-03-10 21:58:09 INFO  com.revconnect.controller.PostController - Fetching posts for user 5952
+2026-03-10 21:58:09 INFO  com.revconnect.service.impl.PostServiceImpl - Fetching posts for user 5952
+2026-03-10 21:59:00 INFO  com.revconnect.service.impl.FollowServiceImpl - Fetching followers list for user 5952
+2026-03-10 21:59:03 INFO  com.revconnect.controller.DashboardController - Dashboard requested
+2026-03-10 21:59:03 INFO  com.revconnect.controller.DashboardController - Loading dashboard for user 5952
+2026-03-10 21:59:03 INFO  com.revconnect.controller.DashboardController - Unread notifications for user 5952 = 4
+2026-03-10 21:59:03 INFO  com.revconnect.controller.DashboardController - Followers: 1, Following: 0 for user 5952
+2026-03-10 21:59:03 INFO  com.revconnect.service.impl.ConnectionServiceImpl - Counting accepted connections for user 5952
+2026-03-10 21:59:03 INFO  com.revconnect.controller.DashboardController - Connections count for user 5952 = 1
+2026-03-10 21:59:03 INFO  com.revconnect.service.impl.PostServiceImpl - Loading global feed for user 5952
+2026-03-10 21:59:03 INFO  com.revconnect.service.impl.PostServiceImpl - Global feed loaded with 6 posts
+2026-03-10 21:59:03 INFO  com.revconnect.controller.DashboardController - Global feed loaded for user 5952
+2026-03-10 21:59:03 INFO  com.revconnect.service.impl.PostServiceImpl - Fetching trending hashtags
+2026-03-10 21:59:03 INFO  com.revconnect.controller.DashboardController - Trending hashtags loaded
+2026-03-10 21:59:03 INFO  com.revconnect.controller.PostController - Fetching saved posts for user 5952
+2026-03-10 21:59:03 INFO  com.revconnect.service.impl.SavedPostServiceImpl - Fetching saved posts for user 5952
+2026-03-10 21:59:03 INFO  com.revconnect.service.impl.SavedPostServiceImpl - User 5952 has 0 saved posts
+2026-03-10 21:59:03 INFO  com.revconnect.controller.PostController - Fetching saved posts for user 5952
+2026-03-10 21:59:03 INFO  com.revconnect.service.impl.SavedPostServiceImpl - Fetching saved posts for user 5952
+2026-03-10 21:59:03 INFO  com.revconnect.service.impl.SavedPostServiceImpl - User 5952 has 0 saved posts
+2026-03-10 21:59:03 INFO  com.revconnect.controller.PostController - Fetching global feed for user 5952
+2026-03-10 21:59:03 INFO  com.revconnect.service.impl.PostServiceImpl - Loading global feed for user 5952
+2026-03-10 21:59:03 INFO  com.revconnect.service.impl.PostServiceImpl - Global feed loaded with 6 posts
+2026-03-10 21:59:03 INFO  com.revconnect.controller.PostController - Fetching global feed for user 5952
+2026-03-10 21:59:03 INFO  com.revconnect.service.impl.PostServiceImpl - Loading global feed for user 5952
+2026-03-10 21:59:03 INFO  com.revconnect.service.impl.PostServiceImpl - Global feed loaded with 6 posts
+2026-03-10 21:59:14 INFO  com.revconnect.service.impl.FollowServiceImpl - Fetching followers list for user 5952
+2026-03-10 21:59:16 INFO  com.revconnect.controller.DashboardController - Dashboard requested
+2026-03-10 21:59:16 INFO  com.revconnect.controller.DashboardController - Loading dashboard for user 5952
+2026-03-10 21:59:16 INFO  com.revconnect.controller.DashboardController - Unread notifications for user 5952 = 4
+2026-03-10 21:59:16 INFO  com.revconnect.controller.DashboardController - Followers: 1, Following: 0 for user 5952
+2026-03-10 21:59:16 INFO  com.revconnect.service.impl.ConnectionServiceImpl - Counting accepted connections for user 5952
+2026-03-10 21:59:16 INFO  com.revconnect.controller.DashboardController - Connections count for user 5952 = 1
+2026-03-10 21:59:16 INFO  com.revconnect.service.impl.PostServiceImpl - Loading global feed for user 5952
+2026-03-10 21:59:17 INFO  com.revconnect.service.impl.PostServiceImpl - Global feed loaded with 6 posts
+2026-03-10 21:59:17 INFO  com.revconnect.controller.DashboardController - Global feed loaded for user 5952
+2026-03-10 21:59:17 INFO  com.revconnect.service.impl.PostServiceImpl - Fetching trending hashtags
+2026-03-10 21:59:17 INFO  com.revconnect.controller.DashboardController - Trending hashtags loaded
+2026-03-10 21:59:17 INFO  com.revconnect.controller.PostController - Fetching saved posts for user 5952
+2026-03-10 21:59:17 INFO  com.revconnect.service.impl.SavedPostServiceImpl - Fetching saved posts for user 5952
+2026-03-10 21:59:17 INFO  com.revconnect.service.impl.SavedPostServiceImpl - User 5952 has 0 saved posts
+2026-03-10 21:59:17 INFO  com.revconnect.controller.PostController - Fetching saved posts for user 5952
+2026-03-10 21:59:17 INFO  com.revconnect.service.impl.SavedPostServiceImpl - Fetching saved posts for user 5952
+2026-03-10 21:59:17 INFO  com.revconnect.service.impl.SavedPostServiceImpl - User 5952 has 0 saved posts
+2026-03-10 21:59:17 INFO  com.revconnect.controller.PostController - Fetching global feed for user 5952
+2026-03-10 21:59:17 INFO  com.revconnect.service.impl.PostServiceImpl - Loading global feed for user 5952
+2026-03-10 21:59:17 INFO  com.revconnect.service.impl.PostServiceImpl - Global feed loaded with 6 posts
+2026-03-10 21:59:17 INFO  com.revconnect.controller.PostController - Fetching global feed for user 5952
+2026-03-10 21:59:17 INFO  com.revconnect.service.impl.PostServiceImpl - Loading global feed for user 5952
+2026-03-10 21:59:17 INFO  com.revconnect.service.impl.PostServiceImpl - Global feed loaded with 6 posts
+2026-03-10 22:13:00 INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-03-10 22:13:00 INFO  com.zaxxer.hikari.HikariDataSource - RevConnectPool - Shutdown initiated...
+2026-03-10 22:13:00 INFO  com.zaxxer.hikari.HikariDataSource - RevConnectPool - Shutdown completed.
+2026-03-10 22:14:35 INFO  com.revconnect.RevconnectApplication - Starting RevConnect Application...
+2026-03-10 22:14:35 INFO  com.revconnect.RevconnectApplication - Starting RevConnect Application...
+2026-03-10 22:14:35 INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.1.Final
+2026-03-10 22:14:35 INFO  com.revconnect.RevconnectApplication - Starting RevconnectApplication using Java 21.0.8 with PID 18220 (D:\RevConnect\revconnect\target\classes started by allam sandeep in D:\RevConnect\revconnect)
+2026-03-10 22:14:35 INFO  com.revconnect.RevconnectApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-10 22:14:35 INFO  org.springframework.boot.devtools.restart.ChangeableUrls - The Class-Path manifest attribute in C:\Users\allam sandeep\.m2\repository\com\oracle\database\jdbc\ojdbc11\21.9.0.0\ojdbc11-21.9.0.0.jar referenced one or more files that do not exist: file:/C:/Users/allam%20sandeep/.m2/repository/com/oracle/database/jdbc/ojdbc11/21.9.0.0/oraclepki.jar
+2026-03-10 22:14:35 INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-03-10 22:14:35 INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-03-10 22:14:37 INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-03-10 22:14:37 INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 150 ms. Found 15 JPA repository interfaces.
+2026-03-10 22:14:38 INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-03-10 22:14:38 INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-10 22:14:38 INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-10 22:14:38 INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.20]
+2026-03-10 22:14:38 INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-10 22:14:38 INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2311 ms
+2026-03-10 22:14:38 INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-10 22:14:38 INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2026-03-10 22:14:38 INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-10 22:14:38 INFO  org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-03-10 22:14:38 INFO  com.zaxxer.hikari.HikariDataSource - RevConnectPool - Starting...
+2026-03-10 22:14:39 INFO  com.zaxxer.hikari.pool.HikariPool - RevConnectPool - Added connection oracle.jdbc.driver.T4CConnection@748c20ea
+2026-03-10 22:14:39 INFO  com.zaxxer.hikari.HikariDataSource - RevConnectPool - Start completed.
+2026-03-10 22:14:42 INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-10 22:14:44 INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-03-10 22:14:44 INFO  com.revconnect.security.config.SecurityConfig - BCryptPasswordEncoder bean created
+2026-03-10 22:14:44 INFO  org.springframework.data.jpa.repository.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-03-10 22:14:46 INFO  com.revconnect.security.jwt.JwtService - JwtService initialized
+2026-03-10 22:14:46 WARN  org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-10 22:14:46 INFO  com.revconnect.security.config.SecurityConfig - Configuring Spring Security filter chain
+2026-03-10 22:14:46 INFO  com.revconnect.security.config.SecurityConfig - Spring Security configuration completed
+2026-03-10 22:14:46 INFO  org.springframework.security.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@3809eb35, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@5a9d01e3, org.springframework.security.web.context.SecurityContextHolderFilter@47639148, org.springframework.security.web.header.HeaderWriterFilter@52d2d645, org.springframework.web.filter.CorsFilter@193c2976, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@5bbce98a, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@1a976d55, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@5c39e1cb, org.springframework.security.web.access.ExceptionTranslationFilter@50077450, org.springframework.security.web.access.intercept.AuthorizationFilter@12c6b5c]
+2026-03-10 22:14:47 INFO  org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2026-03-10 22:14:47 INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-10 22:14:47 INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path ''
+2026-03-10 22:14:47 INFO  com.revconnect.RevconnectApplication - Started RevconnectApplication in 11.663 seconds (process running for 12.808)
+2026-03-10 22:14:47 INFO  com.revconnect.RevconnectApplication - RevConnect Application started successfully
+2026-03-10 22:15:01 INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-03-10 22:15:01 INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-03-10 22:15:01 INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 4 ms
+2026-03-10 22:15:02 INFO  com.revconnect.controller.AuthController - Login page requested
+2026-03-10 22:15:17 INFO  com.revconnect.controller.AuthController - Login attempt for email: uday@gmail.com
+2026-03-10 22:15:17 INFO  com.revconnect.service.impl.AuthServiceImpl - Login attempt for email uday@gmail.com
+2026-03-10 22:15:17 INFO  com.revconnect.service.impl.AuthServiceImpl - Login successful for user 5954
+2026-03-10 22:15:17 INFO  com.revconnect.controller.AuthController - Login successful for email: uday@gmail.com
+2026-03-10 22:15:17 INFO  com.revconnect.controller.DashboardController - Dashboard requested
+2026-03-10 22:15:17 INFO  com.revconnect.controller.DashboardController - Loading dashboard for user 5954
+2026-03-10 22:15:17 INFO  com.revconnect.controller.DashboardController - Unread notifications for user 5954 = 2
+2026-03-10 22:15:17 INFO  com.revconnect.controller.DashboardController - Followers: 0, Following: 1 for user 5954
+2026-03-10 22:15:17 INFO  com.revconnect.service.impl.ConnectionServiceImpl - Counting accepted connections for user 5954
+2026-03-10 22:15:17 INFO  com.revconnect.controller.DashboardController - Connections count for user 5954 = 4
+2026-03-10 22:15:17 INFO  com.revconnect.service.impl.PostServiceImpl - Loading global feed for user 5954
+2026-03-10 22:15:18 INFO  com.revconnect.service.impl.PostServiceImpl - Global feed loaded with 9 posts
+2026-03-10 22:15:18 INFO  com.revconnect.controller.DashboardController - Global feed loaded for user 5954
+2026-03-10 22:15:18 INFO  com.revconnect.service.impl.PostServiceImpl - Fetching trending hashtags
+2026-03-10 22:15:18 INFO  com.revconnect.controller.DashboardController - Trending hashtags loaded
+2026-03-10 22:15:18 INFO  com.revconnect.controller.AuthController - Login attempt for email: uday@gmail.com
+2026-03-10 22:15:18 INFO  com.revconnect.service.impl.AuthServiceImpl - Login attempt for email uday@gmail.com
+2026-03-10 22:15:19 INFO  com.revconnect.service.impl.AuthServiceImpl - Login successful for user 5954
+2026-03-10 22:15:19 INFO  com.revconnect.controller.AuthController - Login successful for email: uday@gmail.com
+2026-03-10 22:15:19 INFO  com.revconnect.controller.DashboardController - Dashboard requested
+2026-03-10 22:15:19 INFO  com.revconnect.controller.DashboardController - Loading dashboard for user 5954
+2026-03-10 22:15:19 INFO  com.revconnect.controller.DashboardController - Unread notifications for user 5954 = 2
+2026-03-10 22:15:19 INFO  com.revconnect.controller.DashboardController - Followers: 0, Following: 1 for user 5954
+2026-03-10 22:15:19 INFO  com.revconnect.service.impl.ConnectionServiceImpl - Counting accepted connections for user 5954
+2026-03-10 22:15:19 INFO  com.revconnect.controller.DashboardController - Connections count for user 5954 = 4
+2026-03-10 22:15:19 INFO  com.revconnect.service.impl.PostServiceImpl - Loading global feed for user 5954
+2026-03-10 22:15:19 INFO  com.revconnect.service.impl.PostServiceImpl - Global feed loaded with 9 posts
+2026-03-10 22:15:19 INFO  com.revconnect.controller.DashboardController - Global feed loaded for user 5954
+2026-03-10 22:15:19 INFO  com.revconnect.service.impl.PostServiceImpl - Fetching trending hashtags
+2026-03-10 22:15:19 INFO  com.revconnect.controller.DashboardController - Trending hashtags loaded
+2026-03-10 22:15:19 INFO  com.revconnect.controller.PostController - Fetching saved posts for user 5954
+2026-03-10 22:15:19 INFO  com.revconnect.service.impl.SavedPostServiceImpl - Fetching saved posts for user 5954
+2026-03-10 22:15:19 INFO  com.revconnect.service.impl.SavedPostServiceImpl - User 5954 has 1 saved posts
+2026-03-10 22:15:20 INFO  com.revconnect.controller.PostController - Fetching saved posts for user 5954
+2026-03-10 22:15:20 INFO  com.revconnect.service.impl.SavedPostServiceImpl - Fetching saved posts for user 5954
+2026-03-10 22:15:20 INFO  com.revconnect.controller.PostController - Fetching global feed for user 5954
+2026-03-10 22:15:20 INFO  com.revconnect.service.impl.PostServiceImpl - Loading global feed for user 5954
+2026-03-10 22:15:20 INFO  com.revconnect.service.impl.SavedPostServiceImpl - User 5954 has 1 saved posts
+2026-03-10 22:15:20 INFO  com.revconnect.service.impl.PostServiceImpl - Global feed loaded with 9 posts
+2026-03-10 22:15:20 INFO  com.revconnect.controller.PostController - Fetching global feed for user 5954
+2026-03-10 22:15:20 INFO  com.revconnect.service.impl.PostServiceImpl - Loading global feed for user 5954
+2026-03-10 22:15:20 INFO  com.revconnect.service.impl.PostServiceImpl - Global feed loaded with 9 posts
+2026-03-10 22:15:22 INFO  com.revconnect.service.impl.ConnectionServiceImpl - Counting accepted connections for user 5954
+2026-03-10 22:15:22 INFO  com.revconnect.service.impl.PostServiceImpl - Fetching trending hashtags
+2026-03-10 22:15:23 WARN  org.thymeleaf.standard.processor.AbstractStandardFragmentInsertionTagProcessor - [THYMELEAF][http-nio-8080-exec-7][posts/my-posts] Deprecated unwrapped fragment expression "layout/left-sidebar :: leftSidebar(${user},${connectionsCount},${followersCount},${followingCount})" found in template posts/my-posts, line 28, col 18. Please use the complete syntax of fragment expressions instead ("~{layout/left-sidebar :: leftSidebar(${user},${connectionsCount},${followersCount},${followingCount})}"). The old, unwrapped syntax for fragment expressions will be removed in future versions of Thymeleaf.
+2026-03-10 22:15:23 WARN  org.thymeleaf.standard.processor.AbstractStandardFragmentInsertionTagProcessor - [THYMELEAF][http-nio-8080-exec-7][posts/my-posts] Deprecated unwrapped fragment expression "layout/right-sidebar :: rightSidebar" found in template posts/my-posts, line 42, col 18. Please use the complete syntax of fragment expressions instead ("~{layout/right-sidebar :: rightSidebar}"). The old, unwrapped syntax for fragment expressions will be removed in future versions of Thymeleaf.
+2026-03-10 22:15:23 INFO  com.revconnect.controller.PostController - Fetching posts for user 5954
+2026-03-10 22:15:23 INFO  com.revconnect.service.impl.PostServiceImpl - Fetching posts for user 5954
+2026-03-10 22:15:36 INFO  com.revconnect.controller.PostController - Delete post request for post 4959 by user 5954
+2026-03-10 22:15:36 INFO  com.revconnect.service.impl.PostServiceImpl - Deleting post 4959 by user 5954
+2026-03-10 22:15:36 INFO  com.revconnect.service.impl.PostServiceImpl - Post 4959 deleted successfully
+2026-03-10 22:15:36 INFO  com.revconnect.controller.PostController - Post 4959 deleted successfully
+2026-03-10 22:15:36 INFO  com.revconnect.service.impl.ConnectionServiceImpl - Counting accepted connections for user 5954
+2026-03-10 22:15:36 INFO  com.revconnect.service.impl.PostServiceImpl - Fetching trending hashtags
+2026-03-10 22:15:36 WARN  org.thymeleaf.standard.processor.AbstractStandardFragmentInsertionTagProcessor - [THYMELEAF][http-nio-8080-exec-4][posts/my-posts] Deprecated unwrapped fragment expression "layout/left-sidebar :: leftSidebar(${user},${connectionsCount},${followersCount},${followingCount})" found in template posts/my-posts, line 28, col 18. Please use the complete syntax of fragment expressions instead ("~{layout/left-sidebar :: leftSidebar(${user},${connectionsCount},${followersCount},${followingCount})}"). The old, unwrapped syntax for fragment expressions will be removed in future versions of Thymeleaf.
+2026-03-10 22:15:36 WARN  org.thymeleaf.standard.processor.AbstractStandardFragmentInsertionTagProcessor - [THYMELEAF][http-nio-8080-exec-4][posts/my-posts] Deprecated unwrapped fragment expression "layout/right-sidebar :: rightSidebar" found in template posts/my-posts, line 42, col 18. Please use the complete syntax of fragment expressions instead ("~{layout/right-sidebar :: rightSidebar}"). The old, unwrapped syntax for fragment expressions will be removed in future versions of Thymeleaf.
+2026-03-10 22:15:36 INFO  com.revconnect.controller.PostController - Fetching posts for user 5954
+2026-03-10 22:15:36 INFO  com.revconnect.service.impl.PostServiceImpl - Fetching posts for user 5954
+2026-03-10 22:15:41 INFO  com.revconnect.service.impl.PostServiceImpl - Fetching post 4958
+2026-03-10 22:15:44 INFO  com.revconnect.controller.PostController - Update post request for post 4958 by user 5954
+2026-03-10 22:15:44 INFO  com.revconnect.service.impl.PostServiceImpl - Updating post 4958 by user 5954
+2026-03-10 22:15:44 INFO  com.revconnect.service.impl.PostServiceImpl - Post 4958 updated successfully
+2026-03-10 22:15:44 INFO  com.revconnect.controller.PostController - Post 4958 updated successfully
+2026-03-10 22:15:47 INFO  com.revconnect.service.impl.ConnectionServiceImpl - Counting accepted connections for user 5954
+2026-03-10 22:15:47 INFO  com.revconnect.service.impl.PostServiceImpl - Fetching trending hashtags
+2026-03-10 22:15:47 WARN  org.thymeleaf.standard.processor.AbstractStandardFragmentInsertionTagProcessor - [THYMELEAF][http-nio-8080-exec-5][posts/my-posts] Deprecated unwrapped fragment expression "layout/left-sidebar :: leftSidebar(${user},${connectionsCount},${followersCount},${followingCount})" found in template posts/my-posts, line 28, col 18. Please use the complete syntax of fragment expressions instead ("~{layout/left-sidebar :: leftSidebar(${user},${connectionsCount},${followersCount},${followingCount})}"). The old, unwrapped syntax for fragment expressions will be removed in future versions of Thymeleaf.
+2026-03-10 22:15:47 WARN  org.thymeleaf.standard.processor.AbstractStandardFragmentInsertionTagProcessor - [THYMELEAF][http-nio-8080-exec-5][posts/my-posts] Deprecated unwrapped fragment expression "layout/right-sidebar :: rightSidebar" found in template posts/my-posts, line 42, col 18. Please use the complete syntax of fragment expressions instead ("~{layout/right-sidebar :: rightSidebar}"). The old, unwrapped syntax for fragment expressions will be removed in future versions of Thymeleaf.
+2026-03-10 22:15:47 INFO  com.revconnect.controller.PostController - Fetching posts for user 5954
+2026-03-10 22:15:47 INFO  com.revconnect.service.impl.PostServiceImpl - Fetching posts for user 5954
+2026-03-10 22:15:51 INFO  com.revconnect.controller.PostController - Pin post request for post 4958 by user 5954
+2026-03-10 22:15:51 INFO  com.revconnect.service.impl.PostServiceImpl - Pinning post 4958 for user 5954
+2026-03-10 22:15:51 INFO  com.revconnect.controller.PostController - Fetching posts for user 5954
+2026-03-10 22:15:51 INFO  com.revconnect.service.impl.PostServiceImpl - Fetching posts for user 5954
+2026-03-10 22:15:55 INFO  com.revconnect.controller.PostController - Unpin post request for post 4958 by user 5954
+2026-03-10 22:15:55 INFO  com.revconnect.service.impl.PostServiceImpl - Unpinning post 4958
+2026-03-10 22:15:55 INFO  com.revconnect.controller.PostController - Fetching posts for user 5954
+2026-03-10 22:15:55 INFO  com.revconnect.service.impl.PostServiceImpl - Fetching posts for user 5954
+2026-03-10 22:16:00 INFO  com.revconnect.controller.PostController - Pin post request for post 4957 by user 5954
+2026-03-10 22:16:00 INFO  com.revconnect.service.impl.PostServiceImpl - Pinning post 4957 for user 5954
+2026-03-10 22:16:00 INFO  com.revconnect.controller.PostController - Fetching posts for user 5954
+2026-03-10 22:16:00 INFO  com.revconnect.service.impl.PostServiceImpl - Fetching posts for user 5954
+2026-03-10 22:16:04 INFO  com.revconnect.controller.PostController - Unpin post request for post 4957 by user 5954
+2026-03-10 22:16:04 INFO  com.revconnect.service.impl.PostServiceImpl - Unpinning post 4957
+2026-03-10 22:16:04 INFO  com.revconnect.controller.PostController - Fetching posts for user 5954
+2026-03-10 22:16:04 INFO  com.revconnect.service.impl.PostServiceImpl - Fetching posts for user 5954
+2026-03-10 22:16:48 INFO  com.revconnect.service.impl.UserServiceImpl - Fetching user ID for login value: uday@gmail.com
+2026-03-10 22:16:48 INFO  com.revconnect.service.impl.UserServiceImpl - Username not found, trying email lookup for uday@gmail.com
+2026-03-10 22:16:48 INFO  com.revconnect.service.impl.UserServiceImpl - User found with ID 5954
+2026-03-10 22:16:48 INFO  com.revconnect.service.impl.UserServiceImpl - Fetching username for user ID 5954
+2026-03-10 22:16:48 INFO  com.revconnect.service.impl.UserServiceImpl - Username found for user ID 5954 is uday
+2026-03-10 22:16:48 INFO  com.revconnect.service.impl.PostServiceImpl - Fetching posts for user 5954
+2026-03-10 22:16:48 INFO  com.revconnect.service.impl.PostServiceImpl - Counting posts for user 5954
+2026-03-10 22:16:48 INFO  com.revconnect.controller.PostController - Fetching posts for user 5954
+2026-03-10 22:16:48 INFO  com.revconnect.service.impl.PostServiceImpl - Fetching posts for user 5954
+2026-03-10 22:16:54 INFO  com.revconnect.controller.DashboardController - Dashboard requested
+2026-03-10 22:16:54 INFO  com.revconnect.controller.DashboardController - Loading dashboard for user 5954
+2026-03-10 22:16:54 INFO  com.revconnect.controller.DashboardController - Unread notifications for user 5954 = 2
+2026-03-10 22:16:54 INFO  com.revconnect.controller.DashboardController - Followers: 0, Following: 1 for user 5954
+2026-03-10 22:16:54 INFO  com.revconnect.service.impl.ConnectionServiceImpl - Counting accepted connections for user 5954
+2026-03-10 22:16:54 INFO  com.revconnect.controller.DashboardController - Connections count for user 5954 = 4
+2026-03-10 22:16:54 INFO  com.revconnect.service.impl.PostServiceImpl - Loading global feed for user 5954
+2026-03-10 22:16:55 INFO  com.revconnect.service.impl.PostServiceImpl - Global feed loaded with 8 posts
+2026-03-10 22:16:55 INFO  com.revconnect.controller.DashboardController - Global feed loaded for user 5954
+2026-03-10 22:16:55 INFO  com.revconnect.service.impl.PostServiceImpl - Fetching trending hashtags
+2026-03-10 22:16:55 INFO  com.revconnect.controller.DashboardController - Trending hashtags loaded
+2026-03-10 22:16:55 INFO  com.revconnect.controller.PostController - Fetching saved posts for user 5954
+2026-03-10 22:16:55 INFO  com.revconnect.service.impl.SavedPostServiceImpl - Fetching saved posts for user 5954
+2026-03-10 22:16:55 INFO  com.revconnect.service.impl.SavedPostServiceImpl - User 5954 has 1 saved posts
+2026-03-10 22:16:55 INFO  com.revconnect.controller.PostController - Fetching saved posts for user 5954
+2026-03-10 22:16:55 INFO  com.revconnect.service.impl.SavedPostServiceImpl - Fetching saved posts for user 5954
+2026-03-10 22:16:55 INFO  com.revconnect.controller.PostController - Fetching global feed for user 5954
+2026-03-10 22:16:55 INFO  com.revconnect.service.impl.PostServiceImpl - Loading global feed for user 5954
+2026-03-10 22:16:55 INFO  com.revconnect.service.impl.SavedPostServiceImpl - User 5954 has 1 saved posts
+2026-03-10 22:16:55 INFO  com.revconnect.service.impl.PostServiceImpl - Global feed loaded with 8 posts
+2026-03-10 22:16:55 INFO  com.revconnect.controller.PostController - Fetching global feed for user 5954
+2026-03-10 22:16:55 INFO  com.revconnect.service.impl.PostServiceImpl - Loading global feed for user 5954
+2026-03-10 22:16:55 INFO  com.revconnect.service.impl.PostServiceImpl - Global feed loaded with 8 posts
+2026-03-10 22:17:01 INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-03-10 22:17:01 INFO  com.zaxxer.hikari.HikariDataSource - RevConnectPool - Shutdown initiated...
+2026-03-10 22:17:01 INFO  com.zaxxer.hikari.HikariDataSource - RevConnectPool - Shutdown completed.
