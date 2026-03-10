@@ -6,6 +6,9 @@ import com.revconnect.service.FollowService;
 import com.revconnect.service.NotificationService;
 import com.revconnect.service.PostService;
 
+import com.revconnect.entity.UserProfile;
+import com.revconnect.repository.UserProfileRepository;
+
 import jakarta.servlet.http.HttpSession;
 
 import lombok.RequiredArgsConstructor;
@@ -33,6 +36,9 @@ public class DashboardController {
     private final FollowService followService;
     private final ConnectionService connectionService;
 
+    // Profile pic update
+    private final UserProfileRepository userProfileRepository;
+
     @GetMapping("/dashboard")
     public String dashboard(HttpSession session, Model model) {
 
@@ -51,6 +57,13 @@ public class DashboardController {
         logger.info("Loading dashboard for user {}", user.getUserId());
 
         model.addAttribute("user", user);
+
+        //new code added
+        UserProfile userProfile = userProfileRepository
+                .findByUser_UserId(user.getUserId())
+                .orElse(null);
+
+        model.addAttribute("userProfile", userProfile);
 
         // 🔔 Notification count
         long unreadCount =
