@@ -396,7 +396,7 @@ public class PostServiceImpl implements PostService {
                                  List<TagResponse> tags) {
 
         PostResponse response = postMapper.toPostResponse(post, hashtags, tags);
-
+        response.setUserId(post.getUser().getUserId());
         response.setLikeCount(
                 postLikeRepository.countByPost_PostId(post.getPostId())
         );

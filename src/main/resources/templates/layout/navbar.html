@@ -1,4 +1,4 @@
-<nav th:fragment="navbar(user)"
+<nav th:fragment="navbar(user,currentPage)"
      class="navbar navbar-expand-lg sticky-top" xmlns:th="http://www.w3.org/1999/xhtml">
 
     <div class="container-fluid d-flex align-items-center">
@@ -27,42 +27,64 @@
 
             <!-- HOME -->
             <li class="nav-item text-center mx-3">
-                <a th:href="@{/dashboard}" class="nav-link">
+
+                <a th:href="@{/dashboard}"
+                   class="nav-link"
+                   th:classappend="${currentPage == 'dashboard'} ? 'active-nav'">
+
                     <i class="bi bi-house fs-5"></i>
                     <div style="font-size:12px;">Home</div>
+
                 </a>
+
             </li>
 
             <!-- NETWORK -->
             <li class="nav-item text-center mx-3">
-                <a th:href="@{/network}" class="nav-link">
+
+                <a th:href="@{/network}"
+                   class="nav-link"
+                   th:classappend="${currentPage == 'network'} ? 'active-nav'">
+
                     <i class="bi bi-people fs-5"></i>
                     <div style="font-size:12px;">Network</div>
+
                 </a>
+
             </li>
 
             <!-- NOTIFICATIONS -->
             <li class="nav-item text-center mx-3">
+
                 <a th:href="@{/notifications}"
-                   class="nav-link position-relative notification-link">
+                   class="nav-link position-relative notification-link"
+                   th:classappend="${currentPage == 'notifications'} ? 'active-nav'">
 
                     <i class="bi bi-bell fs-5"></i>
 
                     <span class="notification-count"
                           th:if="${unreadCount != null and unreadCount > 0}"
                           th:text="${unreadCount}">
-                    </span>
+        </span>
 
                     <div style="font-size:12px;">Notifications</div>
+
                 </a>
+
             </li>
 
             <!-- PROFILE -->
             <li class="nav-item text-center mx-3">
-                <a th:href="@{/profile}" class="nav-link">
+
+                <a th:href="@{/profile}"
+                   class="nav-link"
+                   th:classappend="${currentPage == 'profile'} ? 'active-nav'">
+
                     <i class="bi bi-person-circle fs-5"></i>
                     <div style="font-size:12px;" th:text="${user.username}"></div>
+
                 </a>
+
             </li>
 
             <!-- LOGOUT -->

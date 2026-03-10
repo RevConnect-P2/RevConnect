@@ -24,7 +24,8 @@
 
 <!-- NAVBAR -->
 
-<div th:replace="~{layout/navbar :: navbar(${session.loggedUser})}"></div>
+<!--<div th:replace="~{layout/navbar :: navbar(${session.loggedUser})}"></div>-->
+<div th:replace="~{layout/navbar :: navbar(${session.loggedUser}, 'notifications')}"></div>
 
 <div class="container mt-4">
 

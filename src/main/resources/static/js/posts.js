@@ -200,6 +200,7 @@ function createFeedPostCard(post, options = {}) {
 
                </div>
 
+
                ${options.showPinned && post.pinned
                    ? `<span class="text-warning">📌</span>`
                    : ""}
@@ -280,7 +281,7 @@ function createFeedPostCard(post, options = {}) {
         <i class="bi bi-chat"></i>
         <span class="ms-1">Comment</span>
 
-        <span class="comment-count ms-1">
+        <span id="comment-count-${post.postId}" class="comment-count ms-1">
             ${post.commentCount || 0}
         </span>
 
@@ -361,15 +362,31 @@ function createMyPostCard(post) {
     card.innerHTML = `
         <div class="card-body">
 
-            <div class="d-flex justify-content-between align-items-start">
-                <div>
-                    <strong>${post.username}</strong>
-                    ${post.pinned ? `<span class="ms-2 text-warning">📌 Pinned</span>` : ""}
-                </div>
+           <div class="d-flex align-items-center mb-2">
+
+               <!-- Avatar -->
+               <div class="post-avatar me-2">
+                   ${(post.username || "U").charAt(0).toUpperCase()}
+               </div>
+
+               <div class="flex-grow-1">
+
+                   <div class="post-username">
+                       ${post.username}
+                       ${post.pinned ? `<i class="bi bi-pin-angle-fill text-danger ms-1"></i>` : ""}
+                   </div>
+
+                   <div class="post-time">
+                       ${formatDate(post.createdAt)}
+                   </div>
+
+               </div>
+
+
 
                 <!-- 3 DOT MENU -->
                 <div class="dropdown">
-                    <button class="btn btn-sm btn-light" data-bs-toggle="dropdown">
+                    <button class="btn btn-sm post-menu-btn" data-bs-toggle="dropdown">
                         <i class="bi bi-three-dots"></i>
                     </button>
 
@@ -459,9 +476,17 @@ function fetchFeedPosts() {
 //            });
 //        })
          .then(posts => {
-                    allFeedPosts = posts;
-                    renderFeedPosts();
-                })
+
+             posts.sort((a, b) => {
+                 if (a.pinned === b.pinned) {
+                     return new Date(b.createdAt) - new Date(a.createdAt);
+                 }
+                 return b.pinned - a.pinned;
+             });
+
+             allFeedPosts = posts;
+             renderFeedPosts();
+         })
         .catch(err => {
             console.error(err);
             feedContainer.innerHTML =
@@ -618,8 +643,7 @@ function fetchMyPostsPage() {
     container.innerHTML =
         "<p class='text-center text-muted'>Loading your posts...</p>";
 
-    fetchSavedPosts()
-        .then(() => fetch(`/posts/user?userId=${currentUser.userId}`))
+    fetch(`/posts/user?userId=${currentUser.userId}`)
         .then(res => {
             if (!res.ok) throw new Error("Failed to load my posts");
             return res.json();
@@ -634,6 +658,7 @@ function fetchMyPostsPage() {
                 return;
             }
 
+            // pinned first
             posts.sort((a, b) => {
                 if (a.pinned === b.pinned) {
                     return new Date(b.createdAt) - new Date(a.createdAt);
@@ -643,14 +668,13 @@ function fetchMyPostsPage() {
 
             posts.forEach(post => {
 
-                const card = createFeedPostCard(post, {
-                    showPinned: true,
-                    isSaved: savedPostIds.has(post.postId)
-                });
+                const card = createMyPostCard(post);   // ✅ correct card
 
                 container.appendChild(card);
 
             });
+
+
 
         })
         .catch(err => {
@@ -664,6 +688,7 @@ function fetchMyPostsPage() {
 // MY POST ACTIONS
 // ===============================
 function pinPostAction(postId) {
+
     fetch(`/posts/${postId}/pin?userId=${currentUser.userId}`, {
         method: "PUT"
     })
@@ -672,12 +697,26 @@ function pinPostAction(postId) {
         return res.json();
     })
     .then(() => {
-        fetchMyPostsPage(); // ✅ FIXED
+
+        if (document.getElementById("myPostsContainer")) {
+            fetchMyPostsPage();
+        }
+
+        if (document.getElementById("feedContainer")) {
+            fetchFeedPosts();
+        }
+
+        if (document.getElementById("profilePostsContainer")) {
+            fetchProfilePosts();
+        }
+
     })
     .catch(err => alert(err.message));
 }
 
+
 function unpinPostAction(postId) {
+
     fetch(`/posts/${postId}/unpin?userId=${currentUser.userId}`, {
         method: "PUT"
     })
@@ -686,10 +725,25 @@ function unpinPostAction(postId) {
         return res.json();
     })
     .then(() => {
-        fetchMyPostsPage(); // ✅ FIXED
+
+        if (document.getElementById("myPostsContainer")) {
+            fetchMyPostsPage();
+        }
+
+        if (document.getElementById("feedContainer")) {
+            fetchFeedPosts();
+        }
+
+        if (document.getElementById("profilePostsContainer")) {
+            fetchProfilePosts();
+        }
+
     })
     .catch(err => alert(err.message));
 }
+
+
+
 function deletePostAction(postId) {
 
     if (!confirm("Delete this post?")) return;
@@ -872,11 +926,11 @@ function submitCommentAction(postId) {
         fetchComments(postId);
 
         // Update comment count safely
-        const commentCol = input.closest(".row")
-            .querySelector(".post-action:nth-child(2) span");
+        const countSpan = document.getElementById(`comment-count-${postId}`);
 
-        let currentCount = parseInt(commentCol.innerText) || 0;
-        commentCol.innerText = currentCount + 1;
+        if (countSpan) {
+            countSpan.innerText = parseInt(countSpan.innerText) + 1;
+        }
 
     })
     .catch(err => console.error(err));
@@ -1011,6 +1065,13 @@ function fetchProfilePosts() {
             return res.json();
         })
         .then(posts => {
+
+            posts.sort((a, b) => {
+                if (a.pinned === b.pinned) {
+                    return new Date(b.createdAt) - new Date(a.createdAt);
+                }
+                return b.pinned - a.pinned;
+            });
 
             container.innerHTML = "";
 
