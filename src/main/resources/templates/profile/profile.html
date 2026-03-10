@@ -21,9 +21,9 @@
 <body>
 
 <!-- NAVBAR -->
+<div th:replace="~{layout/navbar :: navbar(${session.loggedUser}, 'profile')}"></div>
 
-
-<div th:replace="~{layout/navbar :: navbar(${session.loggedUser})}"></div>
+<!--<div th:replace="~{layout/navbar :: navbar(${session.loggedUser})}"></div>-->
 
 <div class="profile-container mt-4">
 

@@ -48,3 +48,19 @@
     background: #333;
     color: white;
 }
+
+/* Styling for datetime-local input */
+input[type="datetime-local"] {
+    background-color: #0f0f0f !important;
+    border: 1px solid #1f1f1f !important;
+    color: white !important;
+    padding: 6px 12px;
+    border-radius: 6px;
+    width: 100%;
+}
+
+/* Ensure the calendar icon is visible in dark mode */
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    filter: invert(1) brightness(1.5);
+    cursor: pointer;
+}
