@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+
+    <Properties>
+        <Property name="LOG_PATH">logs</Property>
+        <Property name="LOG_FILE">revconnect.log</Property>
+    </Properties>
+
+    <Appenders>
+
+        <!-- Console Logs -->
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout
+                    pattern="%d{yyyy-MM-dd HH:mm:ss} %-5level %logger - %msg%n"/>
+        </Console>
+
+        <!-- File Logs -->
+        <RollingFile name="File"
+                     fileName="${LOG_PATH}/${LOG_FILE}"
+                     filePattern="${LOG_PATH}/revconnect-%d{yyyy-MM-dd}.log">
+
+            <PatternLayout
+                    pattern="%d{yyyy-MM-dd HH:mm:ss} %-5level %logger - %msg%n"/>
+
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1"/>
+            </Policies>
+
+        </RollingFile>
+
+    </Appenders>
+
+    <Loggers>
+
+        <!-- Application Logs -->
+        <Root level="info">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="File"/>
+        </Root>
+
+    </Loggers>
+
+</Configuration>

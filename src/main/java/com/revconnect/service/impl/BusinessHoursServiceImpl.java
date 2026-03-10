@@ -7,14 +7,22 @@ import com.revconnect.enums.ProfileType;
 import com.revconnect.exception.ResourceNotFoundException;
 import com.revconnect.repository.BusinessHoursRepository;
 import com.revconnect.repository.UserProfileRepository;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+// LOGGER IMPORTS
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 @Service
 @RequiredArgsConstructor
 public class BusinessHoursServiceImpl {
+
+    private static final Logger logger =
+            LogManager.getLogger(BusinessHoursServiceImpl.class);
 
     private final UserProfileRepository userProfileRepository;
     private final BusinessHoursRepository businessHoursRepository;
@@ -24,18 +32,29 @@ public class BusinessHoursServiceImpl {
             List<BusinessHoursRequest> requestList
     ) {
 
+        logger.info("User {} attempting to add business hours", userId);
+
         UserProfile profile = userProfileRepository
                 .findByUser_UserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Profile not found"));
+                .orElseThrow(() -> {
+                    logger.error("Profile not found for user {}", userId);
+                    return new ResourceNotFoundException("Profile not found");
+                });
 
         // ✅ Only BUSINESS profiles allowed
         if (profile.getProfileType() != ProfileType.BUSINESS) {
+
+            logger.warn("User {} tried to add business hours but profile type is {}",
+                    userId, profile.getProfileType());
+
             throw new IllegalStateException(
                     "Business hours allowed only for BUSINESS profiles"
             );
         }
 
-        // Remove old hours (safe replace)
+        // Remove old hours
+        logger.info("Deleting existing business hours for profile {}", profile.getProfileId());
+
         businessHoursRepository.deleteByProfile_ProfileId(
                 profile.getProfileId()
         );
@@ -51,6 +70,13 @@ public class BusinessHoursServiceImpl {
                     .build();
 
             businessHoursRepository.save(hours);
+
+            logger.debug("Saved business hours for {} : {} - {}",
+                    req.getDayOfWeek(),
+                    req.getOpenTime(),
+                    req.getCloseTime());
         }
+
+        logger.info("Business hours successfully saved for user {}", userId);
     }
 }

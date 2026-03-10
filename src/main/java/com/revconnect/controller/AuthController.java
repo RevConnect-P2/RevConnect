@@ -1,4 +1,3 @@
-
 package com.revconnect.controller;
 
 import com.revconnect.dto.request.LoginRequest;
@@ -10,6 +9,7 @@ import jakarta.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -17,9 +17,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+// ✅ LOGGER IMPORTS
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @Controller
 public class AuthController {
+
+    // ✅ LOGGER OBJECT
+    private static final Logger logger = LogManager.getLogger(AuthController.class);
 
     @Autowired
     private AuthService authService;
@@ -33,6 +39,8 @@ public class AuthController {
     @GetMapping("/register")
     public String registerPage(Model model)
     {
+
+        logger.info("Register page requested");
 
         model.addAttribute("registerRequest", new RegisterRequest());
 
@@ -54,7 +62,11 @@ public class AuthController {
 
         try {
 
+            logger.info("Register request received for email: {}", request.getEmail());
+
             authService.register(request);
+
+            logger.info("User registered successfully: {}", request.getEmail());
 
             model.addAttribute("success",
                     "Registration successful. Please login.");
@@ -65,6 +77,8 @@ public class AuthController {
 
         catch (RuntimeException e)
         {
+
+            logger.error("Registration failed for email: {}", request.getEmail(), e);
 
             model.addAttribute("error",
                     e.getMessage());
@@ -85,6 +99,8 @@ public class AuthController {
     public String loginPage(Model model)
     {
 
+        logger.info("Login page requested");
+
         model.addAttribute("loginRequest", new LoginRequest());
 
         return "auth/login";
@@ -96,6 +112,7 @@ public class AuthController {
     // ========================
     // LOGIN USER
     // ========================
+
     @PostMapping("/login")
     public String login(
             @ModelAttribute LoginRequest request,
@@ -105,7 +122,11 @@ public class AuthController {
 
         try {
 
+            logger.info("Login attempt for email: {}", request.getEmail());
+
             User user = authService.login(request);
+
+            logger.info("Login successful for email: {}", request.getEmail());
 
 
             UsernamePasswordAuthenticationToken authToken =
@@ -124,7 +145,6 @@ public class AuthController {
             );
 
 
-            // ✅ ADD THIS LINE
             session.setAttribute("loggedUser", user);
 
 
@@ -135,6 +155,8 @@ public class AuthController {
         catch (RuntimeException e)
         {
 
+            logger.error("Login failed for email: {}", request.getEmail(), e);
+
             model.addAttribute("error", e.getMessage());
 
             return "auth/login";
@@ -143,38 +165,42 @@ public class AuthController {
 
     }
 
+
+
     // ========================
     // LOGOUT
     // ========================
-
-    // ========================
-// LOGOUT
-// ========================
 
     @GetMapping("/logout")
     public String logout(HttpSession session, Model model)
     {
 
-        // Clear Spring Security context
+        logger.info("User logout requested");
+
         SecurityContextHolder.clearContext();
 
-        // Invalidate session
         session.invalidate();
 
-        // Send success message to login page
         model.addAttribute("success", "Logout Successful");
 
-        // Return login page directly (NOT redirect)
+        logger.info("User logged out successfully");
+
         return "auth/login";
 
     }
+
+
 
     // SHOW FORGOT PAGE
     @GetMapping("/forgot-password")
     public String forgotPasswordPage()
     {
+
+        logger.info("Forgot password page requested");
+
         return "auth/forgot-password";
     }
+
 
 
     // GET QUESTION FOR FORGET
@@ -185,6 +211,8 @@ public class AuthController {
 
         try
         {
+
+            logger.info("Security question requested for email: {}", email);
 
             User user = authService.findByEmail(email);
 
@@ -200,6 +228,8 @@ public class AuthController {
         catch (RuntimeException e)
         {
 
+            logger.error("Failed to fetch security question for email: {}", email, e);
+
             model.addAttribute("error",
                     e.getMessage());
 
@@ -208,6 +238,7 @@ public class AuthController {
         }
 
     }
+
 
 
     // RESET PASSWORD
@@ -221,7 +252,11 @@ public class AuthController {
         try
         {
 
+            logger.info("Password reset attempt for email: {}", email);
+
             authService.resetPassword(email, answer, newPassword);
+
+            logger.info("Password reset successful for email: {}", email);
 
             model.addAttribute("success",
                     "Password reset successful. Please login.");
@@ -232,6 +267,8 @@ public class AuthController {
 
         catch (RuntimeException e)
         {
+
+            logger.error("Password reset failed for email: {}", email, e);
 
             model.addAttribute("error",
                     e.getMessage());

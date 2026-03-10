@@ -16,9 +16,16 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+// LOGGER IMPORTS
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 @Service
 @RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
+
+    private static final Logger logger =
+            LogManager.getLogger(CommentServiceImpl.class);
 
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
@@ -31,6 +38,8 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void addComment(Long postId, String email, String commentText) {
 
+        logger.info("User {} adding comment to post {}", email, postId);
+
         User user = getUserByEmail(email);
         Post post = getPostById(postId);
 
@@ -42,6 +51,8 @@ public class CommentServiceImpl implements CommentService {
 
         commentRepository.save(comment);
 
+        logger.info("Comment added successfully by {} on post {}", email, postId);
+
         createCommentNotification(user, post, commentText);
     }
 
@@ -50,6 +61,8 @@ public class CommentServiceImpl implements CommentService {
     // =====================================
     @Override
     public List<CommentResponse> getCommentsByPostId(Long postId) {
+
+        logger.info("Fetching comments for post {}", postId);
 
         return commentRepository.findByPost_PostId(postId)
                 .stream()
@@ -68,11 +81,19 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void deleteComment(Long commentId, String email) {
 
+        logger.info("User {} attempting to delete comment {}", email, commentId);
+
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new RuntimeException("Comment not found"));
+                .orElseThrow(() -> {
+                    logger.error("Comment {} not found", commentId);
+                    return new RuntimeException("Comment not found");
+                });
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> {
+                    logger.error("User {} not found", email);
+                    return new RuntimeException("User not found");
+                });
 
         boolean isCommentOwner =
                 comment.getUser().getUserId().equals(user.getUserId());
@@ -81,10 +102,15 @@ public class CommentServiceImpl implements CommentService {
                 comment.getPost().getUser().getUserId().equals(user.getUserId());
 
         if(!isCommentOwner && !isPostOwner){
+
+            logger.warn("User {} attempted unauthorized deletion of comment {}", email, commentId);
+
             throw new RuntimeException("You cannot delete this comment");
         }
 
         commentRepository.delete(comment);
+
+        logger.info("Comment {} deleted by user {}", commentId, email);
     }
 
     // =====================================
@@ -93,14 +119,24 @@ public class CommentServiceImpl implements CommentService {
 
     private User getUserByEmail(String email) {
 
+        logger.debug("Fetching user by email {}", email);
+
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> {
+                    logger.error("User not found with email {}", email);
+                    return new RuntimeException("User not found");
+                });
     }
 
     private Post getPostById(Long postId) {
 
+        logger.debug("Fetching post {}", postId);
+
         return postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
+                .orElseThrow(() -> {
+                    logger.error("Post {} not found", postId);
+                    return new RuntimeException("Post not found");
+                });
     }
 
     private void createCommentNotification(User sender, Post post, String commentText) {
@@ -110,6 +146,8 @@ public class CommentServiceImpl implements CommentService {
 
         // prevent self notification
         if (!senderId.equals(receiverId)) {
+
+            logger.debug("Sending comment notification from {} to {}", senderId, receiverId);
 
             notificationService.createNotification(
                     senderId,

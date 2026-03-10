@@ -7,10 +7,18 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+// ✅ LOGGER IMPORTS
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 @RestController
 @RequestMapping("/follow")
 @RequiredArgsConstructor
 public class FollowController {
+
+    // ✅ LOGGER OBJECT
+    private static final Logger logger =
+            LogManager.getLogger(FollowController.class);
 
     private final FollowService followService;
 
@@ -21,7 +29,11 @@ public class FollowController {
     public String followUser(@PathVariable Long followerId,
                              @PathVariable Long followingId) {
 
+        logger.info("User {} attempting to follow user {}", followerId, followingId);
+
         followService.followUser(followerId, followingId);
+
+        logger.info("User {} successfully followed user {}", followerId, followingId);
 
         return "User followed successfully";
     }
@@ -33,7 +45,11 @@ public class FollowController {
     public String unfollowUser(@PathVariable Long followerId,
                                @PathVariable Long followingId) {
 
+        logger.info("User {} attempting to unfollow user {}", followerId, followingId);
+
         followService.unfollowUser(followerId, followingId);
+
+        logger.info("User {} successfully unfollowed user {}", followerId, followingId);
 
         return "User unfollowed successfully";
     }
@@ -45,7 +61,13 @@ public class FollowController {
     public boolean toggleFollow(@PathVariable Long followerId,
                                 @PathVariable Long followingId) {
 
-        return followService.toggleFollow(followerId, followingId);
+        logger.info("Toggle follow request: follower {} -> following {}", followerId, followingId);
+
+        boolean result = followService.toggleFollow(followerId, followingId);
+
+        logger.info("Toggle follow result for {} -> {} : {}", followerId, followingId, result);
+
+        return result;
     }
 
     // =========================
@@ -53,6 +75,8 @@ public class FollowController {
     // =========================
     @GetMapping("/followers/count/{userId}")
     public long getFollowersCount(@PathVariable Long userId) {
+
+        logger.info("Fetching followers count for user {}", userId);
 
         return followService.getFollowersCount(userId);
     }
@@ -63,6 +87,8 @@ public class FollowController {
     @GetMapping("/following/count/{userId}")
     public long getFollowingCount(@PathVariable Long userId) {
 
+        logger.info("Fetching following count for user {}", userId);
+
         return followService.getFollowingCount(userId);
     }
 
@@ -72,6 +98,8 @@ public class FollowController {
     @GetMapping("/followers/{userId}")
     public List<Follow> getFollowers(@PathVariable Long userId) {
 
+        logger.info("Fetching followers list for user {}", userId);
+
         return followService.getFollowers(userId);
     }
 
@@ -80,6 +108,8 @@ public class FollowController {
     // =========================
     @GetMapping("/following/{userId}")
     public List<Follow> getFollowing(@PathVariable Long userId) {
+
+        logger.info("Fetching following list for user {}", userId);
 
         return followService.getFollowing(userId);
     }

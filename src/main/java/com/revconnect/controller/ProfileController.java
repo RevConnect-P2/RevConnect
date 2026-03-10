@@ -9,10 +9,18 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+// ✅ LOGGER IMPORTS
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 @RestController
 @RequestMapping("/profiles")
 @RequiredArgsConstructor
 public class ProfileController {
+
+    // ✅ LOGGER OBJECT
+    private static final Logger logger =
+            LogManager.getLogger(ProfileController.class);
 
     private final ProfileService profileService;
 
@@ -22,7 +30,15 @@ public class ProfileController {
             @PathVariable Long userId,
             @RequestBody ProfileCreateRequest request
     ) {
-        return profileService.createProfile(userId, request);
+
+        logger.info("Create profile request received for user {}", userId);
+
+        ProfileResponse response =
+                profileService.createProfile(userId, request);
+
+        logger.info("Profile created successfully for user {}", userId);
+
+        return response;
     }
 
     // ================= UPDATE PROFILE =================
@@ -31,12 +47,23 @@ public class ProfileController {
             @PathVariable Long userId,
             @RequestBody ProfileUpdateRequest request
     ) {
-        return profileService.updateProfile(userId, request);
+
+        logger.info("Update profile request for user {}", userId);
+
+        ProfileResponse response =
+                profileService.updateProfile(userId, request);
+
+        logger.info("Profile updated successfully for user {}", userId);
+
+        return response;
     }
 
     // ================= GET PROFILE =================
     @GetMapping("/{userId}")
     public ProfileResponse getProfile(@PathVariable Long userId) {
+
+        logger.info("Fetching profile for user {}", userId);
+
         return profileService.getProfile(userId);
     }
 
@@ -45,6 +72,14 @@ public class ProfileController {
     public List<ProfileResponse> searchProfiles(
             @RequestParam String query
     ) {
-        return profileService.searchProfiles(query);
+
+        logger.info("Searching profiles with query: {}", query);
+
+        List<ProfileResponse> profiles =
+                profileService.searchProfiles(query);
+
+        logger.info("Found {} profiles for query {}", profiles.size(), query);
+
+        return profiles;
     }
 }
