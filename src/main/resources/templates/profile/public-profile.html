@@ -246,15 +246,14 @@
 
     </div>
 
-
     <!-- POSTS -->
     <div class="card shadow-sm p-4 mb-4">
 
         <h5 class="section-title">Posts</h5>
         <hr>
 
-        <!-- PUBLIC PROFILE -->
-        <div th:if="${profile.profileVisibility == 'PUBLIC'}">
+        <!-- SHOW POSTS (PUBLIC OR CONNECTED PRIVATE) -->
+        <div th:if="${canViewPosts}">
 
             <div id="profilePostsContainer">
                 <p class="text-center text-muted">
@@ -264,9 +263,8 @@
 
         </div>
 
-        <!-- PRIVATE PROFILE -->
-        <div th:if="${profile.profileVisibility == 'PRIVATE'}"
-             class="text-center p-4">
+        <!-- PRIVATE PROFILE (NOT CONNECTED) -->
+        <div th:if="${!canViewPosts}" class="text-center p-4">
 
             <h6 class="text-muted">
                 🔒 This account is private
@@ -275,6 +273,7 @@
             <p class="text-muted">
                 Send a connection request to see posts.
             </p>
+
             <!-- NOT CONNECTED -->
             <button th:if="${connectionStatus == null}"
                     id="privateConnectBtn"
@@ -296,7 +295,7 @@
 
             </button>
 
-            <!-- ALREADY CONNECTED -->
+            <!-- CONNECTED -->
             <button th:if="${connectionStatus?.name() == 'ACCEPTED'}"
                     class="btn btn-success"
                     disabled>
@@ -305,6 +304,7 @@
                 Connected
 
             </button>
+
         </div>
 
     </div>

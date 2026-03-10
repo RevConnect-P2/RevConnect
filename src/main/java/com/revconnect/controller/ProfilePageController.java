@@ -9,6 +9,7 @@ import com.revconnect.repository.UserProfileRepository;
 import com.revconnect.repository.UserRepository;
 import com.revconnect.service.ConnectionService;
 import com.revconnect.service.FollowService;
+import com.revconnect.service.PostService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -44,11 +45,12 @@ public class ProfilePageController {
         long followers = followService.getFollowersCount(user.getUserId());
         long following = followService.getFollowingCount(user.getUserId());
 
-        // get logged in user from session
+        // logged-in user
         User loggedUser = (User) session.getAttribute("loggedUser");
 
         boolean isFollowing = false;
         ConnectionStatus connectionStatus = null;
+        boolean canViewPosts = false;   // ✅ important
 
         if (loggedUser != null) {
 
@@ -63,14 +65,36 @@ public class ProfilePageController {
                     loggedUser.getUserId(),
                     user.getUserId()
             );
+
+            // ===============================
+            // POST VISIBILITY LOGIC
+            // ===============================
+
+            if (profile != null && profile.getProfileVisibility() != null) {
+
+                // PUBLIC profile → everyone can see posts
+                if ("PUBLIC".equalsIgnoreCase(profile.getProfileVisibility())) {
+                    canViewPosts = true;
+                }
+
+                else if ("PRIVATE".equalsIgnoreCase(profile.getProfileVisibility())
+                        && connectionStatus == ConnectionStatus.ACCEPTED) {
+
+                    canViewPosts = true;
+                }
+            }
         }
 
+        // ===============================
+        // MODEL ATTRIBUTES
+        // ===============================
         model.addAttribute("user", user);
         model.addAttribute("profile", profile);
         model.addAttribute("followers", followers);
         model.addAttribute("following", following);
         model.addAttribute("isFollowing", isFollowing);
         model.addAttribute("connectionStatus", connectionStatus);
+        model.addAttribute("canViewPosts", canViewPosts); // ✅ important
 
         return "profile/public-profile";
     }
