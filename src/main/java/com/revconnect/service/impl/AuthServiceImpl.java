@@ -5,6 +5,9 @@ import com.revconnect.dto.request.RegisterRequest;
 import com.revconnect.entity.User;
 import com.revconnect.repository.UserRepository;
 import com.revconnect.service.AuthService;
+import com.revconnect.entity.UserProfile;
+import com.revconnect.enums.ProfileType;
+import com.revconnect.repository.UserProfileRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,6 +26,9 @@ public class AuthServiceImpl implements AuthService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private UserProfileRepository userProfileRepository;
 
 
 
@@ -50,35 +56,30 @@ public class AuthServiceImpl implements AuthService {
 
 
         User user = User.builder()
-
                 .email(request.getEmail())
-
                 .username(request.getUsername())
-
-                .password(
-                        passwordEncoder.encode(
-                                request.getPassword()
-                        )
-                )
-
-                .userType(
-                        request.getUserType()
-                )
-
-                .securityQuestion(
-                        request.getSecurityQuestion()
-                )
-
-                .securityAnswer(
-                        request.getSecurityAnswer()
-                )
-
+                .password(passwordEncoder.encode(request.getPassword()))
+                .userType(request.getUserType())
+                .securityQuestion(request.getSecurityQuestion())
+                .securityAnswer(request.getSecurityAnswer())
                 .build();
 
+        User savedUser = userRepository.save(user);
 
+/* ===========================
+   CREATE DEFAULT PROFILE
+   =========================== */
 
-        return userRepository.save(user);
+        UserProfile profile = UserProfile.builder()
+                .user(savedUser)
+                .fullName(savedUser.getUsername())   // default
+                .profileVisibility("PUBLIC")
+                .profileType(ProfileType.valueOf(savedUser.getUserType()))
+                .build();
 
+        userProfileRepository.save(profile);
+
+        return savedUser;
     }
 
 

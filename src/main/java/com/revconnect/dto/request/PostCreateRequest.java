@@ -1,5 +1,7 @@
 package com.revconnect.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -12,26 +14,50 @@ import java.util.List;
 @Builder
 public class PostCreateRequest {
 
-    // Post text content
+    // =========================
+    // POST CONTENT
+    // =========================
+    @NotBlank(message = "Post content cannot be empty")
+    @Size(max = 5000, message = "Post content is too long")
     private String content;
 
+
+    // =========================
+    // POST TYPE
     // NORMAL / PROMOTIONAL
+    // =========================
+    @NotBlank(message = "Post type is required")
     private String postType;
 
-    // Pin post on profile
+
+    // =========================
+    // PIN POST ON PROFILE
+    // =========================
     private Boolean pinned;
 
-    // Call-to-action (only for promotional posts)
+
+    // =========================
+    // CTA (ONLY FOR PROMOTIONAL)
+    // =========================
     private String ctaText;
+
     private String ctaLink;
 
-    // For scheduled posts
+
+    // =========================
+    // SCHEDULED POST
+    // =========================
     private LocalDateTime scheduledAt;
 
-    // Hashtags (NOT YOUR MODULE – untouched)
+
+    // =========================
+    // HASHTAGS
+    // =========================
     private List<String> hashtags;
 
-    // 🆕 Product / Service Tags
-    private List<TagRequest> tags;
 
+    // =========================
+    // PRODUCT / SERVICE TAGS
+    // =========================
+    private List<TagRequest> tags;
 }

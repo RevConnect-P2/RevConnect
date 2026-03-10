@@ -1,61 +1,79 @@
-console.log("🔥 search.js loaded");
+document.addEventListener("DOMContentLoaded", function () {
 
-(function () {
+    function initSearch() {
 
-    document.addEventListener("DOMContentLoaded", () => {
+        const searchInput = document.querySelector("#userSearch");
+        const resultsBox = document.querySelector("#searchResults");
 
-        const input = document.getElementById("globalSearchInput");
-        const resultsBox = document.getElementById("searchResults");
-
-        if (!input || !resultsBox) {
-            console.error("❌ Search input or results box not found");
+        if (!searchInput || !resultsBox) {
+            console.log("Search elements not found yet");
             return;
         }
 
+        console.log("Search initialized");
+
         let debounceTimer;
 
-        input.addEventListener("input", () => {
-            const query = input.value.trim();
+        searchInput.addEventListener("input", function () {
+
+            const keyword = searchInput.value.trim();
 
             clearTimeout(debounceTimer);
 
-            if (query.length < 2) {
-                resultsBox.style.display = "none";
+            if (keyword.length < 2) {
                 resultsBox.innerHTML = "";
+                resultsBox.style.display = "none";
                 return;
             }
 
             debounceTimer = setTimeout(() => {
-                fetch(`/profiles/search?query=${encodeURIComponent(query)}`)
+
+                fetch("/users/search?keyword=" + encodeURIComponent(keyword))
                     .then(res => res.json())
-                    .then(data => {
+                    .then(users => {
+
                         resultsBox.innerHTML = "";
 
-                        if (!data.length) {
+                        if (!users || users.length === 0) {
                             resultsBox.style.display = "none";
                             return;
                         }
 
-                        data.forEach(profile => {
-                            const item = document.createElement("a");
-                            item.href = `/profile/${profile.userId}`;
-                            item.className = "list-group-item list-group-item-action";
-                            item.textContent = profile.username;
+                        users.forEach(username => {
+
+                            const item = document.createElement("div");
+                            item.className = "search-item";
+                            item.textContent = username;
+
+                            item.addEventListener("click", function () {
+                                window.location.href = "/profile/" + username;
+                            });
+
                             resultsBox.appendChild(item);
+
                         });
 
                         resultsBox.style.display = "block";
+
                     })
-                    .catch(err => console.error(err));
+                    .catch(err => console.error("Search error:", err));
+
             }, 300);
+
         });
 
-        document.addEventListener("click", (e) => {
-            if (!resultsBox.contains(e.target) && e.target !== input) {
+        document.addEventListener("click", function (e) {
+
+            if (!searchInput.contains(e.target) &&
+                !resultsBox.contains(e.target)) {
+
                 resultsBox.style.display = "none";
             }
+
         });
 
-    });
+    }
 
-})();
+    initSearch();
+
+});

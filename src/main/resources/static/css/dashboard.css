@@ -1,0 +1,259 @@
+/* GLOBAL */
+
+body{
+background:#f3f6f9;
+font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* NAVBAR */
+
+.navbar{
+background:white;
+box-shadow:0 2px 10px rgba(0,0,0,0.05);
+}
+
+.navbar-brand{
+font-weight:700;
+font-size:22px;
+color:#0a66c2 !important;
+}
+
+.nav-link{
+font-size:14px;
+color:#333 !important;
+}
+
+.nav-link:hover{
+color:#0a66c2 !important;
+}
+
+/* SEARCH BAR */
+
+.navbar input[type="search"]{
+border-radius:30px;
+padding:8px 16px;
+background:#eef3f8;
+border:none;
+}
+
+/* PROFILE CARD */
+
+.profile-card{
+border:none;
+border-radius:14px;
+box-shadow:0 4px 12px rgba(0,0,0,0.08);
+}
+
+.profile-cover{
+height:80px;
+background:linear-gradient(90deg,#0a66c2,#378fe9);
+border-radius:14px 14px 0 0;
+}
+
+.profile-avatar{
+width:75px;
+border-radius:50%;
+border:3px solid white;
+margin-top:-40px;
+}
+
+/* SIDEBAR LINKS */
+
+.sidebar-link{
+display:block;
+padding:8px;
+border-radius:8px;
+text-decoration:none;
+color:#333;
+font-size:14px;
+transition:0.2s;
+}
+
+.sidebar-link:hover{
+background:#eef3f8;
+color:#0a66c2;
+font-weight:500;
+}
+
+/* FEED CARD */
+
+.feed-card{
+border-radius:12px;
+border:none;
+box-shadow:0 4px 12px rgba(0,0,0,0.05);
+margin-bottom:20px;
+}
+
+/* CREATE POST */
+
+.post-input{
+background:white;
+border:1px solid #e1e4e8;
+border-radius:30px;
+padding:12px 18px;
+color:#555;
+font-weight:500;
+}
+
+.post-input:hover{
+border-color:#0a66c2;
+box-shadow:0 0 0 4px rgba(13,110,253,0.1);
+}
+
+/* POST ACTION ICONS */
+
+.post-action{
+color:#6c757d;
+font-weight:600;
+font-size:13px;
+padding:6px;
+cursor:pointer;
+}
+
+.post-action:hover{
+background:#f1f3f5;
+border-radius:8px;
+color:#0a66c2;
+}
+
+/* FILTER BUTTON */
+
+.feed-filter-btn{
+border-radius:20px !important;
+padding:6px 16px !important;
+font-weight:500;
+}
+
+/* POST CARD */
+
+.post-card{
+border:none;
+border-radius:12px;
+box-shadow:0 4px 10px rgba(0,0,0,0.05);
+}
+
+/* TRENDING SIDEBAR */
+
+.sidebar-card{
+border:none;
+border-radius:12px;
+box-shadow:0 2px 8px rgba(0,0,0,0.08);
+}
+
+.sidebar-title{
+font-weight:600;
+margin-bottom:15px;
+}
+
+.news-item{
+padding:8px;
+cursor:pointer;
+border-radius:8px;
+transition:0.2s;
+}
+
+.news-item:hover{
+background:#eef3f8;
+}
+
+.news-text{
+font-size:14px;
+font-weight:600;
+}
+
+.news-count{
+font-size:12px;
+color:gray;
+}
+
+
+
+/* Username */
+
+.post-username{
+    font-weight:600;
+}
+
+
+/* Time */
+
+.post-time{
+    font-size:12px;
+    color:#777;
+}
+
+.post-actions{
+    border-top:1px solid #eee;
+    padding-top:10px;
+}
+
+/* Button style */
+
+.post-action{
+    cursor:pointer;
+    padding:6px;
+    border-radius:6px;
+    transition:all 0.2s;
+    font-size:14px;
+}
+
+/* Hover */
+
+.post-action:hover{
+    background:#f3f6f9;
+}
+/* ACTION BAR */
+
+.post-actions{
+    border-top:1px solid #eee;
+    padding-top:10px;
+}
+
+
+/* BUTTON STYLE */
+
+.post-action{
+    cursor:pointer;
+    padding:6px;
+    border-radius:6px;
+    transition:all 0.2s ease;
+    font-size:14px;
+    color:#555;
+}
+
+
+/* HOVER EFFECT */
+
+.post-action:hover{
+    background:#f3f6f9;
+}
+
+
+/* LIKE ACTIVE */
+
+.post-action.liked{
+    color:#0d6efd;
+    font-weight:600;
+}
+
+
+/* SHARE ACTIVE */
+
+.post-action.shared{
+    color:#0d6efd;
+    font-weight:600;
+}
+
+
+/* SAVE ICON */
+
+.save-icon{
+    font-size:18px;
+}
+
+
+/* ICON SPACING */
+
+.post-action i{
+    margin-right:6px;
+}

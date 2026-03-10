@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <title>Notifications</title>
+
+    <style>
+
+        body{
+        font-family:Arial;
+        background:#f4f6f8;
+        }
+
+        .container{
+        width:700px;
+        margin:auto;
+        margin-top:40px;
+        background:white;
+        padding:20px;
+        border-radius:8px;
+        box-shadow:0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .notification{
+        padding:15px;
+        border-bottom:1px solid #ddd;
+        }
+
+        .unread{
+        background:#eef3ff;
+        }
+
+        .notification p{
+        color:black;
+        font-weight:500;
+        margin:0;
+        }
+
+        .time{
+        color:gray;
+        font-size:12px;
+        margin-top:5px;
+        }
+
+        button{
+        padding:6px 10px;
+        margin-top:8px;
+        margin-right:5px;
+        cursor:pointer;
+        border-radius:4px;
+        border:1px solid #ccc;
+        }
+
+        .back-btn{
+        background:#0073b1;
+        color:white;
+        border:none;
+        padding:8px 15px;
+        border-radius:5px;
+        }
+
+        .mark-all{
+        background:#28a745;
+        color:white;
+        border:none;
+        padding:6px 12px;
+        margin-left:10px;
+        }
+
+        .filter-section{
+        margin-top:15px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>Notifications</h2>
+
+    <!-- Back button -->
+
+    <a th:href="@{/dashboard}">
+        <button class="back-btn">← Back to Dashboard</button>
+    </a>
+
+    <br><br>
+
+    <p>
+        Unread Notifications:
+        <strong th:text="${unreadCount}"></strong>
+    </p>
+
+    <!-- FILTER + MARK ALL READ -->
+
+    <div class="filter-section">
+
+        <form th:action="@{/notifications/filter}" method="get">
+
+            <select name="type">
+
+                <option value=""
+                        th:selected="${selectedType == null}">
+                    All Notifications
+                </option>
+
+                <option value="LIKE"
+                        th:selected="${selectedType == T(com.revconnect.enums.NotificationType).LIKE}">
+                    Likes
+                </option>
+
+                <option value="COMMENT"
+                        th:selected="${selectedType == T(com.revconnect.enums.NotificationType).COMMENT}">
+                    Comments
+                </option>
+
+                <option value="FOLLOW"
+                        th:selected="${selectedType == T(com.revconnect.enums.NotificationType).FOLLOW}">
+                    Follows
+                </option>
+
+                <option value="CONNECTION"
+                        th:selected="${selectedType == T(com.revconnect.enums.NotificationType).CONNECTION}">
+                    Connections
+                </option>
+
+                <option value="SHARE"
+                        th:selected="${selectedType == T(com.revconnect.enums.NotificationType).SHARE}">
+                    Shares
+                </option>
+
+                <option value="POST"
+                        th:selected="${selectedType == T(com.revconnect.enums.NotificationType).POST}">
+                    Posts
+                </option>
+
+            </select>
+
+            <button type="submit">Filter</button>
+
+        </form>
+
+        <!-- MARK ALL READ -->
+
+        <form th:action="@{/notifications/read-all}" method="post">
+
+            <button type="submit" class="mark-all">
+                Mark All Read
+            </button>
+
+        </form>
+
+    </div>
+
+    <br>
+
+    <!-- NOTIFICATION LIST -->
+
+    <div th:if="${#lists.isEmpty(notifications)}">
+
+        <p>No notifications found</p>
+
+    </div>
+
+    <div th:each="n : ${notifications}"
+         th:class="'notification ' + (${!n.read} ? 'unread' : '')">
+
+        <p th:text="${n.message}"></p>
+
+        <p class="time"
+           th:text="${#temporals.format(n.createdAt,'dd MMM yyyy HH:mm')}"></p>
+
+
+        <!-- MARK READ -->
+
+        <form th:if="${!n.read}"
+              th:action="@{'/notifications/read/' + ${n.id}}"
+              method="post">
+
+            <input type="hidden"
+                   name="type"
+                   th:value="${selectedType}"/>
+
+            <button>Mark Read</button>
+
+        </form>
+
+
+        <!-- MARK UNREAD -->
+
+        <form th:if="${n.read}"
+              th:action="@{'/notifications/unread/' + ${n.id}}"
+              method="post">
+
+            <input type="hidden"
+                   name="type"
+                   th:value="${selectedType}"/>
+
+            <button>Mark Unread</button>
+
+        </form>
+
+
+        <!-- DELETE -->
+
+        <form th:action="@{'/notifications/delete/' + ${n.id}}"
+              method="post">
+
+            <button>Delete</button>
+
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

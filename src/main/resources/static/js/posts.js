@@ -176,18 +176,26 @@ function createFeedPostCard(post, options = {}) {
                 </div>
             ` : ``}
 
-            <!-- Post Header -->
-            <div class="d-flex justify-content-between">
-                <strong>
-                    ${post.isSharedPost
-                        ? post.originalAuthorUsername
-                        : post.username}
-                </strong>
+           <!-- Post Header -->
+           <div class="d-flex align-items-center justify-content-between mb-2">
 
-                ${options.showPinned && post.pinned
-                    ? `<span class="text-warning">📌 Pinned</span>`
-                    : ""}
-            </div>
+               <div>
+                   <div class="post-username">
+                       ${post.isSharedPost
+                           ? post.originalAuthorUsername
+                           : post.username}
+                   </div>
+
+                   <div class="post-time">
+                       ${formatDate(post.createdAt)}
+                   </div>
+               </div>
+
+               ${options.showPinned && post.pinned
+                   ? `<span class="text-warning">📌 Pinned</span>`
+                   : ""}
+
+           </div>
 
             <!-- Post Content -->
             <p class="post-text mt-2">${post.content}</p>
@@ -230,43 +238,68 @@ function createFeedPostCard(post, options = {}) {
 
             <hr>
 
-            <!-- ACTION ROW -->
-            <div class="row text-center align-items-center">
+       <!-- ACTION ROW -->
+       <div class="row text-center align-items-center post-actions">
 
-                <!-- LIKE -->
-                <div class="col post-action"
-                     style="cursor:pointer"
-                     onclick="likePostAction(${post.postId}, this)">
-                     👍 <span>${post.likeCount || 0}</span>
-                </div>
+           <!-- LIKE -->
+           <div class="col post-action like-action"
+                onclick="likePostAction(${post.postId}, this)">
 
-                <!-- COMMENT -->
-                <div class="col post-action"
-                     style="cursor:pointer"
-                     onclick="toggleCommentBox(${post.postId})">
-                     💬 <span>${post.commentCount || 0}</span>
-                </div>
+               <i class="bi bi-hand-thumbs-up"></i>
+               <span class="ms-1">Like</span>
 
-                <!-- SHARE -->
-                <div class="col post-action"
-                     style="cursor:pointer"
-                     onclick="sharePostAction(${post.postId}, this)">
-                     🔗 <span>${post.shareCount || 0}</span>
-                </div>
+               <span class="like-count ms-1"
+                     onclick="toggleLikeList(event, ${post.postId})">
+                     ${post.likeCount || 0}
+               </span>
 
-                <!-- SAVE -->
-                <div class="col post-action text-end">
-                    <i class="bi ${options.isSaved ? 'bi-bookmark-fill' : 'bi-bookmark'}"
-                       style="cursor:pointer;font-size:18px"
-                       onclick="${
-                           options.isSaved
-                           ? `unsavePost(${post.postId}, this)`
-                           : `savePost(${post.postId}, this)`
-                       }"
-                       title="Save post"></i>
-                </div>
+           </div>
 
-            </div>
+
+           <!-- COMMENT -->
+           <div class="col post-action comment-action"
+                onclick="toggleCommentBox(${post.postId})">
+
+               <i class="bi bi-chat"></i>
+               <span class="ms-1">Comment</span>
+
+               <span class="comment-count ms-1">
+                   ${post.commentCount || 0}
+               </span>
+
+           </div>
+
+
+           <!-- SHARE -->
+           <div class="col post-action share-action"
+                onclick="sharePostAction(${post.postId}, this)">
+
+               <i class="bi bi-arrow-repeat"></i>
+               <span class="ms-1">Share</span>
+
+               <span class="share-count ms-1"
+                     onclick="toggleShareList(event, ${post.postId})">
+                     ${post.shareCount || 0}
+               </span>
+
+           </div>
+
+
+           <!-- SAVE -->
+           <div class="col post-action text-end">
+
+               <i class="bi ${options.isSaved ? 'bi-bookmark-fill' : 'bi-bookmark'} save-icon"
+                  style="cursor:pointer"
+                  onclick="${
+                      options.isSaved
+                      ? `unsavePost(${post.postId}, this)`
+                      : `savePost(${post.postId}, this)`
+                  }"
+                  title="Save post"></i>
+
+           </div>
+
+       </div>
 
             <!-- COMMENT BOX -->
             <div id="comment-box-${post.postId}"
@@ -286,9 +319,30 @@ function createFeedPostCard(post, options = {}) {
 
             <!-- COMMENT LIST -->
             <div id="comment-list-${post.postId}" class="mt-2"></div>
-
+            <!-- LIKE LIST -->
+            <div id="like-list-${post.postId}"
+                 class="mt-2"
+                 style="display:none;"></div>
         </div>
+            <div id="share-list-${post.postId}"
+                 class="mt-2"
+                 style="display:none;"></div>
     `;
+const likeDiv = card.querySelector(".like-action");
+const likeCountSpan = card.querySelector(".like-count");
+
+if (likeDiv) {
+    likeDiv.addEventListener("click", function () {
+        likePostAction(post.postId, likeDiv);
+    });
+}
+
+if (likeCountSpan) {
+    likeCountSpan.addEventListener("click", function (event) {
+        event.stopPropagation();   // prevents like toggle
+        showLikes(post.postId);
+    });
+}
 
     return card;
 }
@@ -379,7 +433,7 @@ function fetchFeedPosts() {
     feedContainer.innerHTML = "<p class='text-center text-muted'>Loading feed...</p>";
 
     fetchSavedPosts()
-        .then(() => fetch(`/posts/feed?viewerId=${currentUser.userId}`))
+        .then(() => fetch(`/posts/feed?viewerUserId=${currentUser.userId}`))
         .then(res => {
             if (!res.ok) throw new Error("Failed to load feed");
             return res.json();
@@ -561,7 +615,7 @@ function fetchMyPostsPage() {
     container.innerHTML =
         "<p class='text-center text-muted'>Loading your posts...</p>";
 
-    fetch(`/posts/my/data?userId=${currentUser.userId}`)
+    fetch(`/posts/user?userId=${currentUser.userId}`)
         .then(res => {
             if (!res.ok) throw new Error("Failed to load my posts");
             return res.json();
@@ -574,6 +628,13 @@ function fetchMyPostsPage() {
                     "<div class='card feed-card text-center p-4'>You haven’t posted anything yet</div>";
                 return;
             }
+
+            posts.sort((a, b) => {
+                if (a.pinned === b.pinned) {
+                    return new Date(b.createdAt) - new Date(a.createdAt);
+                }
+                return b.pinned - a.pinned;
+            });
 
             posts.forEach(post => {
                 const card = createMyPostCard(post);
@@ -617,13 +678,21 @@ function unpinPostAction(postId) {
     })
     .catch(err => alert(err.message));
 }
-
 function deletePostAction(postId) {
+
     if (!confirm("Delete this post?")) return;
 
-    fetch(`/posts/${postId}?userId=${currentUser.userId}`, { method: "DELETE" })
-        .then(() => location.reload())
-        .catch(() => alert("Failed to delete post"));
+    fetch(`/posts/${postId}?userId=${CURRENT_USER_ID}`, {
+        method: "DELETE"
+    })
+    .then(response => {
+        if (response.ok) {
+            location.reload(); // refresh page
+        } else {
+            alert("Delete failed");
+        }
+    })
+    .catch(() => alert("Failed to delete post"));
 }
 
 function updatePost() {
@@ -676,64 +745,103 @@ function updatePost() {
 // ===============================
 function likePostAction(postId, element) {
 
-    fetch(`/posts/${postId}/like`, {
-        method: "POST"
-    })
+   fetch(`/posts/${postId}/like`, {
+       method: "POST",
+       credentials: "same-origin"
+   })
     .then(res => {
         if (!res.ok) throw new Error("Like failed");
         return res.json();
     })
-    .then(newCount => {
+    .then(data => {
 
-        const countSpan = element.querySelector("span");
-        countSpan.innerText = newCount;
+        // update like count
+        const countSpan = element.querySelector(".like-count");
+
+        if (countSpan) {
+            countSpan.innerText = data.likeCount;
+        }
+
+        // update button state
+        if (data.liked) {
+            element.classList.add("liked");
+        } else {
+            element.classList.remove("liked");
+        }
 
     })
-    .catch(err => console.error(err));
+    .catch(err => console.error("Like error:", err));
 }
-
-
-// ===============================
-// SHARE POST
-// ===============================
-function sharePostAction(postId, element) {
+ // ===============================
+ // SHARE POST
+ // ===============================
+ function sharePostAction(postId, element) {
 
     fetch(`/posts/${postId}/share`, {
-        method: "POST"
+        method: "POST",
+        credentials: "same-origin"
     })
-    .then(res => {
-        if (!res.ok) throw new Error("Share failed");
+     .then(res => {
+         if (!res.ok) throw new Error("Share failed");
+         return res.json();
+     })
+     .then(data => {
 
-        const countSpan = element.querySelector("span");
-        let currentCount = parseInt(countSpan.innerText);
+         // update share count
+         const countSpan = element.querySelector(".share-count");
 
-        // Disable after first share
-        if (!element.classList.contains("shared")) {
-            countSpan.innerText = currentCount + 1;
-            element.classList.add("shared");
-        }
-    })
-    .catch(err => console.error(err));
-}
+         if (countSpan) {
+             countSpan.innerText = data.shareCount;
+         }
 
+         // toggle share highlight
+         element.classList.toggle("shared");
 
+     })
+     .catch(err => console.error("Share error:", err));
+ }
 // ===============================
 // TOGGLE COMMENT BOX
 function toggleCommentBox(postId) {
 
-    const box = document.getElementById(`comment-box-${postId}`);
-    const list = document.getElementById(`comment-list-${postId}`);
+    const commentBox =
+        document.getElementById(`comment-box-${postId}`);
 
-    if (!box) return;
+    const commentList =
+        document.getElementById(`comment-list-${postId}`);
 
-    const isHidden = box.style.display === "none" || box.style.display === "";
+    const likeContainer =
+        document.getElementById(`like-list-${postId}`);
+
+    const shareContainer =
+        document.getElementById(`share-list-${postId}`);
+
+    if (!commentBox) return;
+
+    const isHidden =
+        commentBox.style.display === "none" ||
+        commentBox.style.display === "";
+
+    // 🔥 CLOSE LIKE + SHARE FIRST
+    if (likeContainer) {
+        likeContainer.style.display = "none";
+        likeContainer.innerHTML = "";
+    }
+
+    if (shareContainer) {
+        shareContainer.style.display = "none";
+        shareContainer.innerHTML = "";
+    }
 
     if (isHidden) {
-        box.style.display = "block";
-        fetchComments(postId);   // 🔥 load comments when opening
+
+        commentBox.style.display = "block";
+        fetchComments(postId);
+
     } else {
-        box.style.display = "none";
-        list.innerHTML = "";     // optional: clear when closing
+
+        commentBox.style.display = "none";
+        if (commentList) commentList.innerHTML = "";
     }
 }
 
@@ -751,13 +859,14 @@ function submitCommentAction(postId) {
         return;
     }
 
-    fetch(`/posts/${postId}/comments`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(commentText)
-    })
+   fetch(`/posts/${postId}/comments`, {
+       method: "POST",
+       credentials: "same-origin",
+       headers: {
+           "Content-Type": "application/json"
+       },
+       body: JSON.stringify(commentText)
+   })
     .then(res => {
         if (!res.ok) throw new Error("Comment failed");
         return res.text();
@@ -821,3 +930,289 @@ function fetchComments(postId) {
     })
     .catch(err => console.error(err));
 }
+// ===============================
+// FETCH PROFILE POSTS
+// ===============================
+function fetchProfilePosts() {
+
+    const container = document.getElementById("profilePostsContainer");
+    if (!container) return;
+
+    container.innerHTML = "<p class='text-center text-muted'>Loading posts...</p>";
+
+    const profileUserId = window.PROFILE_USER_ID;
+
+    if (!profileUserId) {
+        container.innerHTML =
+            "<p class='text-danger text-center'>User not found</p>";
+        return;
+    }
+
+    fetch(`/posts/user?userId=${profileUserId}`)
+        .then(res => {
+            if (!res.ok) throw new Error("Failed to load profile posts");
+            return res.json();
+        })
+        .then(posts => {
+
+            container.innerHTML = "";
+
+            if (!posts || posts.length === 0) {
+                container.innerHTML =
+                    "<div class='card text-center p-4'>No posts yet</div>";
+                return;
+            }
+
+            posts.forEach(post => {
+
+                const card = createFeedPostCard(post, {
+                    showPinned: true,
+                    isSaved: false
+                });
+
+                container.appendChild(card);
+            });
+
+        })
+        .catch(err => {
+            console.error(err);
+            container.innerHTML =
+                "<p class='text-center text-danger'>Error loading posts</p>";
+        });
+}
+        // ===============================
+        // SHOW USERS WHO LIKED
+        // ===============================
+//function showLikes(postId) {
+//
+//    fetch(`/posts/${postId}/likes`)
+//    .then(res => res.json())
+//    .then(users => {
+//
+//        if (!users || users.length === 0) {
+//            alert("No likes yet");
+//            return;
+//        }
+//
+//        alert("Liked by:\n\n" + users.join("\n"));
+//    })
+//    .catch(err => console.error(err));
+//}
+
+function toggleLikeList(event, postId) {
+
+    event.stopPropagation();
+
+    const likeContainer =
+        document.getElementById(`like-list-${postId}`);
+
+    const shareContainer =
+        document.getElementById(`share-list-${postId}`);
+
+    const commentBox =
+        document.getElementById(`comment-box-${postId}`);
+
+    const commentList =
+        document.getElementById(`comment-list-${postId}`);
+
+    if (!likeContainer) return;
+
+    const isHidden =
+        likeContainer.style.display === "none" ||
+        likeContainer.style.display === "";
+
+    // 🔥 CLOSE SHARE
+    if (shareContainer) {
+        shareContainer.style.display = "none";
+        shareContainer.innerHTML = "";
+    }
+
+    // 🔥 CLOSE COMMENT
+    if (commentBox) {
+        commentBox.style.display = "none";
+    }
+
+    if (commentList) {
+        commentList.innerHTML = "";
+    }
+
+    if (isHidden) {
+
+        likeContainer.style.display = "block";
+
+        fetch(`/posts/${postId}/likes`)
+        .then(res => res.json())
+        .then(users => {
+
+            likeContainer.innerHTML = "";
+
+            if (!users || users.length === 0) {
+                likeContainer.innerHTML =
+                    "<small class='text-muted'>No likes yet</small>";
+                return;
+            }
+
+            users.forEach(username => {
+
+                const div = document.createElement("div");
+                div.className =
+                    "border rounded p-2 mb-2 bg-light";
+
+                div.innerHTML =
+                    `<strong>${username}</strong>`;
+
+                likeContainer.appendChild(div);
+            });
+
+        });
+
+    } else {
+
+        likeContainer.style.display = "none";
+        likeContainer.innerHTML = "";
+    }
+}
+
+function toggleShareList(event, postId) {
+
+    event.stopPropagation();
+
+    const shareContainer =
+        document.getElementById(`share-list-${postId}`);
+
+    const likeContainer =
+        document.getElementById(`like-list-${postId}`);
+
+    const commentBox =
+        document.getElementById(`comment-box-${postId}`);
+
+    const commentList =
+        document.getElementById(`comment-list-${postId}`);
+
+    if (!shareContainer) return;
+
+    const isHidden =
+        shareContainer.style.display === "none" ||
+        shareContainer.style.display === "";
+
+    // 🔥 CLOSE LIKE
+    if (likeContainer) {
+        likeContainer.style.display = "none";
+        likeContainer.innerHTML = "";
+    }
+
+    // 🔥 CLOSE COMMENT
+    if (commentBox) {
+        commentBox.style.display = "none";
+    }
+
+    if (commentList) {
+        commentList.innerHTML = "";
+    }
+
+    if (isHidden) {
+
+        shareContainer.style.display = "block";
+
+        fetch(`/posts/${postId}/shares`)
+        .then(res => res.json())
+        .then(users => {
+
+            shareContainer.innerHTML = "";
+
+            if (!users || users.length === 0) {
+                shareContainer.innerHTML =
+                    "<small class='text-muted'>No shares yet</small>";
+                return;
+            }
+
+            users.forEach(username => {
+
+                const div = document.createElement("div");
+                div.className =
+                    "border rounded p-2 mb-2 bg-light";
+
+                div.innerHTML =
+                    `<strong>${username}</strong>`;
+
+                shareContainer.appendChild(div);
+            });
+
+        });
+
+    } else {
+
+        shareContainer.style.display = "none";
+        shareContainer.innerHTML = "";
+    }
+}
+
+
+//////////////////////////////////////////////////////////
+// LOAD POSTS BY HASHTAG (GLOBAL FUNCTION)
+//////////////////////////////////////////////////////////
+
+function loadHashtagPosts(tag) {
+
+    const feedContainer = document.getElementById("feedContainer");
+
+    if (!feedContainer) return;
+
+    feedContainer.innerHTML =
+        `<p class="text-center text-muted">Loading posts for #${tag}...</p>`;
+
+    fetch(`/posts/hashtag/${tag}`)
+        .then(res => {
+            if (!res.ok) throw new Error("Failed to load hashtag posts");
+            return res.json();
+        })
+        .then(posts => {
+
+            feedContainer.innerHTML = "";
+
+            if (!posts || posts.length === 0) {
+
+                feedContainer.innerHTML =
+                    `<div class="card feed-card text-center p-4">
+                        No posts found for #${tag}
+                     </div>`;
+
+                return;
+            }
+
+            posts.forEach(post => {
+
+                const card = createFeedPostCard(post, {
+                    showPinned: false,
+                    isSaved: savedPostIds.has(post.postId)
+                });
+
+                feedContainer.appendChild(card);
+
+            });
+
+        })
+        .catch(err => {
+
+            console.error(err);
+
+            feedContainer.innerHTML =
+                `<p class="text-center text-danger">
+                    Error loading hashtag posts
+                 </p>`;
+
+        });
+}
+// ===============================
+// LOAD FEED WHEN PAGE LOADS
+// ===============================
+document.addEventListener("DOMContentLoaded", function () {
+
+    // refresh userId after page loads
+    currentUser.userId = window.CURRENT_USER_ID;
+
+    if (currentUser.userId) {
+        fetchFeedPosts();
+    }
+
+});

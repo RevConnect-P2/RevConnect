@@ -27,10 +27,12 @@ public class PostMapper {
                 .ctaLink(post.getCtaLink())
                 .scheduledAt(post.getScheduledAt())
                 .createdAt(post.getCreatedAt())
-                .userId(post.getUser().getUserId())
-                .username(post.getUser().getUsername())
 
-                // ✅ Hashtags (unchanged behavior)
+                // USER DETAILS
+                .userId(post.getUser() != null ? post.getUser().getUserId() : null)
+                .username(post.getUser() != null ? post.getUser().getUsername() : null)
+
+                // HASHTAGS
                 .hashtags(
                         hashtags == null
                                 ? List.of()
@@ -39,8 +41,18 @@ public class PostMapper {
                                 .collect(Collectors.toList())
                 )
 
-                // ✅ Product / Service Tags
+                // PRODUCT / SERVICE TAGS
                 .tags(tags == null ? List.of() : tags)
+
+                // DEFAULT COUNTS (service updates them)
+                .likeCount(0L)
+                .commentCount(0L)
+                .shareCount(0L)
+
+                // SHARED POST INFO (default false)
+                .isSharedPost(false)
+                .sharedByUsername(null)
+                .originalAuthorUsername(null)
 
                 .build();
     }
