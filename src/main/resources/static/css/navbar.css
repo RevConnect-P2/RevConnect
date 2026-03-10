@@ -315,3 +315,15 @@ background:#111;
 .nav-link.active-nav {
     border-bottom: 2px solid #ff4d4d;
 }
+
+.nav-link.active-nav{
+color:#ff4d4d !important;
+}
+
+.nav-link.active-nav i{
+color:#ff4d4d !important;
+}
+
+.nav-link.active-nav div{
+color:#ff4d4d !important;
+}

@@ -5,6 +5,7 @@
     <title th:text="${isEdit} ? 'Update Post' : 'Create Post'"></title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/navbar.css}">
     <link rel="stylesheet" th:href="@{/css/dashboard.css}">
     <link rel="stylesheet" th:href="@{/css/create-post.css}">
@@ -12,7 +13,7 @@
 
 <body>
 
-<div th:replace="~{layout/navbar :: navbar(${session.loggedUser})}"></div>
+<div th:replace="~{layout/navbar :: navbar(${session.loggedUser}, 'none')}"></div>
 
 <div class="container mt-5 pt-5">
     <div class="row justify-content-center">
@@ -59,6 +60,16 @@
                         </div>
                         <div class="col-md-6">
                             <input id="ctaLink" th:value="${post?.ctaLink}" class="form-control" placeholder="CTA Link (https://...)">
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="small text-muted">Schedule Post</label>
+                            <input type="datetime-local"
+                                   id="scheduledAt"
+                                   class="form-control form-control-sm"
+                                   th:value="${post != null and post.scheduledAt != null} ? ${#temporals.format(post.scheduledAt, 'yyyy-MM-dd HH:mm')} : ''">
                         </div>
                     </div>
                 </div>
