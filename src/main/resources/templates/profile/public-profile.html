@@ -137,9 +137,10 @@
 
                 <!-- CONNECT BUTTON -->
                 <!-- NOT CONNECTED -->
-                <button th:if="${connectionStatus == null}"
+                <button th:if="${connectionStatus == null || connectionStatus.name() == 'REJECTED'}"
                         id="connectBtn"
-                        class="btn btn-outline-primary action-btn">
+                        class="btn btn-outline-primary action-btn"
+                        onclick="connectUser()">
 
                     <i class="fa fa-handshake"></i>
                     <span id="connectText">Connect</span>
@@ -243,9 +244,29 @@
             <b>Contact Info:</b>
             <span th:text="${profile.contactInfo}"></span>
         </p>
+        <div th:if="${profile.profileType.name() == 'BUSINESS'}">
+
+            <h6 class="text-primary mt-3">Business Hours</h6>
+
+            <table class="table table-sm" th:if="${businessHours != null}">
+                <tr th:each="hour : ${businessHours}">
+                    <td th:text="${hour.dayOfWeek}"></td>
+
+                    <td>
+                        <span th:if="${hour.isClosed}">Closed</span>
+
+                        <span th:if="${!hour.isClosed}">
+                    <span th:text="${hour.openTime}"></span>
+                    -
+                    <span th:text="${hour.closeTime}"></span>
+                </span>
+                    </td>
+                </tr>
+            </table>
+
+        </div>
 
     </div>
-
 
     <!-- POSTS -->
     <div class="card shadow-sm p-4 mb-4">
@@ -253,8 +274,8 @@
         <h5 class="section-title">Posts</h5>
         <hr>
 
-        <!-- PUBLIC PROFILE -->
-        <div th:if="${profile.profileVisibility == 'PUBLIC'}">
+        <!-- SHOW POSTS (PUBLIC OR CONNECTED PRIVATE) -->
+        <div th:if="${canViewPosts}">
 
             <div id="profilePostsContainer">
                 <p class="text-center text-muted">
@@ -264,9 +285,8 @@
 
         </div>
 
-        <!-- PRIVATE PROFILE -->
-        <div th:if="${profile.profileVisibility == 'PRIVATE'}"
-             class="text-center p-4">
+        <!-- PRIVATE PROFILE (NOT CONNECTED) -->
+        <div th:if="${!canViewPosts}" class="text-center p-4">
 
             <h6 class="text-muted">
                 🔒 This account is private
@@ -275,6 +295,7 @@
             <p class="text-muted">
                 Send a connection request to see posts.
             </p>
+
             <!-- NOT CONNECTED -->
             <button th:if="${connectionStatus == null}"
                     id="privateConnectBtn"
@@ -296,7 +317,7 @@
 
             </button>
 
-            <!-- ALREADY CONNECTED -->
+            <!-- CONNECTED -->
             <button th:if="${connectionStatus?.name() == 'ACCEPTED'}"
                     class="btn btn-success"
                     disabled>
@@ -305,6 +326,7 @@
                 Connected
 
             </button>
+
         </div>
 
     </div>
@@ -473,31 +495,53 @@
     return;
     }
 
+    // ======================
     // REQUEST SENT
+    // ======================
     if(status === "PENDING"){
 
     text.innerText = "Request Sent";
 
-    btn.classList.remove("btn-outline-primary","btn-primary");
+    btn.classList.remove("btn-outline-primary","btn-primary","btn-success");
     btn.classList.add("btn-secondary");
 
     btn.disabled = true;
 
     }
 
-    // ALREADY CONNECTED
+    // ======================
+    // CONNECTED
+    // ======================
     else if(status === "ACCEPTED"){
 
     text.innerText = "Connected";
 
-    btn.classList.remove("btn-outline-primary","btn-primary");
+    btn.classList.remove("btn-outline-primary","btn-primary","btn-secondary");
     btn.classList.add("btn-success");
 
     btn.disabled = true;
 
     }
 
+    // ======================
+    // REJECTED → CONNECT AGAIN
+    // ======================
+    else if(status === "REJECTED"){
+
+    text.innerText = "Connect Again";
+
+    btn.classList.remove("btn-secondary","btn-success");
+    btn.classList.add("btn-outline-primary");
+
+    btn.disabled = false;
+
+    btn.onclick = connectUser;
+
+    }
+
+    // ======================
     // NOT CONNECTED
+    // ======================
     else{
 
     text.innerText = "Connect";
@@ -507,14 +551,12 @@
 
     btn.disabled = false;
 
-    // allow clicking only when not connected
     btn.onclick = connectUser;
 
     }
 
     });
     }
-
     // ======================
     // PAGE LOAD EVENTS
     // ======================

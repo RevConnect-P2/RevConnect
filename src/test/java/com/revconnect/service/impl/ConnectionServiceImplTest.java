@@ -174,5 +174,6 @@ public class ConnectionServiceImplTest {
         connectionService.removeConnection(10L);
 
         verify(connectionRepository).deleteById(10L);
+
     }
 }

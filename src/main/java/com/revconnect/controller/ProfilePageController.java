@@ -1,5 +1,6 @@
 package com.revconnect.controller;
 
+import com.revconnect.enums.ProfileType;
 import jakarta.servlet.http.HttpSession;
 
 import com.revconnect.entity.User;
@@ -9,6 +10,8 @@ import com.revconnect.repository.UserProfileRepository;
 import com.revconnect.repository.UserRepository;
 import com.revconnect.service.ConnectionService;
 import com.revconnect.service.FollowService;
+import com.revconnect.service.PostService;
+import com.revconnect.service.ProfileService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,6 +27,7 @@ public class ProfilePageController {
     private final UserProfileRepository userProfileRepository;
     private final FollowService followService;
     private final ConnectionService connectionService;
+    private final ProfileService profileService;
 
 
     // ===============================
@@ -41,14 +45,26 @@ public class ProfilePageController {
                 .findByUser_UserId(user.getUserId())
                 .orElse(null);
 
+            // ===============================
+    // BUSINESS HOURS (for business profiles)
+    // ===============================
+            if (profile != null && profile.getProfileType() == ProfileType.BUSINESS) {
+
+            model.addAttribute(
+                    "businessHours",
+                    profileService.getBusinessHours(user.getUserId())
+            );
+        }
+
         long followers = followService.getFollowersCount(user.getUserId());
         long following = followService.getFollowingCount(user.getUserId());
 
-        // get logged in user from session
+        // logged-in user
         User loggedUser = (User) session.getAttribute("loggedUser");
 
         boolean isFollowing = false;
         ConnectionStatus connectionStatus = null;
+        boolean canViewPosts = false;   // ✅ important
 
         if (loggedUser != null) {
 
@@ -63,14 +79,42 @@ public class ProfilePageController {
                     loggedUser.getUserId(),
                     user.getUserId()
             );
+
+            // ===============================
+            // POST VISIBILITY LOGIC
+            // ===============================
+
+            if (profile != null && profile.getProfileVisibility() != null) {
+
+                // OWNER CAN ALWAYS SEE POSTS
+                if (loggedUser.getUserId().equals(user.getUserId())) {
+                    canViewPosts = true;
+                }
+
+                // PUBLIC PROFILE
+                else if ("PUBLIC".equalsIgnoreCase(profile.getProfileVisibility())) {
+                    canViewPosts = true;
+                }
+
+                // PRIVATE PROFILE BUT CONNECTED
+                else if ("PRIVATE".equalsIgnoreCase(profile.getProfileVisibility())
+                        && connectionStatus == ConnectionStatus.ACCEPTED) {
+
+                    canViewPosts = true;
+                }
+            }
         }
 
+        // ===============================
+        // MODEL ATTRIBUTES
+        // ===============================
         model.addAttribute("user", user);
         model.addAttribute("profile", profile);
         model.addAttribute("followers", followers);
         model.addAttribute("following", following);
         model.addAttribute("isFollowing", isFollowing);
         model.addAttribute("connectionStatus", connectionStatus);
+        model.addAttribute("canViewPosts", canViewPosts); // ✅ important
 
         return "profile/public-profile";
     }
