@@ -7,8 +7,18 @@
 
         <div class="text-center">
 
-            <img src="https://i.pravatar.cc/100?img=12"
+            <!-- SHOW USER PROFILE IMAGE -->
+            <img th:if="${userProfile != null and userProfile.profilePic != null}"
+                 th:src="@{${userProfile.profilePic}}"
                  class="profile-avatar shadow">
+
+            <!-- SHOW DEFAULT LETTER IF NO IMAGE -->
+            <div th:if="${userProfile == null or userProfile.profilePic == null}"
+                 class="profile-avatar shadow d-flex align-items-center justify-content-center bg-secondary text-white">
+
+                <span th:text="${#strings.substring(user.username,0,1).toUpperCase()}"></span>
+
+            </div>
 
         </div>
 

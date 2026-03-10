@@ -45,6 +45,10 @@
             <h3>Create Account</h3>
             <p class="form-sub">Create your professional account</p>
 
+            <div th:if="${error}" class="alert alert-danger text-center">
+                [[${error}]]
+            </div>
+
             <form th:action="@{/register}" method="post">
 
                 <div class="mb-3">
@@ -127,6 +131,24 @@
     </div>
 
 </div>
+<script>
+    function togglePassword() {
+
+        const passwordField = document.getElementById("password");
+        const icon = document.querySelector(".eye i");
+
+        if (passwordField.type === "password") {
+            passwordField.type = "text";
+            icon.classList.remove("fa-eye");
+            icon.classList.add("fa-eye-slash");
+        } else {
+            passwordField.type = "password";
+            icon.classList.remove("fa-eye-slash");
+            icon.classList.add("fa-eye");
+        }
+
+    }
+</script>
 
 </body>
 

@@ -1,0 +1,80 @@
+/* ========================= */
+/* BUSINESS HOURS PAGE THEME */
+/* ========================= */
+
+.card {
+    background: linear-gradient(145deg, rgba(18,18,18,0.95), rgba(10,10,10,0.95));
+    border: 1px solid #1f1f1f;
+    border-radius: 18px;
+    color: white;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    padding: 20px;
+}
+
+/* Day labels */
+.row strong {
+    color: #e5e5e5;
+}
+
+/* Time inputs */
+.form-control {
+    background-color: #0f0f0f !important;
+    border: 1px solid #1f1f1f !important;
+    color: white !important;
+}
+
+/* Read-only state when 'Closed' is checked */
+.form-control[readonly] {
+    background-color: #1a1a1a !important;
+    color: #555 !important;
+    cursor: not-allowed;
+}
+
+/* Checkbox styling */
+input[type="checkbox"] {
+    accent-color: #ff4d4d;
+    cursor: pointer;
+}
+
+/* Adjust labels for alignment */
+.col-md-3.text-center {
+    color: #aaa;
+    font-size: 0.9rem;
+}
+
+
+/* Styling for the checkbox container */
+input[type="checkbox"] {
+    appearance: none; /* Remove default browser styling */
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #555; /* Distinct border */
+    border-radius: 4px;
+    background-color: #1a1a1a; /* Dark background */
+    cursor: pointer;
+    vertical-align: middle;
+    transition: 0.2s;
+}
+
+/* Change color when checked */
+input[type="checkbox"]:checked {
+    background-color: #ff4d4d;
+    border-color: #ff4d4d;
+    position: relative;
+}
+
+/* Add a checkmark inside the box */
+input[type="checkbox"]:checked::after {
+    content: '✔';
+    color: white;
+    font-size: 12px;
+    position: absolute;
+    left: 3px;
+    top: -1px;
+}
+
+/* Add this to your business-hours.css */
+input[type="time"] {
+    color-scheme: dark;
+}

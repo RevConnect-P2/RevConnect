@@ -5,142 +5,88 @@
     <title th:text="${isEdit} ? 'Update Post' : 'Create Post'"></title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/create-post.css}">
 </head>
 
 <body>
 
-<!-- ========================= -->
-<!-- NAVBAR -->
-<!-- ========================= -->
-<nav class="navbar navbar-dark bg-dark">
-    <div class="container-fluid">
-        <span class="navbar-brand">Create Post</span>
+<div th:replace="~{layout/navbar :: navbar(${session.loggedUser}, 'none')}"></div>
 
-        <div>
-            <a th:href="@{/dashboard}" class="btn btn-outline-light btn-sm me-2">Feed</a>
-            <a th:href="@{/posts}" class="btn btn-outline-light btn-sm">My Posts</a>
-        </div>
-    </div>
-</nav>
+<div class="container mt-5 pt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card p-4 shadow-sm">
 
-<!-- ========================= -->
-<!-- CREATE POST FORM -->
-<!-- ========================= -->
-<div class="container mt-5">
+                <h5 class="fw-bold mb-3 text-white">Share something</h5>
 
-    <div class="card shadow-sm">
-        <div class="card-body">
+                <textarea id="postContent"
+                          class="form-control mb-3"
+                          rows="4"
+                          th:text="${post != null} ? ${post.content} : ''"
+                          placeholder="What's on your mind?"></textarea>
 
-            <h5 class="fw-bold mb-3">Share something</h5>
-
-            <!-- ================= CONTENT ================= -->
-            <textarea id="postContent"
-                      class="form-control mb-3"
-                      rows="4"
-                      th:text="${post != null} ? ${post.content} : ''"
-                      placeholder="What's on your mind?"></textarea>
-
-            <!-- ================= POST TYPE (Business / Creator only) ================= -->
-            <div class="row mb-3"
-                 th:if="${userType == 'BUSINESS' or userType == 'CREATOR'}">
-                <div class="col-md-4">
-                    <label class="small text-muted">Post Type</label>
-                    <select id="postType" class="form-select form-select-sm">
-                        <option value="NORMAL"
-                                th:selected="${post != null and post.postType == 'NORMAL'}">Normal</option>
-                        <option value="PROMOTIONAL"
-                                th:selected="${post != null and post.postType == 'PROMOTIONAL'}">Promotional</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- ================= HASHTAGS ================= -->
-            <input type="text"
-                   id="hashtags"
-                   class="form-control form-control-sm mb-3"
-                   placeholder="#java #springboot">
-
-            <!-- ================= PROMOTIONAL ONLY SECTION ================= -->
-            <div id="promotionalSection"
-                 class="d-none"
-                 th:if="${userType == 'BUSINESS' or userType == 'CREATOR'}">
-
-                <!-- Product / Service Tagging -->
-                <div class="mb-3">
-                    <label class="small text-muted">Tag Product / Service</label>
-                    <div class="d-flex gap-2">
-                        <input id="tagName"
-                               type="text"
-                               class="form-control form-control-sm"
-                               placeholder="e.g. iPhone 15">
-
-                        <select id="tagType"
-                                class="form-select form-select-sm"
-                                style="max-width: 140px">
-                            <option value="PRODUCT">Product</option>
-                            <option value="SERVICE">Service</option>
+                <div class="row mb-3" th:if="${userType == 'BUSINESS' or userType == 'CREATOR'}">
+                    <div class="col-md-4">
+                        <label class="small text-muted">Post Type</label>
+                        <select id="postType" class="form-select form-select-sm">
+                            <option value="NORMAL" th:selected="${post != null and post.postType == 'NORMAL'}">Normal</option>
+                            <option value="PROMOTIONAL" th:selected="${post != null and post.postType == 'PROMOTIONAL'}">Promotional</option>
                         </select>
-
-                        <button class="btn btn-outline-secondary btn-sm"
-                                type="button"
-                                onclick="addTag()">
-                            Add
-                        </button>
-                    </div>
-
-                    <div id="tagList" class="mt-2"></div>
-                </div>
-
-                <!-- CTA -->
-                <div class="row g-2 mb-3">
-                    <div class="col-md-6">
-<!--                        <input id="ctaText"-->
-<!--                               type="text"-->
-<!--                               class="form-control form-control-sm"-->
-<!--                               placeholder="CTA Text (e.g. Learn More)">-->
-
-                        <input id="ctaText" th:value="${post?.ctaText}" class="form-control form-control-sm" placeholder="CTA Text (e.g. Learn More)">
-                    </div>
-                    <div class="col-md-6">
-<!--                        <input id="ctaLink"-->
-<!--                               type="text"-->
-<!--                               class="form-control form-control-sm"-->
-<!--                               placeholder="CTA Link (https://...)">-->
-                        <input id="ctaLink" th:value="${post?.ctaLink}" class="form-control form-control-sm" placeholder="CTA Link (https://...)">
                     </div>
                 </div>
 
-                <!-- Schedule -->
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label class="small text-muted">Schedule Post</label>
-                        <input type="datetime-local"
-                               id="scheduledAt"
-                               th:value="${post?.scheduledAt}">
+                <input type="text" id="hashtags" class="form-control mb-3" placeholder="#java #springboot">
+
+                <div id="promotionalSection" class="d-none" th:if="${userType == 'BUSINESS' or userType == 'CREATOR'}">
+                    <div class="mb-3">
+                        <label class="small text-muted">Tag Product / Service</label>
+                        <div class="d-flex gap-2">
+                            <input id="tagName" type="text" class="form-control" placeholder="e.g. iPhone 15">
+                            <select id="tagType" class="form-select" style="max-width: 140px">
+                                <option value="PRODUCT">Product</option>
+                                <option value="SERVICE">Service</option>
+                            </select>
+                            <button class="btn btn-outline-secondary" type="button" onclick="addTag()">Add</button>
+                        </div>
+                        <div id="tagList" class="mt-2"></div>
                     </div>
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-md-6">
+                            <input id="ctaText" th:value="${post?.ctaText}" class="form-control" placeholder="CTA Text">
+                        </div>
+                        <div class="col-md-6">
+                            <input id="ctaLink" th:value="${post?.ctaLink}" class="form-control" placeholder="CTA Link (https://...)">
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="small text-muted">Schedule Post</label>
+                            <input type="datetime-local"
+                                   id="scheduledAt"
+                                   class="form-control form-control-sm"
+                                   th:value="${post != null and post.scheduledAt != null} ? ${#temporals.format(post.scheduledAt, 'yyyy-MM-dd HH:mm')} : ''">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-end mt-3">
+                    <button class="btn btn-primary" th:onclick="${isEdit} ? 'updatePost()' : 'createPost()'">
+                        <span th:text="${isEdit} ? 'Update' : 'Post'"></span>
+                    </button>
                 </div>
 
             </div>
-
-            <!-- ================= SUBMIT ================= -->
-            <div class="text-end">
-                <button class="btn btn-primary btn-sm"
-                        th:onclick="${isEdit} ? 'updatePost()' : 'createPost()'">
-                    <span th:text="${isEdit} ? 'Update' : 'Post'"></span>
-                </button>
-            </div>
-
         </div>
     </div>
-
 </div>
 
 <script th:inline="javascript">
-    /*<![CDATA[*/
     window.CURRENT_USER_ID = [[${session.loggedUser.userId}]];
-    /*]]>*/
-</script>
-<script th:inline="javascript">
     window.POST_ID = [[${post != null} ? ${post.postId} : 'null']];
 </script>
 <script th:src="@{/js/posts.js}"></script>
@@ -149,12 +95,11 @@
     const postTypeSelect = document.getElementById("postType");
     const promoSection = document.getElementById("promotionalSection");
 
+    // Initial state check
+    if (postTypeSelect.value === "PROMOTIONAL") promoSection.classList.remove("d-none");
+
     postTypeSelect.addEventListener("change", function () {
-        if (this.value === "PROMOTIONAL") {
-            promoSection.classList.remove("d-none");
-        } else {
-            promoSection.classList.add("d-none");
-        }
+        promoSection.classList.toggle("d-none", this.value !== "PROMOTIONAL");
     });
 </script>
 

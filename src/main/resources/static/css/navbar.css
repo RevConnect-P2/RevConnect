@@ -5,7 +5,12 @@
 body{
 background:#070707;
 color:white;
+
 }
+
+/* ========================= */
+/* NAVBAR */
+/* ========================= */
 
 /* ========================= */
 /* NAVBAR */
@@ -15,6 +20,13 @@ color:white;
 background:#070707 !important;
 border-bottom:1px solid #1f1f1f;
 padding:12px 30px;
+
+position:fixed;
+top:0;
+left:0;
+width:100%;
+
+z-index:9999;
 }
 
 .navbar-brand{
@@ -292,4 +304,26 @@ outline:none;
 border-color:#ff4d4d;
 box-shadow:0 0 0 2px rgba(255,77,77,0.15);
 background:#111;
+}
+
+/* Add to your stylesheet */
+.nav-link.active-nav {
+    color: #ff4d4d !important;
+}
+
+/* Optional: Add a subtle indicator line under the active link */
+.nav-link.active-nav {
+    border-bottom: 2px solid #ff4d4d;
+}
+
+.nav-link.active-nav{
+color:#ff4d4d !important;
+}
+
+.nav-link.active-nav i{
+color:#ff4d4d !important;
+}
+
+.nav-link.active-nav div{
+color:#ff4d4d !important;
 }
