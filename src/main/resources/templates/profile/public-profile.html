@@ -185,7 +185,191 @@
 </div>
 
 <script src="/js/posts.js"></script>
+<!-- USER IDS FOR POSTS -->
+<script th:inline="javascript">
+    window.CURRENT_USER_ID = [[${session.loggedUser.userId}]];
+    window.PROFILE_USER_ID = [[${user.userId}]];
+</script>
 
+<!-- POSTS SCRIPT -->
+<script src="/js/posts.js"></script>
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function(){
+
+        if(window.PROFILE_USER_ID){
+            fetchProfilePosts();
+        }
+
+        checkConnectionStatus();
+
+    });
+
+
+    // ======================
+    // FOLLOW / UNFOLLOW USER
+    // ======================
+    function followUser(){
+
+    fetch(`/follow/toggle/${CURRENT_USER_ID}/${PROFILE_USER_ID}`,{
+    method:"POST"
+    })
+    .then(response => response.json())
+    .then(isFollowing => {
+
+    let btn = document.getElementById("followBtn");
+    let text = document.getElementById("followText");
+    let followersCount = document.getElementById("followersCount");
+
+    let count = parseInt(followersCount.innerText);
+
+    if(isFollowing){
+
+    text.innerText = "Unfollow";
+    btn.classList.remove("btn-primary");
+    btn.classList.add("btn-danger");
+
+    followersCount.innerText = count + 1;
+
+    }else{
+
+    text.innerText = "Follow";
+    btn.classList.remove("btn-danger");
+    btn.classList.add("btn-primary");
+
+    followersCount.innerText = count - 1;
+
+    }
+
+    })
+    .catch(error => {
+
+    console.error("Follow error:", error);
+    alert("Follow request failed");
+
+    });
+
+    }
+
+
+    // ======================
+    // SEND CONNECTION REQUEST
+    // ======================
+    function connectUser(){
+
+    let btn =
+    document.getElementById("connectBtn") ||
+    document.getElementById("privateConnectBtn");
+
+    let text =
+    document.getElementById("connectText") ||
+    document.getElementById("privateConnectText");
+
+    if(!btn || !text){
+    return;
+    }
+
+    btn.disabled = true;
+
+    fetch(`/connections/request/${CURRENT_USER_ID}/${PROFILE_USER_ID}`,{
+    method:"POST"
+    })
+    .then(response => response.text())
+    .then(() => {
+
+    text.innerText = "Request Sent";
+
+    btn.classList.remove("btn-outline-primary","btn-primary");
+    btn.classList.add("btn-secondary");
+
+    })
+    .catch(error => {
+
+    btn.disabled = false;
+
+    console.error("Connection error:", error);
+    alert("Connection request failed");
+
+    });
+
+    }
+
+
+    // ======================
+    // CHECK CONNECTION STATUS
+    // ======================
+    function checkConnectionStatus(){
+
+    fetch(`/connections/status/${CURRENT_USER_ID}/${PROFILE_USER_ID}`)
+    .then(response => response.text())
+    .then(status => {
+
+    let btn =
+    document.getElementById("connectBtn") ||
+    document.getElementById("privateConnectBtn");
+
+    let text =
+    document.getElementById("connectText") ||
+    document.getElementById("privateConnectText");
+
+    if(!btn || !text){
+    return;
+    }
+
+    if(status === "PENDING"){
+
+    text.innerText = "Request Sent";
+
+    btn.classList.remove("btn-outline-primary","btn-primary","btn-success");
+    btn.classList.add("btn-secondary");
+
+    btn.disabled = true;
+
+    }
+
+    else if(status === "ACCEPTED"){
+
+    text.innerText = "Connected";
+
+    btn.classList.remove("btn-outline-primary","btn-primary","btn-secondary");
+    btn.classList.add("btn-success");
+
+    btn.disabled = true;
+
+    }
+
+    else if(status === "REJECTED"){
+
+    text.innerText = "Connect Again";
+
+    btn.classList.remove("btn-secondary","btn-success");
+    btn.classList.add("btn-outline-primary");
+
+    btn.disabled = false;
+
+    btn.onclick = connectUser;
+
+    }
+
+    else{
+
+    text.innerText = "Connect";
+
+    btn.classList.remove("btn-secondary","btn-success");
+    btn.classList.add("btn-outline-primary");
+
+    btn.disabled = false;
+
+    btn.onclick = connectUser;
+
+    }
+
+    });
+
+    }
+
+</script>
 </body>
 
 </html>

@@ -8,36 +8,35 @@ import static org.junit.jupiter.api.Assertions.*;
 class TagResponseTest {
 
     @Test
-    void testNoArgsConstructorAndSetters() {
+    void shouldTestGettersAndSetters() {
 
-        TagResponse response = new TagResponse();
+        TagResponse tag = new TagResponse();
 
-        response.setTagName("Laptop");
-        response.setTagType(TagType.PRODUCT);
+        tag.setTagName("Laptop");
+        tag.setTagType(TagType.PRODUCT);
 
-        assertEquals("Laptop", response.getTagName());
-        assertEquals(TagType.PRODUCT, response.getTagType());
+        assertEquals("Laptop", tag.getTagName());
+        assertEquals(TagType.PRODUCT, tag.getTagType());
     }
 
     @Test
-    void testAllArgsConstructor() {
+    void shouldTestAllArgsConstructor() {
 
-        TagResponse response =
-                new TagResponse("Camera", TagType.SERVICE);
+        TagResponse tag = new TagResponse("ServiceTag", TagType.SERVICE);
 
-        assertEquals("Camera", response.getTagName());
-        assertEquals(TagType.SERVICE, response.getTagType());
+        assertEquals("ServiceTag", tag.getTagName());
+        assertEquals(TagType.SERVICE, tag.getTagType());
     }
 
     @Test
-    void testBuilder() {
+    void shouldTestBuilder() {
 
-        TagResponse response = TagResponse.builder()
+        TagResponse tag = TagResponse.builder()
                 .tagName("Phone")
                 .tagType(TagType.PRODUCT)
                 .build();
 
-        assertEquals("Phone", response.getTagName());
-        assertEquals(TagType.PRODUCT, response.getTagType());
+        assertEquals("Phone", tag.getTagName());
+        assertEquals(TagType.PRODUCT, tag.getTagType());
     }
 }

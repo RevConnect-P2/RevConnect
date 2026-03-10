@@ -1,13 +1,18 @@
 package com.revconnect;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.SpringApplication;
 
-@SpringBootTest
-class RevconnectApplicationTests {
+import static org.mockito.Mockito.*;
 
-	@Test
-	void contextLoads() {
-	}
+class RevconnectApplicationTest {
 
+    @Test
+    void testMainMethod() {
+
+        SpringApplication app = mock(SpringApplication.class);
+
+        RevconnectApplication.main(new String[]{});
+
+    }
 }

@@ -232,4 +232,34 @@ class PostControllerTest {
 
         verify(savedPostService).getSavedPosts(userId);
     }
+
+    // ================= TRENDING HASHTAGS =================
+    @Test
+    void shouldReturnTrendingHashtags() {
+
+        when(postService.getTrendingHashtags())
+                .thenReturn(List.of("java", "spring"));
+
+        ResponseEntity<List<String>> result =
+                postController.getTrendingHashtags();
+
+        assertEquals(2, result.getBody().size());
+
+        verify(postService).getTrendingHashtags();
+    }
+
+    // ================= USERS WHO SHARED =================
+    @Test
+    void shouldReturnUsersWhoSharedPost() {
+
+        when(shareService.getUsersWhoShared(1L))
+                .thenReturn(List.of("user1", "user2"));
+
+        ResponseEntity<List<String>> result =
+                postController.getUsersWhoShared(1L);
+
+        assertEquals(2, result.getBody().size());
+
+        verify(shareService).getUsersWhoShared(1L);
+    }
 }

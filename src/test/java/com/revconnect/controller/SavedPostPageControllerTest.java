@@ -1,6 +1,9 @@
 package com.revconnect.controller;
 
 import com.revconnect.entity.User;
+import com.revconnect.service.ConnectionService;
+import com.revconnect.service.FollowService;
+import com.revconnect.service.PostService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,13 +18,26 @@ class SavedPostPageControllerTest {
 
     private SavedPostPageController controller;
 
-    private MockHttpSession session;
+    private FollowService followService;
+    private ConnectionService connectionService;
+    private PostService postService;
 
+    private MockHttpSession session;
     private Model model;
 
     @BeforeEach
     void setUp() {
-        controller = new SavedPostPageController();
+
+        followService = mock(FollowService.class);
+        connectionService = mock(ConnectionService.class);
+        postService = mock(PostService.class);
+
+        controller = new SavedPostPageController(
+                followService,
+                connectionService,
+                postService
+        );
+
         session = new MockHttpSession();
         model = mock(Model.class);
     }
@@ -42,15 +58,21 @@ class SavedPostPageControllerTest {
     void savedPostsPage_shouldLoadSavedPosts_whenUserExists() {
 
         User user = new User();
+        user.setUserId(1L);
+
         session.setAttribute("loggedUser", user);
+
+        when(followService.getFollowersCount(1L)).thenReturn(0L);
+        when(followService.getFollowingCount(1L)).thenReturn(0L);
+        when(connectionService.getConnectionsCount(1L)).thenReturn(0L);
 
         String view = controller.savedPostsPage(session, model);
 
         assertEquals("posts/saved-posts", view);
 
         verify(model).addAttribute("user", user);
-        verify(model).addAttribute("connectionsCount", 0);
-        verify(model).addAttribute("followersCount", 0);
-        verify(model).addAttribute("followingCount", 0);
+        verify(model).addAttribute("connectionsCount", 0L);
+        verify(model).addAttribute("followersCount", 0L);
+        verify(model).addAttribute("followingCount", 0L);
     }
 }

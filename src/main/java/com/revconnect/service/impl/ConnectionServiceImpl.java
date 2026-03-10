@@ -15,9 +15,17 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+// ✅ LOGGER IMPORTS
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 @Service
 @RequiredArgsConstructor
 public class ConnectionServiceImpl implements ConnectionService {
+
+    // ✅ LOGGER OBJECT
+    private static final Logger logger =
+            LogManager.getLogger(ConnectionServiceImpl.class);
 
     private final ConnectionRepository connectionRepository;
     private final UserRepository userRepository;
@@ -30,15 +38,30 @@ public class ConnectionServiceImpl implements ConnectionService {
     @Override
     public void sendConnectionRequest(Long senderId, Long receiverId) {
 
+        logger.info("Connection request attempt from {} to {}", senderId, receiverId);
+
         if (senderId.equals(receiverId)) {
+
+            logger.error("User {} attempted to connect with themselves", senderId);
+
             throw new RuntimeException("You cannot connect with yourself");
         }
 
         User sender = userRepository.findById(senderId)
-                .orElseThrow(() -> new RuntimeException("Sender not found"));
+                .orElseThrow(() -> {
+
+                    logger.error("Sender not found with ID {}", senderId);
+
+                    return new RuntimeException("Sender not found");
+                });
 
         User receiver = userRepository.findById(receiverId)
-                .orElseThrow(() -> new RuntimeException("Receiver not found"));
+                .orElseThrow(() -> {
+
+                    logger.error("Receiver not found with ID {}", receiverId);
+
+                    return new RuntimeException("Receiver not found");
+                });
 
         Optional<Connection> existing =
                 connectionRepository.findConnectionBetweenUsers(sender, receiver);
@@ -48,14 +71,22 @@ public class ConnectionServiceImpl implements ConnectionService {
             Connection connection = existing.get();
 
             if (connection.getStatus() == ConnectionStatus.PENDING) {
+
+                logger.warn("Connection request already pending between {} and {}", senderId, receiverId);
+
                 throw new RuntimeException("Connection request already sent");
             }
 
             if (connection.getStatus() == ConnectionStatus.ACCEPTED) {
+
+                logger.warn("Users {} and {} are already connected", senderId, receiverId);
+
                 throw new RuntimeException("You are already connected");
             }
 
             if (connection.getStatus() == ConnectionStatus.REJECTED) {
+
+                logger.info("Resending previously rejected connection request from {} to {}", senderId, receiverId);
 
                 connection.setStatus(ConnectionStatus.PENDING);
 
@@ -69,6 +100,8 @@ public class ConnectionServiceImpl implements ConnectionService {
                         "sent you a connection request"
                 );
 
+                logger.info("Connection request resent successfully");
+
                 return;
             }
         }
@@ -80,6 +113,8 @@ public class ConnectionServiceImpl implements ConnectionService {
                 .build();
 
         Connection saved = connectionRepository.save(connection);
+
+        logger.info("Connection request saved with ID {}", saved.getConnectionId());
 
         notificationService.createNotification(
                 senderId,
@@ -97,12 +132,21 @@ public class ConnectionServiceImpl implements ConnectionService {
     @Override
     public void acceptRequest(Long connectionId) {
 
+        logger.info("Accepting connection request {}", connectionId);
+
         Connection connection = connectionRepository.findById(connectionId)
-                .orElseThrow(() -> new RuntimeException("Connection not found"));
+                .orElseThrow(() -> {
+
+                    logger.error("Connection not found with ID {}", connectionId);
+
+                    return new RuntimeException("Connection not found");
+                });
 
         connection.setStatus(ConnectionStatus.ACCEPTED);
 
         Connection savedConnection = connectionRepository.save(connection);
+
+        logger.info("Connection {} accepted", connectionId);
 
         notificationService.createNotification(
                 savedConnection.getReceiver().getUserId(),
@@ -120,12 +164,21 @@ public class ConnectionServiceImpl implements ConnectionService {
     @Override
     public void rejectRequest(Long connectionId) {
 
+        logger.info("Rejecting connection request {}", connectionId);
+
         Connection connection = connectionRepository.findById(connectionId)
-                .orElseThrow(() -> new RuntimeException("Connection not found"));
+                .orElseThrow(() -> {
+
+                    logger.error("Connection not found with ID {}", connectionId);
+
+                    return new RuntimeException("Connection not found");
+                });
 
         connection.setStatus(ConnectionStatus.REJECTED);
 
         Connection savedConnection = connectionRepository.save(connection);
+
+        logger.info("Connection {} rejected", connectionId);
 
         notificationService.createNotification(
                 savedConnection.getReceiver().getUserId(),
@@ -143,7 +196,11 @@ public class ConnectionServiceImpl implements ConnectionService {
     @Override
     public void removeConnection(Long connectionId) {
 
+        logger.info("Removing connection {}", connectionId);
+
         connectionRepository.deleteById(connectionId);
+
+        logger.info("Connection {} removed successfully", connectionId);
     }
 
 
@@ -152,6 +209,8 @@ public class ConnectionServiceImpl implements ConnectionService {
     // =========================
     @Override
     public List<Connection> getReceivedRequests(Long userId) {
+
+        logger.info("Fetching received connection requests for user {}", userId);
 
         return connectionRepository.findByReceiver_UserIdAndStatus(
                 userId,
@@ -166,6 +225,8 @@ public class ConnectionServiceImpl implements ConnectionService {
     @Override
     public List<Connection> getSentRequests(Long userId) {
 
+        logger.info("Fetching sent connection requests for user {}", userId);
+
         return connectionRepository.findBySender_UserIdAndStatus(
                 userId,
                 ConnectionStatus.PENDING
@@ -179,6 +240,8 @@ public class ConnectionServiceImpl implements ConnectionService {
     @Override
     public long getConnectionsCount(Long userId) {
 
+        logger.info("Counting accepted connections for user {}", userId);
+
         return connectionRepository.countAcceptedConnections(
                 userId,
                 ConnectionStatus.ACCEPTED
@@ -191,6 +254,8 @@ public class ConnectionServiceImpl implements ConnectionService {
     // =========================
     @Override
     public ConnectionStatus getConnectionStatus(Long user1, Long user2) {
+
+        logger.info("Checking connection status between {} and {}", user1, user2);
 
         User userA = userRepository.findById(user1)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -210,6 +275,8 @@ public class ConnectionServiceImpl implements ConnectionService {
     // =========================
     @Override
     public List<User> getMyConnections(Long userId) {
+
+        logger.info("Fetching connections list for user {}", userId);
 
         List<Connection> connections =
                 connectionRepository.findAllAcceptedConnections(userId);

@@ -16,9 +16,16 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+// LOGGER IMPORTS
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 @Service
 @RequiredArgsConstructor
 public class LikeServiceImpl implements LikeService {
+
+    private static final Logger logger =
+            LogManager.getLogger(LikeServiceImpl.class);
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
@@ -31,6 +38,8 @@ public class LikeServiceImpl implements LikeService {
     @Override
     public void likePost(Long postId, String email) {
 
+        logger.info("User {} attempting to like post {}", email, postId);
+
         User user = getUserByEmail(email);
         Post post = getPostById(postId);
 
@@ -38,6 +47,7 @@ public class LikeServiceImpl implements LikeService {
                 postLikeRepository.findByPost_PostIdAndUser_Email(postId, email);
 
         if (existingLike.isPresent()) {
+            logger.warn("User {} already liked post {}", email, postId);
             throw new RuntimeException("You already liked this post");
         }
 
@@ -48,6 +58,8 @@ public class LikeServiceImpl implements LikeService {
 
         postLikeRepository.save(like);
 
+        logger.info("User {} liked post {}", email, postId);
+
         createLikeNotification(user, post);
     }
 
@@ -57,11 +69,18 @@ public class LikeServiceImpl implements LikeService {
     @Override
     public void unlikePost(Long postId, String email) {
 
+        logger.info("User {} attempting to unlike post {}", email, postId);
+
         PostLike like = postLikeRepository
                 .findByPost_PostIdAndUser_Email(postId, email)
-                .orElseThrow(() -> new RuntimeException("Like not found"));
+                .orElseThrow(() -> {
+                    logger.error("Like not found for user {} on post {}", email, postId);
+                    return new RuntimeException("Like not found");
+                });
 
         postLikeRepository.delete(like);
+
+        logger.info("User {} unliked post {}", email, postId);
     }
 
     // =====================================
@@ -69,6 +88,8 @@ public class LikeServiceImpl implements LikeService {
     // =====================================
     @Override
     public boolean toggleLike(Long postId, String email) {
+
+        logger.info("User {} toggling like for post {}", email, postId);
 
         User user = getUserByEmail(email);
         Post post = getPostById(postId);
@@ -80,6 +101,9 @@ public class LikeServiceImpl implements LikeService {
         if (existingLike.isPresent()) {
 
             postLikeRepository.delete(existingLike.get());
+
+            logger.info("User {} removed like from post {}", email, postId);
+
             return false;
         }
 
@@ -91,6 +115,8 @@ public class LikeServiceImpl implements LikeService {
 
         postLikeRepository.save(like);
 
+        logger.info("User {} liked post {} via toggle", email, postId);
+
         createLikeNotification(user, post);
 
         return true;
@@ -101,6 +127,8 @@ public class LikeServiceImpl implements LikeService {
     // =====================================
     @Override
     public List<String> getUsersWhoLiked(Long postId) {
+
+        logger.info("Fetching users who liked post {}", postId);
 
         return postLikeRepository
                 .findByPost_PostId(postId)
@@ -115,14 +143,24 @@ public class LikeServiceImpl implements LikeService {
 
     private User getUserByEmail(String email) {
 
+        logger.debug("Fetching user by email {}", email);
+
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> {
+                    logger.error("User not found with email {}", email);
+                    return new RuntimeException("User not found");
+                });
     }
 
     private Post getPostById(Long postId) {
 
+        logger.debug("Fetching post {}", postId);
+
         return postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
+                .orElseThrow(() -> {
+                    logger.error("Post not found {}", postId);
+                    return new RuntimeException("Post not found");
+                });
     }
 
     private void createLikeNotification(User sender, Post post) {
@@ -132,6 +170,8 @@ public class LikeServiceImpl implements LikeService {
 
         // prevent self notification
         if (!senderId.equals(receiverId)) {
+
+            logger.debug("Creating like notification from {} to {}", senderId, receiverId);
 
             notificationService.createNotification(
                     senderId,

@@ -14,10 +14,18 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+// ✅ LOGGER IMPORTS
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 @RestController
 @RequestMapping("/posts")
 @RequiredArgsConstructor
 public class PostController {
+
+    // ✅ LOGGER OBJECT
+    private static final Logger logger =
+            LogManager.getLogger(PostController.class);
 
     private final PostService postService;
     private final SavedPostService savedPostService;
@@ -33,7 +41,14 @@ public class PostController {
             @RequestParam Long userId,
             @Valid @RequestBody PostCreateRequest request
     ) {
-        return ResponseEntity.ok(postService.createPost(userId, request));
+
+        logger.info("Create post request received from user {}", userId);
+
+        PostResponse response = postService.createPost(userId, request);
+
+        logger.info("Post created successfully by user {}", userId);
+
+        return ResponseEntity.ok(response);
     }
 
     // =========================
@@ -45,7 +60,14 @@ public class PostController {
             @RequestParam Long userId,
             @Valid @RequestBody PostCreateRequest request
     ) {
-        return ResponseEntity.ok(postService.updatePost(postId, userId, request));
+
+        logger.info("Update post request for post {} by user {}", postId, userId);
+
+        PostResponse response = postService.updatePost(postId, userId, request);
+
+        logger.info("Post {} updated successfully", postId);
+
+        return ResponseEntity.ok(response);
     }
 
     // =========================
@@ -56,7 +78,13 @@ public class PostController {
             @PathVariable Long postId,
             @RequestParam Long userId
     ) {
+
+        logger.info("Delete post request for post {} by user {}", postId, userId);
+
         postService.deletePost(postId, userId);
+
+        logger.info("Post {} deleted successfully", postId);
+
         return ResponseEntity.ok("Post deleted successfully");
     }
 
@@ -67,6 +95,9 @@ public class PostController {
     public ResponseEntity<PostResponse> getPostById(
             @PathVariable Long postId
     ) {
+
+        logger.info("Fetching post with ID {}", postId);
+
         return ResponseEntity.ok(postService.getPostById(postId));
     }
 
@@ -77,6 +108,9 @@ public class PostController {
     public ResponseEntity<List<PostResponse>> getPostsByUser(
             @RequestParam Long userId
     ) {
+
+        logger.info("Fetching posts for user {}", userId);
+
         return ResponseEntity.ok(postService.getPostsByUser(userId));
     }
 
@@ -87,6 +121,9 @@ public class PostController {
     public ResponseEntity<List<PostResponse>> getGlobalFeed(
             @RequestParam Long viewerUserId
     ) {
+
+        logger.info("Fetching global feed for user {}", viewerUserId);
+
         return ResponseEntity.ok(postService.getGlobalFeed(viewerUserId));
     }
 
@@ -98,6 +135,9 @@ public class PostController {
             @PathVariable Long postId,
             @RequestParam Long userId
     ) {
+
+        logger.info("Pin post request for post {} by user {}", postId, userId);
+
         return ResponseEntity.ok(postService.pinPost(postId, userId));
     }
 
@@ -109,10 +149,11 @@ public class PostController {
             @PathVariable Long postId,
             @RequestParam Long userId
     ) {
+
+        logger.info("Unpin post request for post {} by user {}", postId, userId);
+
         return ResponseEntity.ok(postService.unpinPost(postId, userId));
     }
-
-
 
     // =========================
     // GET POSTS BY HASHTAG
@@ -121,6 +162,9 @@ public class PostController {
     public ResponseEntity<List<PostResponse>> getPostsByHashtag(
             @PathVariable String tag
     ) {
+
+        logger.info("Fetching posts for hashtag {}", tag);
+
         return ResponseEntity.ok(postService.getPostsByHashtag(tag));
     }
 
@@ -129,6 +173,9 @@ public class PostController {
     // =========================
     @GetMapping("/hashtags/trending")
     public ResponseEntity<List<String>> getTrendingHashtags() {
+
+        logger.info("Fetching trending hashtags");
+
         return ResponseEntity.ok(postService.getTrendingHashtags());
     }
 
@@ -140,7 +187,13 @@ public class PostController {
             @PathVariable Long postId,
             @RequestParam Long userId
     ) {
+
+        logger.info("User {} saving post {}", userId, postId);
+
         savedPostService.savePost(userId, postId);
+
+        logger.info("Post {} saved by user {}", postId, userId);
+
         return ResponseEntity.ok("Post saved successfully");
     }
 
@@ -152,7 +205,13 @@ public class PostController {
             @PathVariable Long postId,
             @RequestParam Long userId
     ) {
+
+        logger.info("User {} unsaving post {}", userId, postId);
+
         savedPostService.unsavePost(userId, postId);
+
+        logger.info("Post {} unsaved by user {}", postId, userId);
+
         return ResponseEntity.ok("Post unsaved successfully");
     }
 
@@ -163,6 +222,9 @@ public class PostController {
     public ResponseEntity<List<PostResponse>> getSavedPosts(
             @RequestParam Long userId
     ) {
+
+        logger.info("Fetching saved posts for user {}", userId);
+
         return ResponseEntity.ok(savedPostService.getSavedPosts(userId));
     }
 
@@ -170,6 +232,9 @@ public class PostController {
     public ResponseEntity<List<String>> getUsersWhoShared(
             @PathVariable Long postId
     ) {
+
+        logger.info("Fetching users who shared post {}", postId);
+
         return ResponseEntity.ok(shareService.getUsersWhoShared(postId));
     }
 

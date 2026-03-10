@@ -189,4 +189,32 @@ class AuthControllerTest {
         verify(model).addAttribute(eq("success"), anyString());
     }
 
+    // ========================
+// RESET PASSWORD FAILURE
+// ========================
+    @Test
+    void shouldReturnResetPageWhenResetFails() {
+
+        User user = new User();
+        user.setSecurityQuestion("Your pet?");
+
+        doThrow(new RuntimeException("Wrong answer"))
+                .when(authService)
+                .resetPassword("test@mail.com", "dog", "newpass");
+
+        when(authService.findByEmail("test@mail.com")).thenReturn(user);
+
+        String view = authController.resetPassword(
+                "test@mail.com",
+                "dog",
+                "newpass",
+                model
+        );
+
+        assertEquals("auth/reset-password", view);
+
+        verify(model).addAttribute("error", "Wrong answer");
+        verify(model).addAttribute("email", "test@mail.com");
+        verify(model).addAttribute("question", "Your pet?");
+    }
 }

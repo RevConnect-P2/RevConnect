@@ -136,4 +136,100 @@ public class ShareServiceImplTest {
 
         shareService.unsharePost(10L, "test@mail.com");
     }
+
+    @Test
+    public void shouldToggleShareAndRemoveExistingShare() {
+
+        Share share = new Share();
+
+        when(userRepository.findByEmail("test@mail.com"))
+                .thenReturn(Optional.of(user));
+
+        when(postRepository.findById(10L))
+                .thenReturn(Optional.of(post));
+
+        when(shareRepository
+                .findByOriginalPost_PostIdAndSharedBy_UserId(10L, 1L))
+                .thenReturn(Optional.of(share));
+
+        boolean result = shareService.toggleShare(10L, "test@mail.com");
+
+        verify(shareRepository).delete(share);
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void shouldToggleShareAndCreateShare() {
+
+        when(userRepository.findByEmail("test@mail.com"))
+                .thenReturn(Optional.of(user));
+
+        when(postRepository.findById(10L))
+                .thenReturn(Optional.of(post));
+
+        when(shareRepository
+                .findByOriginalPost_PostIdAndSharedBy_UserId(10L, 1L))
+                .thenReturn(Optional.empty());
+
+        boolean result = shareService.toggleShare(10L, "test@mail.com");
+
+        verify(shareRepository).save(any(Share.class));
+
+        assertTrue(result);
+    }
+
+    @Test
+    public void shouldUnshareSuccessfully() {
+
+        Share share = new Share();
+
+        when(userRepository.findByEmail("test@mail.com"))
+                .thenReturn(Optional.of(user));
+
+        when(shareRepository
+                .findByOriginalPost_PostIdAndSharedBy_UserId(10L, 1L))
+                .thenReturn(Optional.of(share));
+
+        shareService.unsharePost(10L, "test@mail.com");
+
+        verify(shareRepository).delete(share);
+    }
+
+    @Test
+    public void shouldReturnUsersWhoShared() {
+
+        when(shareRepository.findUsernamesWhoShared(10L))
+                .thenReturn(java.util.List.of("alice", "bob"));
+
+        java.util.List<String> users =
+                shareService.getUsersWhoShared(10L);
+
+        assertEquals(2, users.size());
+    }
+
+    @Test
+    public void shouldNotSendNotificationForSelfShare() {
+
+        user.setUserId(1L);
+
+        post.setUser(user); // same user sharing own post
+
+        when(userRepository.findByEmail("test@mail.com"))
+                .thenReturn(Optional.of(user));
+
+        when(postRepository.findById(10L))
+                .thenReturn(Optional.of(post));
+
+        when(shareRepository
+                .findByOriginalPost_PostIdAndSharedBy_UserId(10L, 1L))
+                .thenReturn(Optional.empty());
+
+        shareService.sharePost(10L, "test@mail.com");
+
+        verify(notificationService, never())
+                .createNotification(any(), any(), any(), any(), any());
+    }
+
+
 }

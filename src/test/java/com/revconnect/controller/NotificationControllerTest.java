@@ -155,4 +155,90 @@ class NotificationControllerTest {
 
         verify(notificationService).markAllAsRead(1L);
     }
+
+    // =========================
+// NOTIFICATION COUNT (principal null)
+// =========================
+    @Test
+    void notificationCount_shouldSetZero_whenPrincipalNull() {
+
+        controller.notificationCount(model, null);
+
+        verify(model).addAttribute("unreadCount", 0);
+    }
+
+    // =========================
+// NOTIFICATION COUNT (principal present)
+// =========================
+    @Test
+    void notificationCount_shouldReturnUnreadCount() {
+
+        User user = new User();
+        user.setUserId(1L);
+
+        when(principal.getName()).thenReturn("test@mail.com");
+        when(userRepository.findByEmail("test@mail.com"))
+                .thenReturn(Optional.of(user));
+
+        when(notificationService.getUnreadCount(1L))
+                .thenReturn(3L);
+
+        controller.notificationCount(model, principal);
+
+        verify(model).addAttribute("unreadCount", 3L);
+    }
+
+    // =========================
+// FILTER WITHOUT TYPE
+// =========================
+    @Test
+    void shouldFilterNotifications_whenTypeNull() {
+
+        User user = new User();
+        user.setUserId(1L);
+
+        when(principal.getName()).thenReturn("test@mail.com");
+        when(userRepository.findByEmail("test@mail.com"))
+                .thenReturn(Optional.of(user));
+
+        when(notificationService.getUserNotifications(1L))
+                .thenReturn(List.of());
+
+        when(notificationService.getUnreadCount(1L))
+                .thenReturn(2L);
+
+        String view = controller.filterNotifications(null, model, principal);
+
+        assertEquals("notifications/notifications", view);
+
+        verify(model).addAttribute(eq("unreadCount"), eq(2L));
+    }
+
+    // =========================
+// MARK READ WITH TYPE
+// =========================
+    @Test
+    void shouldRedirectFilteredPage_whenMarkReadWithType() {
+
+        String view = controller.markRead(5L, NotificationType.LIKE);
+
+        assertEquals("redirect:/notifications/filter?type=LIKE", view);
+
+        verify(notificationService).markAsRead(5L);
+    }
+
+    // =========================
+// MARK UNREAD WITH TYPE
+// =========================
+    @Test
+    void shouldRedirectFilteredPage_whenMarkUnreadWithType() {
+
+        String view = controller.markUnread(6L, NotificationType.COMMENT);
+
+        assertEquals("redirect:/notifications/filter?type=COMMENT", view);
+
+        verify(notificationService).markAsUnread(6L);
+    }
+
+
 }
