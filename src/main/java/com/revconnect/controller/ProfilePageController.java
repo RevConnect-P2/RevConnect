@@ -45,10 +45,10 @@ public class ProfilePageController {
                 .findByUser_UserId(user.getUserId())
                 .orElse(null);
 
-        // ===============================
-// BUSINESS HOURS (for business profiles)
-// ===============================
-        if (profile != null && profile.getProfileType() == ProfileType.BUSINESS) {
+            // ===============================
+    // BUSINESS HOURS (for business profiles)
+    // ===============================
+            if (profile != null && profile.getProfileType() == ProfileType.BUSINESS) {
 
             model.addAttribute(
                     "businessHours",
@@ -86,11 +86,17 @@ public class ProfilePageController {
 
             if (profile != null && profile.getProfileVisibility() != null) {
 
-                // PUBLIC profile → everyone can see posts
-                if ("PUBLIC".equalsIgnoreCase(profile.getProfileVisibility())) {
+                // OWNER CAN ALWAYS SEE POSTS
+                if (loggedUser.getUserId().equals(user.getUserId())) {
                     canViewPosts = true;
                 }
 
+                // PUBLIC PROFILE
+                else if ("PUBLIC".equalsIgnoreCase(profile.getProfileVisibility())) {
+                    canViewPosts = true;
+                }
+
+                // PRIVATE PROFILE BUT CONNECTED
                 else if ("PRIVATE".equalsIgnoreCase(profile.getProfileVisibility())
                         && connectionStatus == ConnectionStatus.ACCEPTED) {
 
