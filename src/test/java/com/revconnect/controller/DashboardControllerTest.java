@@ -5,6 +5,8 @@ import com.revconnect.service.ConnectionService;
 import com.revconnect.service.FollowService;
 import com.revconnect.service.NotificationService;
 import com.revconnect.service.PostService;
+import com.revconnect.repository.UserProfileRepository;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,6 +46,10 @@ class DashboardControllerTest {
     @InjectMocks
     private DashboardController dashboardController;
 
+    @Mock
+    private UserProfileRepository userProfileRepository;
+
+
     private MockHttpSession session;
 
     @BeforeEach
@@ -75,6 +81,9 @@ class DashboardControllerTest {
         user.setUserId(1L);
 
         session.setAttribute("loggedUser", user);
+
+        when(userProfileRepository.findByUser_UserId(1L))
+                .thenReturn(Optional.empty());
 
         when(notificationService.getUnreadCount(1L)).thenReturn(5L);
         when(postService.getGlobalFeed(1L)).thenReturn(List.of());
