@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="/css/register.css">
 
 </head>
+
 <body>
 
 <div class="main-container">
@@ -51,79 +52,118 @@
 
             <form th:action="@{/register}" method="post">
 
+                <!-- EMAIL -->
                 <div class="mb-3">
                     <label>Email</label>
-                    <input type="email" class="form-control" name="email" placeholder="Enter email">
+                    <input type="email"
+                           class="form-control"
+                           name="email"
+                           placeholder="Enter email"
+                           required>
                 </div>
 
+                <!-- USERNAME -->
                 <div class="mb-3">
                     <label>Username</label>
-                    <input type="text" class="form-control" name="username" placeholder="Enter username">
+                    <input type="text"
+                           class="form-control"
+                           name="username"
+                           placeholder="Enter username"
+                           required>
                 </div>
 
+                <!-- PASSWORD -->
                 <div class="mb-3">
                     <label>Password</label>
 
                     <div class="input-group">
 
-                        <input type="password" class="form-control" id="password" name="password" placeholder="Enter password">
+                        <input type="password"
+                               class="form-control"
+                               id="password"
+                               name="password"
+                               placeholder="Enter password"
+                               required>
 
                         <span class="input-group-text eye" onclick="togglePassword()">
-                            <i class="fa fa-eye"></i>
-                        </span>
+<i class="fa fa-eye"></i>
+</span>
 
                     </div>
 
                 </div>
 
                 <!-- USER TYPE RADIO -->
-
                 <div class="mb-3">
 
                     <label>User Type</label>
 
                     <div class="radio-group">
 
-                        <label><input type="radio" name="userType" value="PERSONAL"> Personal</label>
-                        <label><input type="radio" name="userType" value="CREATOR"> Creator</label>
-                        <label><input type="radio" name="userType" value="BUSINESS"> Business</label>
+                        <label>
+                            <input type="radio" name="userType" value="PERSONAL" required>
+                            Personal
+                        </label>
+
+                        <label>
+                            <input type="radio" name="userType" value="CREATOR">
+                            Creator
+                        </label>
+
+                        <label>
+                            <input type="radio" name="userType" value="BUSINESS">
+                            Business
+                        </label>
 
                     </div>
 
                 </div>
 
                 <!-- SECURITY QUESTION -->
-
                 <div class="mb-3">
 
                     <label>Security Question</label>
 
-                    <select class="form-control" name="securityQuestion">
+                    <select class="form-control"
+                            name="securityQuestion"
+                            required>
 
-                        <option>Select Question</option>
-                        <option>What is your pet name?</option>
-                        <option>What is your school name?</option>
-                        <option>What is your favorite color?</option>
-                        <option>What is your best friend name?</option>
+                        <option value="">Select Question</option>
+
+                        <option value="What is your pet name?">What is your pet name?</option>
+
+                        <option value="What is your school name?">What is your school name?</option>
+
+                        <option value="What is your favorite color?">What is your favorite color?</option>
+
+                        <option value="What is your best friend name?">What is your best friend name?</option>
 
                     </select>
 
                 </div>
 
+                <!-- SECURITY ANSWER -->
                 <div class="mb-3">
 
                     <label>Security Answer</label>
 
-                    <input type="text" class="form-control" name="securityAnswer" placeholder="Enter answer">
+                    <input type="text"
+                           class="form-control"
+                           name="securityAnswer"
+                           placeholder="Enter answer"
+                           required>
 
                 </div>
 
-                <button class="btn create-btn w-100">Create Account</button>
+                <button class="btn create-btn w-100">
+                    Create Account
+                </button>
 
             </form>
 
             <p class="login-text">
-                Already have account? <a th:href="@{/login}">Login</a>
+                Already have account?
+                <a th:href="@{/login}">Login</a>
             </p>
 
         </div>
@@ -131,25 +171,31 @@
     </div>
 
 </div>
+
 <script>
-    function togglePassword() {
 
-        const passwordField = document.getElementById("password");
-        const icon = document.querySelector(".eye i");
+    function togglePassword(){
 
-        if (passwordField.type === "password") {
-            passwordField.type = "text";
-            icon.classList.remove("fa-eye");
-            icon.classList.add("fa-eye-slash");
-        } else {
-            passwordField.type = "password";
-            icon.classList.remove("fa-eye-slash");
-            icon.classList.add("fa-eye");
-        }
+    const passwordField = document.getElementById("password");
+    const icon = document.querySelector(".eye i");
+
+    if(passwordField.type === "password"){
+
+    passwordField.type = "text";
+    icon.classList.remove("fa-eye");
+    icon.classList.add("fa-eye-slash");
+
+    }else{
+
+    passwordField.type = "password";
+    icon.classList.remove("fa-eye-slash");
+    icon.classList.add("fa-eye");
 
     }
+
+    }
+
 </script>
 
 </body>
-
 </html>
