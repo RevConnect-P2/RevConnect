@@ -7,6 +7,7 @@ import com.revconnect.enums.NotificationType;
 import com.revconnect.repository.PostLikeRepository;
 import com.revconnect.repository.PostRepository;
 import com.revconnect.repository.UserRepository;
+import com.revconnect.service.AnalyticsService;
 import com.revconnect.service.LikeService;
 import com.revconnect.service.NotificationService;
 
@@ -31,6 +32,7 @@ public class LikeServiceImpl implements LikeService {
     private final UserRepository userRepository;
     private final PostLikeRepository postLikeRepository;
     private final NotificationService notificationService;
+    private final AnalyticsService analyticsService;
 
     // =====================================
     // LIKE POST
@@ -57,6 +59,7 @@ public class LikeServiceImpl implements LikeService {
                 .build();
 
         postLikeRepository.save(like);
+        analyticsService.incrementLikes(post);
 
         logger.info("User {} liked post {}", email, postId);
 
@@ -79,6 +82,7 @@ public class LikeServiceImpl implements LikeService {
                 });
 
         postLikeRepository.delete(like);
+        analyticsService.decrementLikes(like.getPost());
 
         logger.info("User {} unliked post {}", email, postId);
     }
@@ -114,6 +118,7 @@ public class LikeServiceImpl implements LikeService {
                 .build();
 
         postLikeRepository.save(like);
+        analyticsService.incrementLikes(post);
 
         logger.info("User {} liked post {} via toggle", email, postId);
 

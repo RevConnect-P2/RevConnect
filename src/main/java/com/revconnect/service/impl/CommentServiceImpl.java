@@ -8,6 +8,7 @@ import com.revconnect.enums.NotificationType;
 import com.revconnect.repository.CommentRepository;
 import com.revconnect.repository.PostRepository;
 import com.revconnect.repository.UserRepository;
+import com.revconnect.service.AnalyticsService;
 import com.revconnect.service.CommentService;
 import com.revconnect.service.NotificationService;
 
@@ -31,6 +32,7 @@ public class CommentServiceImpl implements CommentService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final NotificationService notificationService;
+    private final AnalyticsService analyticsService;
 
     // =====================================
     // ADD COMMENT
@@ -51,6 +53,7 @@ public class CommentServiceImpl implements CommentService {
 
         commentRepository.save(comment);
 
+        analyticsService.incrementComments(post);
         logger.info("Comment added successfully by {} on post {}", email, postId);
 
         createCommentNotification(user, post, commentText);
@@ -109,6 +112,7 @@ public class CommentServiceImpl implements CommentService {
         }
 
         commentRepository.delete(comment);
+        analyticsService.decrementComments(comment.getPost());
 
         logger.info("Comment {} deleted by user {}", commentId, email);
     }
