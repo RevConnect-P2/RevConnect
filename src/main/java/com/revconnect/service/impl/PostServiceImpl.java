@@ -45,6 +45,7 @@ public class PostServiceImpl implements PostService {
 
     private final NotificationService notificationService;
     private final FollowRepository followRepository;
+    private final PostAnalyticsRepository postAnalyticsRepository;
 
     // =========================
     // CREATE POST
@@ -93,6 +94,17 @@ public class PostServiceImpl implements PostService {
                 .build();
 
         Post savedPost = postRepository.save(post);
+        // CREATE ANALYTICS RECORD
+        postAnalyticsRepository.save(
+                PostAnalytics.builder()
+                        .post(savedPost)
+                        .totalLikes(0L)
+                        .totalComments(0L)
+                        .totalShares(0L)
+                        .reachCount(0L)
+                        .build()
+        );
+
 
         logger.info("Post created successfully with ID {}", savedPost.getPostId());
 
