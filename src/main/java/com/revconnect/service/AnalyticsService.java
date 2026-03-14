@@ -16,4 +16,7 @@ public interface AnalyticsService {
 
     void decrementShares(Post post);
     ProfileAnalyticsResponse getUserAnalytics(Long userId);
+
+    // Inside your Post/Like Controller
+
 }

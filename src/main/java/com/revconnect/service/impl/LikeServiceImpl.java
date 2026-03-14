@@ -105,7 +105,7 @@ public class LikeServiceImpl implements LikeService {
         if (existingLike.isPresent()) {
 
             postLikeRepository.delete(existingLike.get());
-
+            analyticsService.decrementLikes(post);
             logger.info("User {} removed like from post {}", email, postId);
 
             return false;
