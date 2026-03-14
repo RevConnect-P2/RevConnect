@@ -19,6 +19,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.web.multipart.MultipartFile;
+import java.nio.file.*;
+import java.io.IOException;
+import java.util.UUID;
+
 @Controller
 @RequiredArgsConstructor
 public class ProfilePageController {
@@ -153,6 +158,58 @@ public class ProfilePageController {
         model.addAttribute("followingList", following);
 
         return "profile/following";
+    }
+
+    @PostMapping("/profile/upload-photo")
+    public String uploadProfilePhoto(@RequestParam("file") MultipartFile file,
+                                     HttpSession session) throws IOException {
+
+        User loggedUser = (User) session.getAttribute("loggedUser");
+
+        if (loggedUser == null) {
+            return "redirect:/login";
+        }
+
+        UserProfile profile = userProfileRepository
+                .findByUser_UserId(loggedUser.getUserId())
+                .orElseThrow(() -> new RuntimeException("Profile not found"));
+
+        // generate unique filename
+        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+
+        Path uploadPath = Paths.get("uploads");
+
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+
+        Path filePath = uploadPath.resolve(fileName);
+
+        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+        // save path in DB
+        profile.setProfilePic("/uploads/" + fileName);
+
+        userProfileRepository.save(profile);
+
+        return "redirect:/profile/" + loggedUser.getUsername();
+    }
+
+    @PostMapping("/profile/remove-photo")
+    public String removeProfilePhoto(HttpSession session) {
+
+        User loggedUser = (User) session.getAttribute("loggedUser");
+
+        UserProfile profile = userProfileRepository
+                .findByUser_UserId(loggedUser.getUserId())
+                .orElseThrow(() -> new RuntimeException("Profile not found"));
+
+        // Remove profile image
+        profile.setProfilePic(null);
+
+        userProfileRepository.save(profile);
+
+        return "redirect:/profile/" + loggedUser.getUsername();
     }
 
 }

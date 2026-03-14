@@ -1098,24 +1098,7 @@ function fetchProfilePosts() {
                 "<p class='text-center text-danger'>Error loading posts</p>";
         });
 }
-        // ===============================
-        // SHOW USERS WHO LIKED
-        // ===============================
-//function showLikes(postId) {
-//
-//    fetch(`/posts/${postId}/likes`)
-//    .then(res => res.json())
-//    .then(users => {
-//
-//        if (!users || users.length === 0) {
-//            alert("No likes yet");
-//            return;
-//        }
-//
-//        alert("Liked by:\n\n" + users.join("\n"));
-//    })
-//    .catch(err => console.error(err));
-//}
+
 
 function toggleLikeList(event, postId) {
 

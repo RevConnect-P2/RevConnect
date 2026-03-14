@@ -10,20 +10,25 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-
+import com.revconnect.entity.UserProfile;
+import com.revconnect.repository.UserProfileRepository;
 @Controller
 public class SavedPostPageController {
 
     private final FollowService followService;
     private final ConnectionService connectionService;
     private final PostService postService;
+    private final UserProfileRepository userProfileRepository;
 
     public SavedPostPageController(FollowService followService,
                                    ConnectionService connectionService,
-                                   PostService postService) {
+                                   PostService postService,
+                                   UserProfileRepository userProfileRepository) {
+
         this.followService = followService;
         this.connectionService = connectionService;
         this.postService = postService;
+        this.userProfileRepository = userProfileRepository;
     }
 
     @GetMapping("/saved")
@@ -36,6 +41,11 @@ public class SavedPostPageController {
         }
 
         model.addAttribute("user", user);
+        UserProfile userProfile = userProfileRepository
+                .findByUser_UserId(user.getUserId())
+                .orElse(null);
+
+        model.addAttribute("userProfile", userProfile);
 
         Long userId = user.getUserId();
 

@@ -70,12 +70,30 @@ border:1px solid #1f1f1f;
 box-shadow:0 10px 30px rgba(0,0,0,0.6);
 margin-bottom:20px;
 }
-
 .profile-cover{
-height:90px;
 background:linear-gradient(135deg,#ff4d4d,#b91c1c);
-border-radius:16px 16px 0 0;
+height:90px;
 }
+
+/* SIDEBAR AVATAR FIX */
+
+.sidebar-avatar-wrapper{
+position:relative;
+display:flex;
+justify-content:center;
+}
+
+.sidebar-avatar-wrapper .profile-avatar{
+position:absolute;
+top:-40px;
+left:50%;
+transform:translateX(-50%);
+background:#1a1a1a;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
 
 .profile-avatar{
 width:85px;
@@ -282,9 +300,10 @@ height:90px;
 
 .profile-avatar{
 width:80px;
+height:80px;
 border-radius:50%;
 border:3px solid #070707;
-margin-top:-45px;
+object-fit:cover;
 }
 
 /* ========================= */

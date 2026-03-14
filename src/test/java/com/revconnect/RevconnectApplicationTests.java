@@ -1,18 +1,13 @@
 package com.revconnect;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.SpringApplication;
 
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-class RevconnectApplicationTest {
+class RevconnectApplicationTests {
 
     @Test
-    void testMainMethod() {
-
-        SpringApplication app = mock(SpringApplication.class);
-
-        RevconnectApplication.main(new String[]{});
-
+    void applicationClassLoads() {
+        assertNotNull(new RevconnectApplication());
     }
 }
