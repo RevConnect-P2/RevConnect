@@ -15,6 +15,8 @@ public interface PostAnalyticsRepository extends JpaRepository<PostAnalytics, Lo
     // =============================
     Optional<PostAnalytics> findByPost(Post post);
 
+    void deleteByPost_PostId(Long postId);
+
 
     // =============================
     // GET TOTAL ANALYTICS FOR USER

@@ -47,6 +47,7 @@ public class PostServiceImpl implements PostService {
     private final NotificationService notificationService;
     private final FollowRepository followRepository;
     private final PostAnalyticsRepository postAnalyticsRepository;
+    private final SavedPostRepository savedPostRepository;
 
     // =========================
     // CREATE POST
@@ -177,9 +178,27 @@ public class PostServiceImpl implements PostService {
             throw new UnauthorizedException("Not allowed");
         }
 
+        // =========================
+        // DELETE CHILD RECORDS
+        // =========================
+
+        commentRepository.deleteByPost_PostId(postId);
+
+        postLikeRepository.deleteByPost_PostId(postId);
+
+        savedPostRepository.deleteByPost_PostId(postId);
+
         shareRepository.deleteByOriginalPost(post);
+
         postTagRepository.deleteByPost(post);
+
         postHashtagRepository.deleteByPost(post);
+
+        postAnalyticsRepository.deleteByPost_PostId(postId);
+
+        // =========================
+        // DELETE POST
+        // =========================
 
         postRepository.delete(post);
 
