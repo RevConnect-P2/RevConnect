@@ -151,6 +151,7 @@ function createFeedPostCard(post, options = {}) {
 
     const card = document.createElement("div");
     card.className = "card feed-card mb-3";
+
     card.setAttribute("data-post-id", post.postId);
 
     const hashtags = (post.hashtags || [])
@@ -971,8 +972,13 @@ document.getElementById("confirmDeleteBtn").onclick = function(){
 
         if(data.status === 200){
             fetchComments(deletePostId);
-        }
 
+            const countSpan = document.getElementById(`comment-count-${deletePostId}`);
+                        if (countSpan) {
+                            let currentCount = parseInt(countSpan.innerText) || 0;
+                            countSpan.innerText = Math.max(0, currentCount - 1); // Decrease but don't go below 0
+        }
+    }
     })
     .catch(err => console.error(err));
 
