@@ -21,7 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.*;
-
+import java.util.Set;
+import java.util.HashSet;
 // LOGGER IMPORTS
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -42,7 +43,7 @@ public class PostServiceImpl implements PostService {
     private final PostLikeRepository postLikeRepository;
     private final CommentRepository commentRepository;
     private final ShareRepository shareRepository;
-
+    private final ConnectionRepository connectionRepository;
     private final NotificationService notificationService;
     private final FollowRepository followRepository;
     private final PostAnalyticsRepository postAnalyticsRepository;
@@ -372,19 +373,61 @@ public class PostServiceImpl implements PostService {
 
     private void notifyFollowers(Long userId, Long postId) {
 
-        logger.info("Sending notifications to followers of user {}", userId);
+        logger.info("Sending notifications to followers and connections of user {}", userId);
 
+        Set<Long> notifiedUsers = new HashSet<>();
+
+        // ======================================
+        // NOTIFY FOLLOWERS
+        // ======================================
         followRepository.findByFollowing_UserId(userId)
                 .stream()
                 .map(Follow::getFollower)
                 .filter(follower -> !follower.getUserId().equals(userId))
-                .forEach(follower -> notificationService.createNotification(
-                        userId,
-                        follower.getUserId(),
-                        postId,
-                        NotificationType.POST,
-                        null
-                ));
+                .forEach(follower -> {
+
+                    Long receiverId = follower.getUserId();
+
+                    notificationService.createNotification(
+                            userId,
+                            receiverId,
+                            postId,
+                            NotificationType.POST,
+                            null
+                    );
+
+                    notifiedUsers.add(receiverId);
+                });
+
+        // ======================================
+        // NOTIFY CONNECTIONS
+        // ======================================
+        connectionRepository.findAllAcceptedConnections(userId)
+                .forEach(connection -> {
+
+                    User otherUser;
+
+                    if (connection.getSender().getUserId().equals(userId)) {
+                        otherUser = connection.getReceiver();
+                    } else {
+                        otherUser = connection.getSender();
+                    }
+
+                    Long receiverId = otherUser.getUserId();
+
+                    if (!receiverId.equals(userId) && !notifiedUsers.contains(receiverId)) {
+
+                        notificationService.createNotification(
+                                userId,
+                                receiverId,
+                                postId,
+                                NotificationType.POST,
+                                null
+                        );
+
+                        notifiedUsers.add(receiverId);
+                    }
+                });
     }
 
     private List<PostResponse> buildPostResponses(List<Post> posts) {
