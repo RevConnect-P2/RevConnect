@@ -18,4 +18,6 @@ public interface SavedPostRepository extends JpaRepository<SavedPost, Long> {
 
     // Delete saved post (unsave)
     void deleteByUserAndPost(User user, Post post);
+
+    void deleteByPost_PostId(Long postId);
 }
