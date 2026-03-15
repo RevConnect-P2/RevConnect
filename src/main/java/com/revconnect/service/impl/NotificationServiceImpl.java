@@ -2,9 +2,11 @@ package com.revconnect.service.impl;
 
 import com.revconnect.dto.response.NotificationResponse;
 import com.revconnect.entity.Notification;
+import com.revconnect.entity.NotificationPreference;
 import com.revconnect.entity.User;
 import com.revconnect.enums.NotificationType;
 import com.revconnect.mapper.NotificationMapper;
+import com.revconnect.repository.NotificationPreferenceRepository;
 import com.revconnect.repository.NotificationRepository;
 import com.revconnect.repository.UserRepository;
 import com.revconnect.service.NotificationService;
@@ -18,7 +20,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class NotificationServiceImpl implements NotificationService {
-
+    private final NotificationPreferenceRepository preferenceRepository;
     private final NotificationRepository notificationRepository;
     private final NotificationMapper notificationMapper;
     private final UserRepository userRepository;
@@ -35,6 +37,10 @@ public class NotificationServiceImpl implements NotificationService {
 
         // Prevent self-notifications
         if (senderId.equals(receiverId)) {
+            return;
+        }
+
+        if (!isNotificationEnabled(receiverId)) {
             return;
         }
 
@@ -179,5 +185,61 @@ public class NotificationServiceImpl implements NotificationService {
 
         return notificationRepository
                 .countByReceiver_UserIdAndTypeAndReadFalse(userId, type);
+    }
+
+    @Override
+    public void enableNotifications(Long userId) {
+
+        NotificationPreference pref =
+                preferenceRepository.findByUser_UserId(userId)
+                        .orElse(null);
+
+        if (pref == null) {
+
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            pref = NotificationPreference.builder()
+                    .user(user)
+                    .enabled(true)
+                    .build();
+
+        } else {
+            pref.setEnabled(true);
+        }
+
+        preferenceRepository.save(pref);
+    }
+
+    @Override
+    public void disableNotifications(Long userId) {
+
+        NotificationPreference pref =
+                preferenceRepository.findByUser_UserId(userId)
+                        .orElse(null);
+
+        if (pref == null) {
+
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            pref = NotificationPreference.builder()
+                    .user(user)
+                    .enabled(false)
+                    .build();
+
+        } else {
+            pref.setEnabled(false);
+        }
+
+        preferenceRepository.save(pref);
+    }
+
+    @Override
+    public boolean isNotificationEnabled(Long userId) {
+
+        return preferenceRepository.findByUser_UserId(userId)
+                .map(NotificationPreference::getEnabled)
+                .orElse(true); // default enabled
     }
 }

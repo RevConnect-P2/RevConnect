@@ -37,6 +37,16 @@ public interface NotificationService {
     // FILTER BY TYPE
     List<NotificationResponse> getNotificationsByType(Long userId, NotificationType type);
 
+    // ENABLE NOTIFICATIONS
+    void enableNotifications(Long userId);
+
+    // DISABLE NOTIFICATIONS
+    void disableNotifications(Long userId);
+
+    // CHECK IF ENABLED
+    boolean isNotificationEnabled(Long userId);
+
+
     // UNREAD COUNT BY TYPE
     long getUnreadCountByType(Long userId, NotificationType type);
 }

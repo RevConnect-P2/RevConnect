@@ -21,7 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.*;
-
+import java.util.Set;
+import java.util.HashSet;
 // LOGGER IMPORTS
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -42,7 +43,7 @@ public class PostServiceImpl implements PostService {
     private final PostLikeRepository postLikeRepository;
     private final CommentRepository commentRepository;
     private final ShareRepository shareRepository;
-
+    private final ConnectionRepository connectionRepository;
     private final NotificationService notificationService;
     private final FollowRepository followRepository;
     private final PostAnalyticsRepository postAnalyticsRepository;
@@ -369,22 +370,63 @@ public class PostServiceImpl implements PostService {
     // =========================
     // PRIVATE HELPERS
     // =========================
-
     private void notifyFollowers(Long userId, Long postId) {
 
-        logger.info("Sending notifications to followers of user {}", userId);
+        logger.info("Sending post notifications for user {}", userId);
 
+        User author = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // =========================
+        // PRIVATE ACCOUNT
+        // Only followers get notification
+        // =========================
+        if (Boolean.TRUE.equals(author.getIsPrivate())) {
+
+            followRepository.findByFollowing_UserId(userId)
+                    .forEach(follow -> {
+
+                        User follower = follow.getFollower();
+
+                        notificationService.createNotification(
+                                userId,
+                                follower.getUserId(),
+                                postId,
+                                NotificationType.POST,
+                                null
+                        );
+
+                    });
+
+            return;
+        }
+
+        // =========================
+        // PUBLIC ACCOUNT
+        // Followers + Following
+        // =========================
+
+        Set<Long> usersToNotify = new HashSet<>();
+
+        // Followers
         followRepository.findByFollowing_UserId(userId)
-                .stream()
-                .map(Follow::getFollower)
-                .filter(follower -> !follower.getUserId().equals(userId))
-                .forEach(follower -> notificationService.createNotification(
+                .forEach(f -> usersToNotify.add(f.getFollower().getUserId()));
+
+        // Following
+        followRepository.findByFollower_UserId(userId)
+                .forEach(f -> usersToNotify.add(f.getFollowing().getUserId()));
+
+        usersToNotify.remove(userId);
+
+        usersToNotify.forEach(id ->
+                notificationService.createNotification(
                         userId,
-                        follower.getUserId(),
+                        id,
                         postId,
                         NotificationType.POST,
                         null
-                ));
+                )
+        );
     }
 
     private List<PostResponse> buildPostResponses(List<Post> posts) {
