@@ -370,64 +370,63 @@ public class PostServiceImpl implements PostService {
     // =========================
     // PRIVATE HELPERS
     // =========================
-
     private void notifyFollowers(Long userId, Long postId) {
 
-        logger.info("Sending notifications to followers and connections of user {}", userId);
+        logger.info("Sending post notifications for user {}", userId);
 
-        Set<Long> notifiedUsers = new HashSet<>();
+        User author = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // ======================================
-        // NOTIFY FOLLOWERS
-        // ======================================
-        followRepository.findByFollowing_UserId(userId)
-                .stream()
-                .map(Follow::getFollower)
-                .filter(follower -> !follower.getUserId().equals(userId))
-                .forEach(follower -> {
+        // =========================
+        // PRIVATE ACCOUNT
+        // Only followers get notification
+        // =========================
+        if (Boolean.TRUE.equals(author.getIsPrivate())) {
 
-                    Long receiverId = follower.getUserId();
+            followRepository.findByFollowing_UserId(userId)
+                    .forEach(follow -> {
 
-                    notificationService.createNotification(
-                            userId,
-                            receiverId,
-                            postId,
-                            NotificationType.POST,
-                            null
-                    );
-
-                    notifiedUsers.add(receiverId);
-                });
-
-        // ======================================
-        // NOTIFY CONNECTIONS
-        // ======================================
-        connectionRepository.findAllAcceptedConnections(userId)
-                .forEach(connection -> {
-
-                    User otherUser;
-
-                    if (connection.getSender().getUserId().equals(userId)) {
-                        otherUser = connection.getReceiver();
-                    } else {
-                        otherUser = connection.getSender();
-                    }
-
-                    Long receiverId = otherUser.getUserId();
-
-                    if (!receiverId.equals(userId) && !notifiedUsers.contains(receiverId)) {
+                        User follower = follow.getFollower();
 
                         notificationService.createNotification(
                                 userId,
-                                receiverId,
+                                follower.getUserId(),
                                 postId,
                                 NotificationType.POST,
                                 null
                         );
 
-                        notifiedUsers.add(receiverId);
-                    }
-                });
+                    });
+
+            return;
+        }
+
+        // =========================
+        // PUBLIC ACCOUNT
+        // Followers + Following
+        // =========================
+
+        Set<Long> usersToNotify = new HashSet<>();
+
+        // Followers
+        followRepository.findByFollowing_UserId(userId)
+                .forEach(f -> usersToNotify.add(f.getFollower().getUserId()));
+
+        // Following
+        followRepository.findByFollower_UserId(userId)
+                .forEach(f -> usersToNotify.add(f.getFollowing().getUserId()));
+
+        usersToNotify.remove(userId);
+
+        usersToNotify.forEach(id ->
+                notificationService.createNotification(
+                        userId,
+                        id,
+                        postId,
+                        NotificationType.POST,
+                        null
+                )
+        );
     }
 
     private List<PostResponse> buildPostResponses(List<Post> posts) {

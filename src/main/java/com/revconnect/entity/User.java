@@ -80,4 +80,6 @@ public class User {
 
     }
 
+    @Column(name = "notifications_enabled")
+    private Boolean notificationsEnabled = true;
 }
