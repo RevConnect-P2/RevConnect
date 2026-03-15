@@ -20,4 +20,9 @@ public class ProfileResponse {
     private String externalLinks;
     private String businessAddress;
     private String contactInfo;
+
+    private Long totalLikes;
+    private Long totalComments;
+    private Long totalShares;
+    private Long totalPosts;
 }

@@ -34,21 +34,21 @@
 
         <div class="d-flex justify-content-center">
 
-            <div class="profile-avatar">
+            <div class="profile-avatar profile-avatar-lg">
 
                 <!-- CLICKABLE PROFILE IMAGE -->
-                <label for="profileUpload" style="cursor:pointer;">
+                <label for="profileUpload" class="avatar-upload">
 
-                    <!-- SHOW PROFILE IMAGE -->
+                    <!-- PROFILE IMAGE -->
                     <img th:if="${profile != null and profile.profilePic != null}"
                          th:src="@{${profile.profilePic}}"
-                         class="img-fluid rounded-circle"
-                         style="width:100%; height:100%; object-fit:cover;" />
+                         class="profile-img"/>
 
-                    <!-- SHOW FIRST LETTER IF NO IMAGE -->
+                    <!-- LETTER AVATAR -->
                     <span th:if="${profile == null or profile.profilePic == null}"
+                          class="avatar-letter"
                           th:text="${#strings.substring(username,0,1).toUpperCase()}">
-                </span>
+                    </span>
 
                 </label>
 
@@ -133,6 +133,7 @@
         </div>
 
     </div>
+
 
     <!-- ABOUT -->
 
@@ -283,6 +284,36 @@ Closed
 
         </a>
 
+    </div>
+
+
+    <div th:if="${profile.profileType != null and (profile.profileType.toString() == 'CREATOR' or profile.profileType.toString() == 'BUSINESS')}"
+         class="about-card p-4 mb-4">
+
+        <h5>Analytics</h5>
+        <hr>
+
+        <div class="row text-center">
+            <div class="col">
+                <h5 th:text="${profile.totalPosts ?: 0}">0</h5>
+                <small>Posts</small>
+            </div>
+
+            <div class="col">
+                <h5 th:text="${profile.totalLikes ?: 0}">0</h5>
+                <small>Likes</small>
+            </div>
+
+            <div class="col">
+                <h5 th:text="${profile.totalComments ?: 0}">0</h5>
+                <small>Comments</small>
+            </div>
+
+            <div class="col">
+                <h5 th:text="${profile.totalShares ?: 0}">0</h5>
+                <small>Shares</small>
+            </div>
+        </div>
     </div>
 
     <!-- POSTS -->

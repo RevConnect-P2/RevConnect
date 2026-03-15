@@ -7,6 +7,7 @@ import com.revconnect.enums.NotificationType;
 import com.revconnect.repository.PostRepository;
 import com.revconnect.repository.ShareRepository;
 import com.revconnect.repository.UserRepository;
+import com.revconnect.service.AnalyticsService;
 import com.revconnect.service.NotificationService;
 import com.revconnect.service.ShareService;
 
@@ -31,7 +32,7 @@ public class ShareServiceImpl implements ShareService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final NotificationService notificationService;
-
+    private final AnalyticsService analyticsService;
     // =========================
     // SHARE POST
     // =========================
@@ -63,6 +64,7 @@ public class ShareServiceImpl implements ShareService {
                 .build();
 
         shareRepository.save(share);
+        analyticsService.incrementShares(post);
 
         logger.info("User {} shared post {}", email, postId);
 
@@ -92,6 +94,7 @@ public class ShareServiceImpl implements ShareService {
                 });
 
         shareRepository.delete(share);
+        analyticsService.decrementShares(share.getOriginalPost());
 
         logger.info("User {} unshared post {}", email, postId);
     }
@@ -117,6 +120,7 @@ public class ShareServiceImpl implements ShareService {
         if (existingShare.isPresent()) {
 
             shareRepository.delete(existingShare.get());
+            analyticsService.decrementShares(existingShare.get().getOriginalPost());
 
             logger.info("User {} unshared post {} via toggle", email, postId);
 
@@ -130,6 +134,7 @@ public class ShareServiceImpl implements ShareService {
                 .build();
 
         shareRepository.save(share);
+        analyticsService.incrementShares(post);
 
         logger.info("User {} shared post {} via toggle", email, postId);
 

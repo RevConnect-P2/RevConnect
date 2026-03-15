@@ -4,6 +4,7 @@ import com.revconnect.dto.request.BusinessHoursRequest;
 import com.revconnect.dto.request.ProfileCreateRequest;
 import com.revconnect.dto.request.ProfileUpdateRequest;
 import com.revconnect.dto.response.BusinessHoursResponse;
+import com.revconnect.dto.response.ProfileAnalyticsResponse;
 import com.revconnect.dto.response.ProfileResponse;
 import com.revconnect.entity.BusinessHours;
 import com.revconnect.entity.User; // ✅ FIXED IMPORT
@@ -11,8 +12,10 @@ import com.revconnect.entity.UserProfile;
 import com.revconnect.enums.ProfileType;
 import com.revconnect.exception.ResourceNotFoundException;
 import com.revconnect.repository.BusinessHoursRepository;
+import com.revconnect.repository.PostRepository;
 import com.revconnect.repository.UserProfileRepository;
 import com.revconnect.repository.UserRepository;
+import com.revconnect.service.AnalyticsService;
 import com.revconnect.service.ProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,8 +32,8 @@ public class ProfileServiceImpl implements ProfileService {
     private final UserRepository userRepository;
     private final UserProfileRepository userProfileRepository;
     private final BusinessHoursRepository businessHoursRepository;
-
-
+    private final AnalyticsService analyticsService;
+    private final PostRepository postRepository;
     // ================= CREATE PROFILE =================
 
     @Override
@@ -346,6 +349,18 @@ public class ProfileServiceImpl implements ProfileService {
         response.setBusinessAddress(profile.getBusinessAddress());
         response.setContactInfo(profile.getContactInfo());
 
+        // ===============================
+        // ADD ANALYTICS HERE
+        // ===============================
+        ProfileAnalyticsResponse analytics =
+                analyticsService.getUserAnalytics(user.getUserId());
+
+        response.setTotalLikes(analytics.getTotalLikes());
+        response.setTotalComments(analytics.getTotalComments());
+        response.setTotalShares(analytics.getTotalShares());
+
+        // total posts
+        response.setTotalPosts(postRepository.countByUser(user));
         return response;
     }
 
