@@ -67,7 +67,7 @@ public class CommentServiceImpl implements CommentService {
 
         logger.info("Fetching comments for post {}", postId);
 
-        return commentRepository.findByPost_PostId(postId)
+        return commentRepository.findByPost_PostIdOrderByCreatedAtDesc(postId)
                 .stream()
                 .map(comment -> CommentResponse.builder()
                         .commentId(comment.getCommentId())
