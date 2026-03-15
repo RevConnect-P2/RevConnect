@@ -47,6 +47,14 @@ public class PostServiceImplTest {
     private NotificationService notificationService;
     @Mock
     private FollowRepository followRepository;
+    @Mock
+    private ConnectionRepository connectionRepository;
+
+    @Mock
+    private PostAnalyticsRepository postAnalyticsRepository;
+
+    @Mock
+    private SavedPostRepository savedPostRepository;
 
     @InjectMocks
     private PostServiceImpl postService;

@@ -6,6 +6,7 @@ import com.revconnect.entity.User;
 import com.revconnect.repository.PostRepository;
 import com.revconnect.repository.ShareRepository;
 import com.revconnect.repository.UserRepository;
+import com.revconnect.service.AnalyticsService;
 import com.revconnect.service.NotificationService;
 
 import org.junit.Before;
@@ -32,6 +33,9 @@ public class ShareServiceImplTest {
 
     @Mock
     private NotificationService notificationService;
+
+    @Mock
+    private AnalyticsService analyticsService;
 
     @InjectMocks
     private ShareServiceImpl shareService;

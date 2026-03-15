@@ -5,6 +5,7 @@ import com.revconnect.entity.Notification;
 import com.revconnect.entity.User;
 import com.revconnect.enums.NotificationType;
 import com.revconnect.mapper.NotificationMapper;
+import com.revconnect.repository.NotificationPreferenceRepository;
 import com.revconnect.repository.NotificationRepository;
 import com.revconnect.repository.UserRepository;
 
@@ -31,6 +32,9 @@ public class NotificationServiceImplTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private NotificationPreferenceRepository preferenceRepository;
 
     @InjectMocks
     private NotificationServiceImpl notificationService;

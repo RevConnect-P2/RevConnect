@@ -1,6 +1,7 @@
 package com.revconnect.controller;
 
 import com.revconnect.entity.User;
+import com.revconnect.repository.UserProfileRepository;
 import com.revconnect.service.ConnectionService;
 import com.revconnect.service.FollowService;
 import com.revconnect.service.PostService;
@@ -23,6 +24,7 @@ class MyPostsPageControllerTest {
     private FollowService followService;
     private ConnectionService connectionService;
     private PostService postService;
+    private UserProfileRepository userProfileRepository;   // ✅ added
 
     private MockHttpSession session;
     private Model model;
@@ -33,11 +35,13 @@ class MyPostsPageControllerTest {
         followService = mock(FollowService.class);
         connectionService = mock(ConnectionService.class);
         postService = mock(PostService.class);
+        userProfileRepository = mock(UserProfileRepository.class);  // ✅ added
 
         controller = new MyPostsPageController(
                 followService,
                 connectionService,
-                postService
+                postService,
+                userProfileRepository      // ✅ added
         );
 
         session = new MockHttpSession();
