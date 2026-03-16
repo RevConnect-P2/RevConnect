@@ -3,15 +3,18 @@ package com.revconnect.service.impl;
 import com.revconnect.dto.request.ProfileCreateRequest;
 import com.revconnect.dto.request.ProfileUpdateRequest;
 import com.revconnect.dto.request.BusinessHoursRequest;
+import com.revconnect.dto.response.ProfileAnalyticsResponse;
 import com.revconnect.entity.User;
 import com.revconnect.entity.UserProfile;
 import com.revconnect.entity.BusinessHours;
 import com.revconnect.enums.ProfileType;
 import com.revconnect.exception.ResourceNotFoundException;
+import com.revconnect.repository.PostRepository;
 import com.revconnect.repository.UserRepository;
 import com.revconnect.repository.UserProfileRepository;
 import com.revconnect.repository.BusinessHoursRepository;
 
+import com.revconnect.service.AnalyticsService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,6 +40,12 @@ public class ProfileServiceImplTest {
     @Mock
     private BusinessHoursRepository businessHoursRepository;
 
+    @Mock
+    private AnalyticsService analyticsService;
+
+    @Mock
+    private PostRepository postRepository;
+
     @InjectMocks
     private ProfileServiceImpl profileService;
 
@@ -55,6 +64,15 @@ public class ProfileServiceImplTest {
         profile.setProfileId(10L);
         profile.setUser(user);
         profile.setProfileType(ProfileType.PERSONAL);
+
+        // ✅ FIX: mock analytics response
+        ProfileAnalyticsResponse analytics = new ProfileAnalyticsResponse();
+        analytics.setTotalLikes(0L);
+        analytics.setTotalComments(0L);
+        analytics.setTotalShares(0L);
+
+        when(analyticsService.getUserAnalytics(anyLong()))
+                .thenReturn(analytics);
     }
 
     // -------- CREATE PROFILE --------

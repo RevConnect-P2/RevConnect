@@ -8,9 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 @SpringBootApplication
-public class
-
-RevconnectApplication {
+public class RevconnectApplication {
 
 	private static final Logger logger =
 			LogManager.getLogger(RevconnectApplication.class);

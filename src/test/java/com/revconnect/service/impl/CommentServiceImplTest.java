@@ -6,6 +6,7 @@ import com.revconnect.entity.User;
 import com.revconnect.repository.CommentRepository;
 import com.revconnect.repository.PostRepository;
 import com.revconnect.repository.UserRepository;
+import com.revconnect.service.AnalyticsService;
 import com.revconnect.service.NotificationService;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,6 +33,9 @@ public class CommentServiceImplTest {
 
     @Mock
     private NotificationService notificationService;
+
+    @Mock
+    private AnalyticsService analyticsService;
 
     @InjectMocks
     private CommentServiceImpl commentService;
@@ -101,7 +105,7 @@ public class CommentServiceImplTest {
         comment.setCommentText("Nice");
         comment.setUser(user);   // 🔥 ADD THIS
 
-        when(commentRepository.findByPost_PostId(10L))
+        when(commentRepository.findByPost_PostIdOrderByCreatedAtDesc(10L))
                 .thenReturn(List.of(comment));
 
         List<?> result = commentService.getCommentsByPostId(10L);
