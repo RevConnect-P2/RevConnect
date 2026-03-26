@@ -24,7 +24,7 @@ import org.apache.logging.log4j.Logger;
 @Controller
 public class AuthController {
 
-    // ✅ LOGGER OBJECT
+    // LOGGER OBJECT
     private static final Logger logger = LogManager.getLogger(AuthController.class);
 
     @Autowired

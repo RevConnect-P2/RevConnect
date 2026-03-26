@@ -7,9 +7,7 @@ import java.util.List;
 
 public interface PostService {
 
-    // =====================================
     // CREATE / UPDATE / DELETE POST
-    // =====================================
     PostResponse createPost(Long userId, PostCreateRequest request);
 
     PostResponse updatePost(Long postId, Long userId, PostCreateRequest request);
@@ -18,9 +16,7 @@ public interface PostService {
 
 
 
-    // =====================================
     // GET POSTS
-    // =====================================
     PostResponse getPostById(Long postId);
 
     List<PostResponse> getPostsByUser(Long userId);
@@ -29,32 +25,24 @@ public interface PostService {
 
 
 
-    // =====================================
     // PIN / UNPIN POST
-    // =====================================
     PostResponse pinPost(Long postId, Long userId);
 
     PostResponse unpinPost(Long postId, Long userId);
 
 
 
-    // =====================================
     // PROFILE STATS
-    // =====================================
     long countPostsByUser(Long userId);
 
 
 
-    // =====================================
     // HASHTAG FEATURES
-    // =====================================
     List<String> getTrendingHashtags();
 
     List<PostResponse> getPostsByHashtag(String hashtag);
 
 
 
-    // =====================================
-    // SHARE / UNSHARE POST
-    // =====================================
+
 }

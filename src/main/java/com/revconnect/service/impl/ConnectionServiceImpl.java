@@ -23,7 +23,7 @@ import org.apache.logging.log4j.Logger;
 @RequiredArgsConstructor
 public class ConnectionServiceImpl implements ConnectionService {
 
-    // ✅ LOGGER OBJECT
+    //  LOGGER OBJECT
     private static final Logger logger =
             LogManager.getLogger(ConnectionServiceImpl.class);
 
@@ -32,9 +32,7 @@ public class ConnectionServiceImpl implements ConnectionService {
     private final NotificationService notificationService;
 
 
-    // =========================
     // SEND CONNECTION REQUEST
-    // =========================
     @Override
     public void sendConnectionRequest(Long senderId, Long receiverId) {
 
@@ -126,9 +124,9 @@ public class ConnectionServiceImpl implements ConnectionService {
     }
 
 
-    // =========================
+
     // ACCEPT REQUEST
-    // =========================
+
     @Override
     public void acceptRequest(Long connectionId) {
 
@@ -158,9 +156,8 @@ public class ConnectionServiceImpl implements ConnectionService {
     }
 
 
-    // =========================
+
     // REJECT REQUEST
-    // =========================
     @Override
     public void rejectRequest(Long connectionId) {
 
@@ -190,9 +187,8 @@ public class ConnectionServiceImpl implements ConnectionService {
     }
 
 
-    // =========================
     // REMOVE CONNECTION
-    // =========================
+
     @Override
     public void removeConnection(Long connectionId) {
 
@@ -204,9 +200,8 @@ public class ConnectionServiceImpl implements ConnectionService {
     }
 
 
-    // =========================
     // GET RECEIVED REQUESTS
-    // =========================
+
     @Override
     public List<Connection> getReceivedRequests(Long userId) {
 
@@ -219,9 +214,9 @@ public class ConnectionServiceImpl implements ConnectionService {
     }
 
 
-    // =========================
+
     // GET SENT REQUESTS
-    // =========================
+
     @Override
     public List<Connection> getSentRequests(Long userId) {
 
@@ -234,9 +229,9 @@ public class ConnectionServiceImpl implements ConnectionService {
     }
 
 
-    // =========================
+
     // COUNT USER CONNECTIONS
-    // =========================
+
     @Override
     public long getConnectionsCount(Long userId) {
 
@@ -249,9 +244,8 @@ public class ConnectionServiceImpl implements ConnectionService {
     }
 
 
-    // =========================
     // GET CONNECTION STATUS
-    // =========================
+
     @Override
     public ConnectionStatus getConnectionStatus(Long user1, Long user2) {
 
@@ -270,9 +264,8 @@ public class ConnectionServiceImpl implements ConnectionService {
     }
 
 
-    // =========================
     // GET MY CONNECTIONS
-    // =========================
+
     @Override
     public List<User> getMyConnections(Long userId) {
 

@@ -34,9 +34,9 @@ public class LikeServiceImpl implements LikeService {
     private final NotificationService notificationService;
     private final AnalyticsService analyticsService;
 
-    // =====================================
+
     // LIKE POST
-    // =====================================
+
     @Override
     public void likePost(Long postId, String email) {
 
@@ -66,9 +66,9 @@ public class LikeServiceImpl implements LikeService {
         createLikeNotification(user, post);
     }
 
-    // =====================================
+
     // UNLIKE POST
-    // =====================================
+
     @Override
     public void unlikePost(Long postId, String email) {
 
@@ -87,9 +87,9 @@ public class LikeServiceImpl implements LikeService {
         logger.info("User {} unliked post {}", email, postId);
     }
 
-    // =====================================
+
     // TOGGLE LIKE
-    // =====================================
+
     @Override
     public boolean toggleLike(Long postId, String email) {
 
@@ -127,9 +127,9 @@ public class LikeServiceImpl implements LikeService {
         return true;
     }
 
-    // =====================================
+
     // USERS WHO LIKED
-    // =====================================
+
     @Override
     public List<String> getUsersWhoLiked(Long postId) {
 
@@ -142,9 +142,9 @@ public class LikeServiceImpl implements LikeService {
                 .toList();
     }
 
-    // =====================================
+
     // HELPER METHODS
-    // =====================================
+
 
     private User getUserByEmail(String email) {
 

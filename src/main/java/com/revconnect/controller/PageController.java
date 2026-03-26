@@ -279,38 +279,5 @@ public class PageController {
 
     }
 
-    // ================= PUBLIC PROFILE PAGE =================
-//    @GetMapping("/profile/{userId}")
-//    public String viewPublicProfile(
-//            @PathVariable Long userId,
-//            Model model
-//    ) {
-//
-//        ProfileResponse profile =
-//                profileService.getProfile(userId);
-//
-//        model.addAttribute("profile", profile);
-//
-//        // USER POSTS
-//        List<PostResponse> posts =
-//                postService.getPostsByUser(userId);
-//
-//        model.addAttribute("posts", posts);
-//
-//        long postCount =
-//                postService.countPostsByUser(userId);
-//
-//        model.addAttribute("postCount", postCount);
-//
-//        if (profile.getProfileType() == ProfileType.BUSINESS) {
-//
-//            List<BusinessHoursResponse> hours =
-//                    profileService.getBusinessHours(userId);
-//
-//            model.addAttribute("businessHours", hours);
-//        }
-//
-//        return "profile/profile";
-//    }
 
 }

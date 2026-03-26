@@ -29,9 +29,9 @@ public class FollowServiceImpl implements FollowService {
     private final UserRepository userRepository;
     private final NotificationService notificationService;
 
-    // =========================
+
     // FOLLOW USER
-    // =========================
+
     @Override
     public void followUser(Long followerId, Long followingId) {
 
@@ -64,9 +64,9 @@ public class FollowServiceImpl implements FollowService {
         sendFollowNotification(followerId, followingId);
     }
 
-    // =========================
+
     // UNFOLLOW USER
-    // =========================
+
     @Override
     public void unfollowUser(Long followerId, Long followingId) {
 
@@ -91,9 +91,9 @@ public class FollowServiceImpl implements FollowService {
         logger.info("User {} unfollowed user {}", followerId, followingId);
     }
 
-    // =========================
+
     // TOGGLE FOLLOW
-    // =========================
+
     @Override
     public boolean toggleFollow(Long followerId, Long followingId) {
 
@@ -132,9 +132,9 @@ public class FollowServiceImpl implements FollowService {
         return true;
     }
 
-    // =========================
+
     // GET FOLLOWERS COUNT
-    // =========================
+
     @Override
     public long getFollowersCount(Long userId) {
 
@@ -143,9 +143,9 @@ public class FollowServiceImpl implements FollowService {
         return followRepository.countByFollowing_UserId(userId);
     }
 
-    // =========================
+
     // GET FOLLOWING COUNT
-    // =========================
+
     @Override
     public long getFollowingCount(Long userId) {
 
@@ -165,9 +165,9 @@ public class FollowServiceImpl implements FollowService {
         return followRepository.findByFollowing_UserId(userId);
     }
 
-    // =========================
+
     // GET FOLLOWING LIST
-    // =========================
+
     @Override
     public List<Follow> getFollowing(Long userId) {
 
@@ -176,9 +176,9 @@ public class FollowServiceImpl implements FollowService {
         return followRepository.findByFollower_UserId(userId);
     }
 
-    // =========================
+
     // HELPER METHODS
-    // =========================
+
 
     private User getUser(Long userId) {
 

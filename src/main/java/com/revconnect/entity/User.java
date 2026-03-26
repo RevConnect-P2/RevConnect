@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO) // ✅ Best for Oracle
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "USER_ID")
     private Long userId;
 
@@ -58,7 +58,7 @@ public class User {
     @Column(name = "UPDATED_AT")
     private LocalDateTime updatedAt;
 
-    // ✅ ADD THIS PART
+
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     private UserProfile userProfile;
 

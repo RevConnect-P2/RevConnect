@@ -33,9 +33,9 @@ public class ShareServiceImpl implements ShareService {
     private final UserRepository userRepository;
     private final NotificationService notificationService;
     private final AnalyticsService analyticsService;
-    // =========================
+
     // SHARE POST
-    // =========================
+
     @Override
     public void sharePost(Long postId, String email) {
 
@@ -71,9 +71,9 @@ public class ShareServiceImpl implements ShareService {
         createShareNotification(user, post);
     }
 
-    // =========================
+
     // UNSHARE POST
-    // =========================
+
     @Override
     public void unsharePost(Long postId, String email) {
 
@@ -99,9 +99,9 @@ public class ShareServiceImpl implements ShareService {
         logger.info("User {} unshared post {}", email, postId);
     }
 
-    // =========================
+
     // TOGGLE SHARE
-    // =========================
+
     @Override
     public boolean toggleShare(Long postId, String email) {
 
@@ -143,9 +143,9 @@ public class ShareServiceImpl implements ShareService {
         return true;
     }
 
-    // =========================
+
     // SHARE COUNT
-    // =========================
+
     @Override
     public Long getShareCount(Long postId) {
 
@@ -154,9 +154,9 @@ public class ShareServiceImpl implements ShareService {
         return shareRepository.countByOriginalPost_PostId(postId);
     }
 
-    // =========================
+
     // USERS WHO SHARED
-    // =========================
+
     @Override
     public List<String> getUsersWhoShared(Long postId) {
 
@@ -166,9 +166,9 @@ public class ShareServiceImpl implements ShareService {
         return shareRepository.findUsernamesWhoShared(postId);
     }
 
-    // =========================
+
     // HELPER METHODS
-    // =========================
+
 
     private User getUserByEmail(String email) {
 
@@ -196,9 +196,8 @@ public class ShareServiceImpl implements ShareService {
                 });
     }
 
-    // =========================
     // CREATE SHARE NOTIFICATION
-    // =========================
+
     private void createShareNotification(User sender, Post post) {
 
         Long senderId = sender.getUserId();

@@ -14,11 +14,11 @@ import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-    // 1️⃣ Find pinned post
+    //  Find pinned post
     Optional<Post> findByUserAndPinnedTrue(User user);
 
 
-    // 2️⃣ Visible posts of a specific user
+    // Visible posts of a specific user
     @Query("""
         SELECT p FROM Post p
         WHERE p.user = :user
@@ -31,7 +31,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     );
 
 
-    // 3️⃣ GLOBAL FEED (SAFE VERSION)
+    //GLOBAL FEED (SAFE VERSION)
     @Query("""
     SELECT p FROM Post p
     LEFT JOIN p.user u
@@ -60,11 +60,11 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             @Param("currentUserId") Long currentUserId,
             @Param("now") LocalDateTime now
     );
-    // 4️⃣ Profile post count
+    // Profile post count
     long countByUser(User user);
 
 
-    // 5️⃣ Scheduled posts
+    //  Scheduled posts
     @Query("""
         SELECT p FROM Post p
         WHERE p.scheduledAt IS NOT NULL
@@ -73,7 +73,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findReadyScheduledPosts(@Param("now") LocalDateTime now);
 
 
-    // 6️⃣ Trending hashtags
+    //  Trending hashtags
     @Query("""
         SELECT ph.hashtag.tagName
         FROM PostHashtag ph
@@ -83,7 +83,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<String> findTrendingHashtags(Pageable pageable);
 
 
-    // 7️⃣ Find posts by hashtag
+    //  Find posts by hashtag
     @Query("""
         SELECT ph.post
         FROM PostHashtag ph

@@ -10,33 +10,23 @@ import java.util.Optional;
 
 public interface ShareRepository extends JpaRepository<Share, Long> {
 
-    // ===============================
     // CHECK IF USER ALREADY SHARED
-    // ===============================
     Optional<Share> findByOriginalPost_PostIdAndSharedBy_UserId(Long postId, Long userId);
 
 
-    // ===============================
     // COUNT TOTAL SHARES
-    // ===============================
     Long countByOriginalPost_PostId(Long postId);
 
 
-    // ===============================
     // FETCH ALL SHARES FOR FEED
-    // ===============================
     List<Share> findAllByOrderByCreatedAtDesc();
 
 
-    // ===============================
     // GET SHARES FOR A POST
-    // ===============================
     List<Share> findByOriginalPost_PostId(Long postId);
 
 
-    // ===============================
     // GET USERS WHO SHARED (UI LIST)
-    // ===============================
     @Query("""
         SELECT s.sharedBy.username
         FROM Share s
@@ -46,8 +36,6 @@ public interface ShareRepository extends JpaRepository<Share, Long> {
     List<String> findUsernamesWhoShared(Long postId);
 
 
-    // ===============================
     // DELETE SHARES WHEN POST DELETED
-    // ===============================
     void deleteByOriginalPost(Post post);
 }

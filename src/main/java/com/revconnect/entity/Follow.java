@@ -45,8 +45,6 @@ public class Follow {
     private LocalDateTime updatedAt;
 
 
-
-    // ✅ ONLY ONE PrePersist
     @PrePersist
     protected void onCreate() {
 
@@ -55,8 +53,6 @@ public class Follow {
 
     }
 
-
-    // ✅ ONLY ONE PreUpdate
     @PreUpdate
     protected void onUpdate() {
 
@@ -66,7 +62,7 @@ public class Follow {
     }
 
 
-    // validation method (NO annotation here)
+    // validation method
     private void validateFollow() {
 
         if (follower != null &&

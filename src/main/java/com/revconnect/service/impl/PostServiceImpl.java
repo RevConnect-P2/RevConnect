@@ -49,9 +49,9 @@ public class PostServiceImpl implements PostService {
     private final PostAnalyticsRepository postAnalyticsRepository;
     private final SavedPostRepository savedPostRepository;
 
-    // =========================
+
     // CREATE POST
-    // =========================
+
     @Override
     @Transactional
     public PostResponse createPost(Long userId, PostCreateRequest request) {
@@ -118,9 +118,9 @@ public class PostServiceImpl implements PostService {
         return mapPost(savedPost, hashtags, tags);
     }
 
-    // =========================
+
     // UPDATE POST
-    // =========================
+
     @Override
     @Transactional
     public PostResponse updatePost(Long postId, Long userId, PostCreateRequest request) {
@@ -158,9 +158,9 @@ public class PostServiceImpl implements PostService {
         return mapPost(updatedPost, hashtags, tags);
     }
 
-    // =========================
+
     // DELETE POST
-    // =========================
+
     @Override
     @Transactional
     public void deletePost(Long postId, Long userId) {
@@ -178,9 +178,9 @@ public class PostServiceImpl implements PostService {
             throw new UnauthorizedException("Not allowed");
         }
 
-        // =========================
+
         // DELETE CHILD RECORDS
-        // =========================
+
 
         commentRepository.deleteByPost_PostId(postId);
 
@@ -196,18 +196,18 @@ public class PostServiceImpl implements PostService {
 
         postAnalyticsRepository.deleteByPost_PostId(postId);
 
-        // =========================
+
         // DELETE POST
-        // =========================
+
 
         postRepository.delete(post);
 
         logger.info("Post {} deleted successfully", postId);
     }
 
-    // =========================
+
     // GET POSTS BY USER
-    // =========================
+
     @Override
     @Transactional(readOnly = true)
     public List<PostResponse> getPostsByUser(Long userId) {
@@ -223,9 +223,9 @@ public class PostServiceImpl implements PostService {
         return buildPostResponses(posts);
     }
 
-    // =========================
+
     // GET POST BY ID
-    // =========================
+
     @Override
     public PostResponse getPostById(Long postId) {
 
@@ -237,9 +237,9 @@ public class PostServiceImpl implements PostService {
         return mapPost(post, getHashtagsForPost(post), getTagsForPost(post));
     }
 
-    // =========================
+
     // GLOBAL FEED
-    // =========================
+
     @Override
     @Transactional(readOnly = true)
     public List<PostResponse> getGlobalFeed(Long viewerUserId) {
@@ -299,9 +299,9 @@ public class PostServiceImpl implements PostService {
         return responses;
     }
 
-    // =========================
+
     // PIN POST
-    // =========================
+
     @Override
     @Transactional
     public PostResponse pinPost(Long postId, Long userId) {
@@ -329,9 +329,9 @@ public class PostServiceImpl implements PostService {
                 getTagsForPost(post));
     }
 
-    // =========================
+
     // UNPIN POST
-    // =========================
+
     @Override
     @Transactional
     public PostResponse unpinPost(Long postId, Long userId) {
@@ -348,9 +348,9 @@ public class PostServiceImpl implements PostService {
                 getTagsForPost(post));
     }
 
-    // =========================
+
     // COUNT POSTS
-    // =========================
+
     @Override
     public long countPostsByUser(Long userId) {
 
@@ -362,9 +362,9 @@ public class PostServiceImpl implements PostService {
         return postRepository.countByUser(user);
     }
 
-    // =========================
+
     // TRENDING HASHTAGS
-    // =========================
+
     @Override
     public List<String> getTrendingHashtags() {
 
@@ -373,9 +373,9 @@ public class PostServiceImpl implements PostService {
         return postRepository.findTrendingHashtags(PageRequest.of(0, 5));
     }
 
-    // =========================
+
     // POSTS BY HASHTAG
-    // =========================
+
     @Override
     public List<PostResponse> getPostsByHashtag(String hashtag) {
 
@@ -386,9 +386,9 @@ public class PostServiceImpl implements PostService {
         return buildPostResponses(posts);
     }
 
-    // =========================
+
     // PRIVATE HELPERS
-    // =========================
+
     private void notifyFollowers(Long userId, Long postId) {
 
         logger.info("Sending post notifications for user {}", userId);
@@ -396,10 +396,10 @@ public class PostServiceImpl implements PostService {
         User author = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // =========================
+
         // PRIVATE ACCOUNT
         // Only followers get notification
-        // =========================
+
         if (Boolean.TRUE.equals(author.getIsPrivate())) {
 
             followRepository.findByFollowing_UserId(userId)
@@ -420,10 +420,9 @@ public class PostServiceImpl implements PostService {
             return;
         }
 
-        // =========================
+
         // PUBLIC ACCOUNT
         // Followers + Following
-        // =========================
 
         Set<Long> usersToNotify = new HashSet<>();
 

@@ -17,9 +17,7 @@ public class SecurityConfig {
     private static final Logger logger =
             LogManager.getLogger(SecurityConfig.class);
 
-    // =========================
     // PASSWORD ENCODER
-    // =========================
     @Bean
     public PasswordEncoder passwordEncoder() {
 
@@ -28,9 +26,7 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    // =========================
     // SECURITY FILTER CHAIN
-    // =========================
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 

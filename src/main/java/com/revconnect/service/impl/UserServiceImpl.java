@@ -15,7 +15,7 @@ import org.apache.logging.log4j.Logger;
 @Service
 public class UserServiceImpl implements UserService {
 
-    // ✅ LOGGER OBJECT
+    // LOGGER OBJECT
     private static final Logger logger =
             LogManager.getLogger(UserServiceImpl.class);
 
@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
         return user.getUserId();
     }
 
-    // 🔍 SEARCH USERNAMES (for navbar search suggestions)
+    // SEARCH USERNAMES (for navbar search suggestions)
     @Override
     public List<String> searchUsernames(String keyword) {
 

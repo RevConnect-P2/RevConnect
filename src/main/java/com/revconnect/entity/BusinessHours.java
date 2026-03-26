@@ -34,10 +34,10 @@ public class BusinessHours {
     private String dayOfWeek;
 
     @Column(name = "OPEN_TIME")
-    private LocalTime openTime;     // ✅ LocalTime ONLY
+    private LocalTime openTime;
 
     @Column(name = "CLOSE_TIME")
-    private LocalTime closeTime;    // ✅ LocalTime ONLY
+    private LocalTime closeTime;
 
     // Oracle stores Boolean as NUMBER(1)
     @Builder.Default

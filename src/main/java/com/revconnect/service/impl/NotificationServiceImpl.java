@@ -25,9 +25,9 @@ public class NotificationServiceImpl implements NotificationService {
     private final NotificationMapper notificationMapper;
     private final UserRepository userRepository;
 
-    // =========================================
+
     // CREATE NOTIFICATION
-    // =========================================
+
     @Override
     public void createNotification(Long senderId,
                                    Long receiverId,
@@ -65,9 +65,9 @@ public class NotificationServiceImpl implements NotificationService {
         System.out.println("Notification created: " + message);
     }
 
-    // =========================================
+
     // MESSAGE BUILDER
-    // =========================================
+
     private String buildMessage(String username,
                                 NotificationType type,
                                 String extraText) {
@@ -85,9 +85,9 @@ public class NotificationServiceImpl implements NotificationService {
         };
     }
 
-    // =========================================
+
     // GET USER NOTIFICATIONS
-    // =========================================
+
     @Override
     public List<NotificationResponse> getUserNotifications(Long userId) {
 
@@ -98,9 +98,9 @@ public class NotificationServiceImpl implements NotificationService {
                 .collect(Collectors.toList());
     }
 
-    // =========================================
+
     // GET UNREAD COUNT
-    // =========================================
+
     @Override
     public long getUnreadCount(Long userId) {
 
@@ -108,9 +108,9 @@ public class NotificationServiceImpl implements NotificationService {
                 .countByReceiver_UserIdAndReadFalse(userId);
     }
 
-    // =========================================
+
     // MARK AS READ
-    // =========================================
+
     @Override
     public void markAsRead(Long notificationId) {
 
@@ -123,9 +123,8 @@ public class NotificationServiceImpl implements NotificationService {
         notificationRepository.save(notification);
     }
 
-    // =========================================
     // MARK AS UNREAD
-    // =========================================
+
     @Override
     public void markAsUnread(Long notificationId) {
 
@@ -138,9 +137,9 @@ public class NotificationServiceImpl implements NotificationService {
         notificationRepository.save(notification);
     }
 
-    // =========================================
+
     // MARK ALL AS READ
-    // =========================================
+
     @Override
     public void markAllAsRead(Long userId) {
 
@@ -153,18 +152,18 @@ public class NotificationServiceImpl implements NotificationService {
         notificationRepository.saveAll(notifications);
     }
 
-    // =========================================
+
     // DELETE NOTIFICATION
-    // =========================================
+
     @Override
     public void deleteNotification(Long notificationId) {
 
         notificationRepository.deleteById(notificationId);
     }
 
-    // =========================================
+
     // FILTER BY TYPE
-    // =========================================
+
     @Override
     public List<NotificationResponse> getNotificationsByType(Long userId,
                                                              NotificationType type) {
@@ -176,9 +175,9 @@ public class NotificationServiceImpl implements NotificationService {
                 .collect(Collectors.toList());
     }
 
-    // =========================================
+
     // UNREAD COUNT BY TYPE
-    // =========================================
+
     @Override
     public long getUnreadCountByType(Long userId,
                                      NotificationType type) {

@@ -10,17 +10,16 @@ import java.util.Optional;
 
 public interface PostAnalyticsRepository extends JpaRepository<PostAnalytics, Long> {
 
-    // =============================
+
     // FIND ANALYTICS FOR ONE POST
-    // =============================
     Optional<PostAnalytics> findByPost(Post post);
 
     void deleteByPost_PostId(Long postId);
 
 
-    // =============================
+
     // GET TOTAL ANALYTICS FOR USER
-    // =============================
+
     @Query("""
     SELECT 
         COALESCE(SUM(pa.totalLikes), 0),

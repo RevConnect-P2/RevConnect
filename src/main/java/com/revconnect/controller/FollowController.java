@@ -16,7 +16,7 @@ import org.apache.logging.log4j.Logger;
 @RequiredArgsConstructor
 public class FollowController {
 
-    // ✅ LOGGER OBJECT
+    // LOGGER OBJECT
     private static final Logger logger =
             LogManager.getLogger(FollowController.class);
 

@@ -233,12 +233,12 @@ public class ProfileServiceImpl implements ProfileService {
 
                     return res;
                 })
-                // ✅ FIX HERE
+
                 .collect(java.util.stream.Collectors.toList());
 
 
 
-        // ✅ SORT NOW WORKS
+
         hours.sort(java.util.Comparator.comparing(
                 h -> java.time.DayOfWeek.valueOf(h.getDayOfWeek().toUpperCase())
         ));
@@ -286,7 +286,7 @@ public class ProfileServiceImpl implements ProfileService {
         else if (type == ProfileType.BUSINESS) {
 
 
-            // ✅ CREATE
+
 
             if (request instanceof ProfileCreateRequest r) {
 
@@ -301,7 +301,6 @@ public class ProfileServiceImpl implements ProfileService {
             }
 
 
-            // ✅ UPDATE  ⭐ THIS WAS MISSING ⭐
 
             if (request instanceof ProfileUpdateRequest r) {
 

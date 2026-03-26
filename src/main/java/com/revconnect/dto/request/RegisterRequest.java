@@ -15,13 +15,12 @@ public class RegisterRequest {
 
     private String password;
 
-    // ✅ ADD THIS
+
     private String userType;
 
-    // ✅ ADD THIS
+
     private String securityQuestion;
 
-    // ✅ ADD THIS
     private String securityAnswer;
 
 }

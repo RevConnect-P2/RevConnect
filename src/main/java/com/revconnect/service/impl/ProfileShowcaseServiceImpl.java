@@ -29,9 +29,7 @@ public class ProfileShowcaseServiceImpl implements ProfileShowcaseService {
     private final UserProfileRepository userProfileRepository;
     private final ProfileShowcaseRepository showcaseRepository;
 
-    // =========================
     // ADD SHOWCASE
-    // =========================
     @Override
     public void addShowcase(Long userId, ShowcaseRequest request) {
 
@@ -66,9 +64,9 @@ public class ProfileShowcaseServiceImpl implements ProfileShowcaseService {
         logger.info("Showcase '{}' created successfully for user {}", request.getTitle(), userId);
     }
 
-    // =========================
+
     // GET SHOWCASES
-    // =========================
+
     @Override
     public List<ShowcaseResponse> getShowcases(Long userId) {
 
@@ -99,9 +97,9 @@ public class ProfileShowcaseServiceImpl implements ProfileShowcaseService {
         return showcases;
     }
 
-    // =========================
+
     // UPDATE SHOWCASE
-    // =========================
+
     @Override
     public void updateShowcase(
             Long userId,
@@ -138,9 +136,9 @@ public class ProfileShowcaseServiceImpl implements ProfileShowcaseService {
         logger.info("Showcase {} updated successfully by user {}", showcaseId, userId);
     }
 
-    // =========================
+
     // DELETE SHOWCASE
-    // =========================
+
     @Override
     public void deleteShowcase(Long userId, Long showcaseId) {
 

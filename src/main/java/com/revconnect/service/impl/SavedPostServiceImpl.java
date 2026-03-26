@@ -35,9 +35,9 @@ public class SavedPostServiceImpl implements SavedPostService {
     private final PostRepository postRepository;
     private final PostMapper postMapper;
 
-    // =========================
+
     // SAVE POST
-    // =========================
+
     @Override
     @Transactional
     public void savePost(Long userId, Long postId) {
@@ -75,9 +75,9 @@ public class SavedPostServiceImpl implements SavedPostService {
         logger.info("Post {} saved successfully by user {}", postId, userId);
     }
 
-    // =========================
+
     // UNSAVE POST
-    // =========================
+
     @Override
     @Transactional
     public void unsavePost(Long userId, Long postId) {
@@ -101,9 +101,8 @@ public class SavedPostServiceImpl implements SavedPostService {
         logger.info("Post {} unsaved successfully by user {}", postId, userId);
     }
 
-    // =========================
     // GET SAVED POSTS
-    // =========================
+
     @Override
     public List<PostResponse> getSavedPosts(Long userId) {
 

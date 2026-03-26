@@ -23,14 +23,12 @@ import org.apache.logging.log4j.Logger;
 @RequiredArgsConstructor
 public class PostController {
 
-    // ✅ LOGGER OBJECT
+    // LOGGER OBJECT
     private static final Logger logger =
             LogManager.getLogger(PostController.class);
 
     private final PostService postService;
     private final SavedPostService savedPostService;
-
-    // ✅ NEW
     private final ShareService shareService;
 
     // =========================

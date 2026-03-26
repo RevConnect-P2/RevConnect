@@ -18,13 +18,13 @@ import org.apache.logging.log4j.Logger;
 @RequestMapping("/profiles")
 public class BusinessHoursController {
 
-    // ✅ LOGGER OBJECT
+    //  LOGGER OBJECT
     private static final Logger logger =
             LogManager.getLogger(BusinessHoursController.class);
 
     private final ProfileService profileService;
 
-    // ✅ ADD business hours
+    //  ADD business hours
     @PostMapping("/{userId}/business-hours")
     public ResponseEntity<String> addBusinessHours(
             @PathVariable Long userId,
@@ -40,7 +40,7 @@ public class BusinessHoursController {
         return ResponseEntity.ok("Business hours saved successfully");
     }
 
-    // ✅ GET business hours
+    //  GET business hours
     @GetMapping("/{userId}/business-hours")
     public ResponseEntity<List<BusinessHoursResponse>> getBusinessHours(
             @PathVariable Long userId

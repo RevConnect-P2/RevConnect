@@ -34,9 +34,7 @@ public class CommentServiceImpl implements CommentService {
     private final NotificationService notificationService;
     private final AnalyticsService analyticsService;
 
-    // =====================================
     // ADD COMMENT
-    // =====================================
     @Override
     public void addComment(Long postId, String email, String commentText) {
 
@@ -59,9 +57,7 @@ public class CommentServiceImpl implements CommentService {
         createCommentNotification(user, post, commentText);
     }
 
-    // =====================================
     // GET COMMENTS FOR POST
-    // =====================================
     @Override
     public List<CommentResponse> getCommentsByPostId(Long postId) {
 
@@ -78,9 +74,7 @@ public class CommentServiceImpl implements CommentService {
                 .toList();
     }
 
-    // =====================================
     // DELETE COMMENT
-    // =====================================
     @Override
     public void deleteComment(Long commentId, String email) {
 
@@ -117,9 +111,7 @@ public class CommentServiceImpl implements CommentService {
         logger.info("Comment {} deleted by user {}", commentId, email);
     }
 
-    // =====================================
     // HELPER METHODS
-    // =====================================
 
     private User getUserByEmail(String email) {
 

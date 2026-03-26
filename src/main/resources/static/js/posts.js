@@ -669,7 +669,7 @@ function fetchMyPostsPage() {
 
             posts.forEach(post => {
 
-                const card = createMyPostCard(post);   // ✅ correct card
+                const card = createMyPostCard(post);   //
 
                 container.appendChild(card);
 
@@ -875,7 +875,7 @@ function toggleCommentBox(postId) {
         commentBox.style.display === "none" ||
         commentBox.style.display === "";
 
-    // 🔥 CLOSE LIKE + SHARE FIRST
+    // CLOSE LIKE + SHARE FIRST
 
 
 
@@ -923,7 +923,7 @@ function submitCommentAction(postId) {
         // Clear input
         input.value = "";
 
-        // Reload comments list 🔥
+        // Reload comments list
         fetchComments(postId);
 
         // Update comment count safely
@@ -1197,9 +1197,8 @@ function closeUserPopup(){
     document.getElementById("userPopupOverlay").style.display = "none";
 }
 
-//////////////////////////////////////////////////////////
+
 // LOAD POSTS BY HASHTAG (GLOBAL FUNCTION)
-//////////////////////////////////////////////////////////
 
 function loadHashtagPosts(tag) {
 

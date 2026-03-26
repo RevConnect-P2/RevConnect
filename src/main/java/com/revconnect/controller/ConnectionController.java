@@ -19,7 +19,7 @@ import org.apache.logging.log4j.Logger;
 @RequiredArgsConstructor
 public class ConnectionController {
 
-    // ✅ LOGGER OBJECT
+    // LOGGER OBJECT
     private static final Logger logger =
             LogManager.getLogger(ConnectionController.class);
 

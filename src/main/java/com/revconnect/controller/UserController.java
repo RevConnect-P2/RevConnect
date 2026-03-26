@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
 @RequestMapping("/users")
 public class UserController {
 
-    // ✅ LOGGER OBJECT
+    // LOGGER OBJECT
     private static final Logger logger =
             LogManager.getLogger(UserController.class);
 
@@ -23,7 +23,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    // 🔍 SEARCH USERNAMES API
+    //  SEARCH USERNAMES API
     @GetMapping("/search")
     public List<String> searchUsers(@RequestParam String keyword) {
 

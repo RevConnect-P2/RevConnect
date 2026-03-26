@@ -25,14 +25,14 @@ import org.apache.logging.log4j.Logger;
 @RequiredArgsConstructor
 public class DashboardController {
 
-    // ✅ LOGGER OBJECT
+    // LOGGER OBJECT
     private static final Logger logger =
             LogManager.getLogger(DashboardController.class);
 
     private final PostService postService;
     private final NotificationService notificationService;
 
-    // ⭐ NEW SERVICES
+    // NEW SERVICES
     private final FollowService followService;
     private final ConnectionService connectionService;
 
@@ -44,7 +44,7 @@ public class DashboardController {
 
         logger.info("Dashboard requested");
 
-        // ✅ Get logged-in user
+        // Get logged-in user
         User user = (User) session.getAttribute("loggedUser");
 
         if (user == null) {
@@ -65,7 +65,7 @@ public class DashboardController {
 
         model.addAttribute("userProfile", userProfile);
 
-        // 🔔 Notification count
+        //  Notification count
         long unreadCount =
                 notificationService.getUnreadCount(user.getUserId());
 
@@ -73,7 +73,7 @@ public class DashboardController {
 
         model.addAttribute("unreadCount", unreadCount);
 
-        // 📊 Followers / Following
+        //  Followers / Following
         long followers =
                 followService.getFollowersCount(user.getUserId());
 
@@ -82,7 +82,7 @@ public class DashboardController {
 
         logger.info("Followers: {}, Following: {} for user {}", followers, following, user.getUserId());
 
-        // 🤝 Connections
+        //  Connections
         long connections =
                 connectionService.getConnectionsCount(user.getUserId());
 
@@ -92,7 +92,7 @@ public class DashboardController {
         model.addAttribute("followingCount", following);
         model.addAttribute("connectionsCount", connections);
 
-        // 📰 Feed
+        // Feed
         model.addAttribute(
                 "posts",
                 postService.getGlobalFeed(user.getUserId())
@@ -100,7 +100,7 @@ public class DashboardController {
 
         logger.info("Global feed loaded for user {}", user.getUserId());
 
-        // 🔥 Trending hashtags
+        // Trending hashtags
         model.addAttribute(
                 "trendingTags",
                 postService.getTrendingHashtags()

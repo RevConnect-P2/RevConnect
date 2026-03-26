@@ -23,30 +23,22 @@ public interface ConnectionRepository extends JpaRepository<Connection, Long> {
             @Param("user2") User user2
     );
 
-    // =====================================
     // Sent connection requests
-    // =====================================
     List<Connection> findBySender_UserId(Long userId);
 
-    // =====================================
     // ACCEPTED connections (sender side)
-    // =====================================
     List<Connection> findBySender_UserIdAndStatus(
             Long userId,
             ConnectionStatus status
     );
 
-    // =====================================
     // ACCEPTED connections (receiver side)
-    // =====================================
     List<Connection> findByReceiver_UserIdAndStatus(
             Long userId,
             ConnectionStatus status
     );
 
-    // =====================================
     // ALL ACCEPTED CONNECTIONS (BOTH SIDES)
-    // =====================================
     @Query("""
            SELECT c
            FROM Connection c
@@ -55,9 +47,8 @@ public interface ConnectionRepository extends JpaRepository<Connection, Long> {
            """)
     List<Connection> findAllAcceptedConnections(@Param("userId") Long userId);
 
-    // =====================================
     // Correct count query
-    // =====================================
+
     @Query("""
            SELECT COUNT(c)
            FROM Connection c

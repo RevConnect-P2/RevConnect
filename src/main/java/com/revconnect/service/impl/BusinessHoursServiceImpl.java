@@ -41,7 +41,7 @@ public class BusinessHoursServiceImpl {
                     return new ResourceNotFoundException("Profile not found");
                 });
 
-        // ✅ Only BUSINESS profiles allowed
+        // Only BUSINESS profiles allowed
         if (profile.getProfileType() != ProfileType.BUSINESS) {
 
             logger.warn("User {} tried to add business hours but profile type is {}",

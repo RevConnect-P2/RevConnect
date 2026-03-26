@@ -20,7 +20,7 @@ import org.apache.logging.log4j.Logger;
 @Service
 public class AuthServiceImpl implements AuthService {
 
-    // ✅ LOGGER OBJECT
+    // LOGGER OBJECT
     private static final Logger logger =
             LogManager.getLogger(AuthServiceImpl.class);
 
@@ -34,10 +34,7 @@ public class AuthServiceImpl implements AuthService {
     private UserProfileRepository userProfileRepository;
 
 
-    // ============================
     // REGISTER USER
-    // ============================
-
     @Override
     public User register(RegisterRequest request)
     {
@@ -98,10 +95,7 @@ public class AuthServiceImpl implements AuthService {
 
 
 
-
-    // ============================
     // LOGIN USER
-    // ============================
 
     @Override
     public User login(LoginRequest request)
@@ -138,11 +132,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
 
-
-    // ============================
     // FIND USER BY EMAIL
-    // ============================
-
     @Override
     public User findByEmail(String email)
     {
@@ -160,10 +150,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
 
-
-    // ============================
     // RESET PASSWORD
-    // ============================
 
     @Override
     public void resetPassword(String email,

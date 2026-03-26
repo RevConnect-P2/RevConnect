@@ -18,7 +18,7 @@ import org.apache.logging.log4j.Logger;
 @RequiredArgsConstructor
 public class ProfileController {
 
-    // ✅ LOGGER OBJECT
+    // LOGGER OBJECT
     private static final Logger logger =
             LogManager.getLogger(ProfileController.class);
 
